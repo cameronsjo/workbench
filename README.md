@@ -2,11 +2,14 @@
 
 Personal Claude Code plugin marketplace - a curated collection of agents, commands, and skills for software development.
 
+[![Support me on Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Me-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/cameronsjo)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Quick Start
 
 ```bash
 # Add marketplace
-/plugin marketplace add cameron/claude-marketplace
+/plugin marketplace add cameronsjo/claude-marketplace
 
 # Browse available plugins
 /plugin
@@ -17,27 +20,27 @@ Personal Claude Code plugin marketplace - a curated collection of agents, comman
 
 ## Available Plugins
 
-| Plugin | Description | Components |
-|--------|-------------|------------|
-| **core-productivity** | Git workflows, code review, project checks | 8 commands, 1 agent |
-| **python-toolkit** | Python development with uv, async, testing | 1 command, 1 agent, 1 skill |
-| **typescript-toolkit** | TypeScript/React/Next.js patterns | 5 agents |
-| **api-development** | REST API design, OpenAPI, architecture | 2 commands, 3 agents, 1 skill |
-| **security-suite** | OWASP, vulnerability scanning, auth | 1 command, 2 agents, 2 skills |
-| **pr-workflow** | Multi-perspective PR reviews, labels | 3 commands |
-| **research-tools** | Comprehensive research, academic sources | 4 agents |
-| **obsidian-pkm** | Obsidian markdown, MOCs, tags, linking | 3 agents, 1 skill |
-| **mcp-development** | MCP server architecture, testing, security | 6 agents, 1 skill |
-| **dx-tools** | Debugging, optimization, prompts | 2 commands, 4 agents, 2 skills |
-| **cloud-ops** | AWS/Azure/GCP, Kubernetes, Terraform | 5 agents |
-| **data-science** | SQL, ML pipelines, data engineering | 7 agents |
+| Plugin | Description | Docs |
+|--------|-------------|------|
+| [**core-productivity**](docs/core-productivity.md) | Git workflows, code review, project checks | [View](docs/core-productivity.md) |
+| [**python-toolkit**](docs/python-toolkit.md) | Python development with uv, async, testing | [View](docs/python-toolkit.md) |
+| [**typescript-toolkit**](docs/typescript-toolkit.md) | TypeScript/React/Next.js patterns | [View](docs/typescript-toolkit.md) |
+| [**api-development**](docs/api-development.md) | REST API design, OpenAPI, architecture | [View](docs/api-development.md) |
+| [**security-suite**](docs/security-suite.md) | OWASP, vulnerability scanning, auth | [View](docs/security-suite.md) |
+| [**pr-workflow**](docs/pr-workflow.md) | Multi-perspective PR reviews, labels | [View](docs/pr-workflow.md) |
+| [**research-tools**](docs/research-tools.md) | Comprehensive research, academic sources | [View](docs/research-tools.md) |
+| [**obsidian-pkm**](docs/obsidian-pkm.md) | Obsidian markdown, MOCs, tags, linking | [View](docs/obsidian-pkm.md) |
+| [**mcp-development**](docs/mcp-development.md) | MCP server architecture, testing, security | [View](docs/mcp-development.md) |
+| [**dx-tools**](docs/dx-tools.md) | Debugging, optimization, prompts | [View](docs/dx-tools.md) |
+| [**cloud-ops**](docs/cloud-ops.md) | AWS/Azure/GCP, Kubernetes, Terraform | [View](docs/cloud-ops.md) |
+| [**data-science**](docs/data-science.md) | SQL, ML pipelines, data engineering | [View](docs/data-science.md) |
 
 ## Installation
 
 ### Add the Marketplace
 
 ```bash
-/plugin marketplace add cameron/claude-marketplace
+/plugin marketplace add cameronsjo/claude-marketplace
 ```
 
 ### Install Plugins
@@ -68,7 +71,7 @@ Configure auto-installation in your project's `.claude/settings.json`:
     "cameron-tools": {
       "source": {
         "source": "github",
-        "repo": "cameron/claude-marketplace"
+        "repo": "cameronsjo/claude-marketplace"
       }
     }
   },
@@ -79,77 +82,23 @@ Configure auto-installation in your project's `.claude/settings.json`:
 }
 ```
 
-## Plugin Details
+## Documentation
 
-### core-productivity
+See the [docs/](docs/) folder for detailed documentation on each plugin:
 
-Essential productivity tools for every project.
+- [Getting Started](docs/getting-started.md) - Installation and basic usage
+- [Plugin Guide](docs/plugin-guide.md) - How plugins work together
+- Individual plugin docs linked in the table above
 
-**Commands:**
-- `/commit` - Well-formatted git commits with conventional messages
-- `/ready` - Commit, push, and create PR with automated review
-- `/check` - Run project checks and fix errors
-- `/clean` - Fix linting and formatting issues
-- `/turbo` - Maximum speed execution mode
-- `/catchup` - Read uncommitted changes after /clear
-- `/context-prime` - Load project context from README
-- `/explore` - Launch codebase investigation agent
+## Acknowledgments
 
-**Agents:**
-- `code-reviewer` - Expert code review for quality, security, maintainability
+Many of the original agent prompts in this collection were inspired by or derived from [davepoon/claude-code-subagents-collection](https://github.com/davepoon/claude-code-subagents-collection). Huge thanks to [@davepoon](https://github.com/davepoon) for the foundational work on Claude Code subagents!
 
-### python-toolkit
+## Support
 
-Python development expertise.
+If you find this marketplace useful, consider supporting the project:
 
-**Commands:**
-- `/test-gen` - Generate comprehensive tests
-
-**Agents:**
-- `python-expert` - Advanced Python patterns, async, decorators, testing
-
-**Skills:**
-- `python-development` - Python best practices and patterns
-
-### api-development
-
-API design and architecture tools.
-
-**Commands:**
-- `/review.api` - Review API design for REST best practices
-- `/review.architecture` - Review system architecture
-
-**Agents:**
-- `api-documenter` - OpenAPI specs, SDK generation, documentation
-- `backend-architect` - RESTful APIs, microservices, database schemas
-- `graphql-architect` - GraphQL schemas, resolvers, federation
-
-**Skills:**
-- `api-design` - REST API design guidelines and patterns
-
-### security-suite
-
-Security auditing and review tools.
-
-**Commands:**
-- `/review.security` - Comprehensive security audit
-
-**Agents:**
-- `security-auditor` - OWASP compliance, vulnerability detection
-- `api-security-audit` - API-specific security review
-
-**Skills:**
-- `security-review` - Security review checklists and patterns
-- `security-principles` - Core security principles
-
-### pr-workflow
-
-Pull request automation.
-
-**Commands:**
-- `/review.pr` - Multi-perspective PR review (PM, Dev, QA, Security)
-- `/review.pr-fix` - Fix issues from PR review
-- `/setup-labels` - Setup PR review labels
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/cameronsjo)
 
 ## Contributing
 
@@ -160,4 +109,4 @@ Pull request automation.
 
 ## License
 
-MIT
+MIT License - See [LICENSE](LICENSE) for details.
