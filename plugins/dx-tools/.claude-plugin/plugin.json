@@ -1,0 +1,10 @@
+{
+  "name": "dx-tools",
+  "description": "Developer experience: debugging, optimization, prompt engineering, code analysis",
+  "version": "1.0.0",
+  "author": {
+    "name": "Cameron"
+  },
+  "keywords": ["dx", "debugging", "optimization", "prompts", "tooling"],
+  "category": "development"
+}

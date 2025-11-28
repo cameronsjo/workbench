@@ -1,0 +1,10 @@
+{
+  "name": "data-science",
+  "description": "Data science and analytics: SQL optimization, ML pipelines, data engineering, visualization",
+  "version": "1.0.0",
+  "author": {
+    "name": "Cameron"
+  },
+  "keywords": ["data", "sql", "ml", "analytics", "engineering"],
+  "category": "data"
+}

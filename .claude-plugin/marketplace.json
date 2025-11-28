@@ -1,0 +1,122 @@
+{
+  "name": "cameron-tools",
+  "owner": {
+    "name": "Cameron",
+    "email": "cameron@example.com"
+  },
+  "metadata": {
+    "description": "Personal Claude Code productivity toolkit - agents, commands, and skills for software development",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "core-productivity",
+      "source": "./plugins/core-productivity",
+      "description": "Essential productivity commands: git workflows, code review, project checks",
+      "version": "1.0.0",
+      "category": "productivity",
+      "tags": ["git", "commit", "workflow", "review"],
+      "strict": true
+    },
+    {
+      "name": "python-toolkit",
+      "source": "./plugins/python-toolkit",
+      "description": "Python development expertise: async, testing, uv, type hints",
+      "version": "1.0.0",
+      "category": "language",
+      "tags": ["python", "uv", "testing", "async"],
+      "strict": true
+    },
+    {
+      "name": "typescript-toolkit",
+      "source": "./plugins/typescript-toolkit",
+      "description": "TypeScript/JavaScript development: React, Next.js, Node.js patterns",
+      "version": "1.0.0",
+      "category": "language",
+      "tags": ["typescript", "javascript", "react", "nextjs"],
+      "strict": true
+    },
+    {
+      "name": "api-development",
+      "source": "./plugins/api-development",
+      "description": "API design and review: REST best practices, OpenAPI, architecture",
+      "version": "1.0.0",
+      "category": "architecture",
+      "tags": ["api", "rest", "openapi", "architecture"],
+      "strict": true
+    },
+    {
+      "name": "security-suite",
+      "source": "./plugins/security-suite",
+      "description": "Security auditing and review: OWASP, vulnerability scanning, auth patterns",
+      "version": "1.0.0",
+      "category": "security",
+      "tags": ["security", "owasp", "audit", "vulnerabilities"],
+      "strict": true
+    },
+    {
+      "name": "pr-workflow",
+      "source": "./plugins/pr-workflow",
+      "description": "Pull request automation: multi-perspective reviews, labels, fixes",
+      "version": "1.0.0",
+      "category": "workflow",
+      "tags": ["pr", "review", "github", "labels"],
+      "strict": true
+    },
+    {
+      "name": "research-tools",
+      "source": "./plugins/research-tools",
+      "description": "Research and analysis: comprehensive research, web search, synthesis",
+      "version": "1.0.0",
+      "category": "research",
+      "tags": ["research", "search", "analysis", "synthesis"],
+      "strict": true
+    },
+    {
+      "name": "obsidian-pkm",
+      "source": "./plugins/obsidian-pkm",
+      "description": "Obsidian knowledge management: markdown, MOCs, tags, linking",
+      "version": "1.0.0",
+      "category": "productivity",
+      "tags": ["obsidian", "markdown", "pkm", "notes"],
+      "strict": true
+    },
+    {
+      "name": "mcp-development",
+      "source": "./plugins/mcp-development",
+      "description": "MCP server development: architecture, testing, deployment",
+      "version": "1.0.0",
+      "category": "development",
+      "tags": ["mcp", "servers", "protocol", "tools"],
+      "strict": true
+    },
+    {
+      "name": "dx-tools",
+      "source": "./plugins/dx-tools",
+      "description": "Developer experience: debugging, optimization, prompt engineering",
+      "version": "1.0.0",
+      "category": "development",
+      "tags": ["dx", "debugging", "optimization", "prompts"],
+      "strict": true
+    },
+    {
+      "name": "cloud-ops",
+      "source": "./plugins/cloud-ops",
+      "description": "Cloud operations: AWS/Azure/GCP, Kubernetes, DevOps, deployment",
+      "version": "1.0.0",
+      "category": "infrastructure",
+      "tags": ["cloud", "kubernetes", "devops", "deployment"],
+      "strict": true
+    },
+    {
+      "name": "data-science",
+      "source": "./plugins/data-science",
+      "description": "Data science and analytics: SQL, ML pipelines, data engineering",
+      "version": "1.0.0",
+      "category": "data",
+      "tags": ["data", "sql", "ml", "analytics"],
+      "strict": true
+    }
+  ]
+}

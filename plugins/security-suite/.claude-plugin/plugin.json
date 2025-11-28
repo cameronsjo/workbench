@@ -1,0 +1,10 @@
+{
+  "name": "security-suite",
+  "description": "Security auditing and review: OWASP Top 10, vulnerability scanning, auth patterns, secure coding",
+  "version": "1.0.0",
+  "author": {
+    "name": "Cameron"
+  },
+  "keywords": ["security", "owasp", "audit", "vulnerabilities", "auth"],
+  "category": "security"
+}
