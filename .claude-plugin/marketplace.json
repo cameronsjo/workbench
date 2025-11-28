@@ -1,8 +1,8 @@
 {
   "name": "cameron-tools",
   "owner": {
-    "name": "Cameron",
-    "email": "cameron@example.com"
+    "name": "Cameron Sjo",
+    "github": "cameronsjo"
   },
   "metadata": {
     "description": "Personal Claude Code productivity toolkit - agents, commands, and skills for software development",
