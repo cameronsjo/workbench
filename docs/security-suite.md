@@ -5,7 +5,7 @@ OWASP compliance, vulnerability detection, and security auditing.
 ## Installation
 
 ```bash
-/plugin install security-suite@cameron-tools
+/plugin install security-suite@cameronsjo
 ```
 
 ## Commands

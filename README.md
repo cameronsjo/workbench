@@ -15,7 +15,7 @@ Personal Claude Code plugin marketplace - a curated collection of agents, comman
 /plugin
 
 # Install a plugin
-/plugin install core-productivity@cameron-tools
+/plugin install core-productivity@cameronsjo
 ```
 
 ## Available Plugins
@@ -64,16 +64,16 @@ See [compositions.md](docs/compositions.md) for copy-paste configs.
 
 ```bash
 # Essential for every project
-/plugin install core-productivity@cameron-tools
+/plugin install core-productivity@cameronsjo
 
 # For Python projects
-/plugin install python-toolkit@cameron-tools
+/plugin install python-toolkit@cameronsjo
 
 # For TypeScript/React projects
-/plugin install typescript-toolkit@cameron-tools
+/plugin install typescript-toolkit@cameronsjo
 
 # For API development
-/plugin install api-development@cameron-tools
+/plugin install api-development@cameronsjo
 ```
 
 ### Project Configuration
@@ -83,7 +83,7 @@ Configure auto-installation in your project's `.claude/settings.json`:
 ```json
 {
   "extraKnownMarketplaces": {
-    "cameron-tools": {
+    "cameronsjo": {
       "source": {
         "source": "github",
         "repo": "cameronsjo/claude-marketplace"
@@ -91,8 +91,8 @@ Configure auto-installation in your project's `.claude/settings.json`:
     }
   },
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "python-toolkit@cameron-tools"
+    "core-productivity@cameronsjo",
+    "python-toolkit@cameronsjo"
   ]
 }
 ```

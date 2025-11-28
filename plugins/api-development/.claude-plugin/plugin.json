@@ -3,8 +3,14 @@
   "description": "API design and review: REST best practices, OpenAPI specs, architecture patterns, backend design",
   "version": "1.0.0",
   "author": {
-    "name": "Cameron"
+    "name": "https://github.com/cameronsjo"
   },
-  "keywords": ["api", "rest", "openapi", "architecture", "backend"],
+  "keywords": [
+    "api",
+    "rest",
+    "openapi",
+    "architecture",
+    "backend"
+  ],
   "category": "architecture"
 }

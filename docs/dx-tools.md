@@ -5,7 +5,7 @@ Developer experience optimization, debugging, and productivity enhancement.
 ## Installation
 
 ```bash
-/plugin install dx-tools@cameron-tools
+/plugin install dx-tools@cameronsjo
 ```
 
 ## Commands

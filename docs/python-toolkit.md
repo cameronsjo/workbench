@@ -5,7 +5,7 @@ Python development expertise with modern tooling (uv), async patterns, and testi
 ## Installation
 
 ```bash
-/plugin install python-toolkit@cameron-tools
+/plugin install python-toolkit@cameronsjo
 ```
 
 ## Commands

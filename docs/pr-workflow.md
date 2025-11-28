@@ -5,7 +5,7 @@ Multi-perspective pull request reviews and automation.
 ## Installation
 
 ```bash
-/plugin install pr-workflow@cameron-tools
+/plugin install pr-workflow@cameronsjo
 ```
 
 ## Commands

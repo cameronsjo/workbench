@@ -3,8 +3,14 @@
   "description": "Cloud operations: AWS/Azure/GCP, Kubernetes, Terraform, DevOps, deployment pipelines",
   "version": "1.0.0",
   "author": {
-    "name": "Cameron"
+    "name": "https://github.com/cameronsjo"
   },
-  "keywords": ["cloud", "kubernetes", "devops", "deployment", "terraform"],
+  "keywords": [
+    "cloud",
+    "kubernetes",
+    "devops",
+    "deployment",
+    "terraform"
+  ],
   "category": "infrastructure"
 }

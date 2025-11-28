@@ -3,8 +3,14 @@
   "description": "Essential productivity commands for every project: git workflows, code review, project checks, and turbo mode",
   "version": "1.0.0",
   "author": {
-    "name": "Cameron"
+    "name": "https://github.com/cameronsjo"
   },
-  "keywords": ["git", "commit", "workflow", "review", "productivity"],
+  "keywords": [
+    "git",
+    "commit",
+    "workflow",
+    "review",
+    "productivity"
+  ],
   "category": "productivity"
 }

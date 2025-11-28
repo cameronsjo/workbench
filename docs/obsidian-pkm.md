@@ -5,7 +5,7 @@ Personal knowledge management with Obsidian markdown and vault organization.
 ## Installation
 
 ```bash
-/plugin install obsidian-pkm@cameron-tools
+/plugin install obsidian-pkm@cameronsjo
 ```
 
 ## Agents

@@ -31,15 +31,15 @@ Install the plugins you need:
 
 ```bash
 # Core productivity tools (recommended for everyone)
-/plugin install core-productivity@cameron-tools
+/plugin install core-productivity@cameronsjo
 
 # Language-specific toolkits
-/plugin install python-toolkit@cameron-tools
-/plugin install typescript-toolkit@cameron-tools
+/plugin install python-toolkit@cameronsjo
+/plugin install typescript-toolkit@cameronsjo
 
 # Specialty plugins
-/plugin install security-suite@cameron-tools
-/plugin install api-development@cameron-tools
+/plugin install security-suite@cameronsjo
+/plugin install api-development@cameronsjo
 ```
 
 ## Recommended Plugin Combinations
@@ -47,35 +47,35 @@ Install the plugins you need:
 ### For Python Projects
 
 ```bash
-/plugin install core-productivity@cameron-tools
-/plugin install python-toolkit@cameron-tools
-/plugin install security-suite@cameron-tools
+/plugin install core-productivity@cameronsjo
+/plugin install python-toolkit@cameronsjo
+/plugin install security-suite@cameronsjo
 ```
 
 ### For TypeScript/React Projects
 
 ```bash
-/plugin install core-productivity@cameron-tools
-/plugin install typescript-toolkit@cameron-tools
-/plugin install dx-tools@cameron-tools
+/plugin install core-productivity@cameronsjo
+/plugin install typescript-toolkit@cameronsjo
+/plugin install dx-tools@cameronsjo
 ```
 
 ### For API Development
 
 ```bash
-/plugin install core-productivity@cameron-tools
-/plugin install api-development@cameron-tools
-/plugin install security-suite@cameron-tools
+/plugin install core-productivity@cameronsjo
+/plugin install api-development@cameronsjo
+/plugin install security-suite@cameronsjo
 ```
 
 ### For Full-Stack Development
 
 ```bash
-/plugin install core-productivity@cameron-tools
-/plugin install typescript-toolkit@cameron-tools
-/plugin install python-toolkit@cameron-tools
-/plugin install api-development@cameron-tools
-/plugin install pr-workflow@cameron-tools
+/plugin install core-productivity@cameronsjo
+/plugin install typescript-toolkit@cameronsjo
+/plugin install python-toolkit@cameronsjo
+/plugin install api-development@cameronsjo
+/plugin install pr-workflow@cameronsjo
 ```
 
 ## Project Configuration
@@ -85,7 +85,7 @@ For team projects, configure plugins in `.claude/settings.json`:
 ```json
 {
   "extraKnownMarketplaces": {
-    "cameron-tools": {
+    "cameronsjo": {
       "source": {
         "source": "github",
         "repo": "cameronsjo/claude-marketplace"
@@ -93,8 +93,8 @@ For team projects, configure plugins in `.claude/settings.json`:
     }
   },
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "python-toolkit@cameron-tools"
+    "core-productivity@cameronsjo",
+    "python-toolkit@cameronsjo"
   ]
 }
 ```

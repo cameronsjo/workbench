@@ -5,7 +5,7 @@ Essential productivity tools for every project. This is the foundation plugin th
 ## Installation
 
 ```bash
-/plugin install core-productivity@cameron-tools
+/plugin install core-productivity@cameronsjo
 ```
 
 ## Commands

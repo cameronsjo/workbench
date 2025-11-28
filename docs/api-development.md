@@ -5,7 +5,7 @@ REST API design, OpenAPI specifications, and backend architecture patterns.
 ## Installation
 
 ```bash
-/plugin install api-development@cameron-tools
+/plugin install api-development@cameronsjo
 ```
 
 ## Commands

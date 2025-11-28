@@ -5,7 +5,7 @@ TypeScript, React, and Next.js development patterns with modern best practices.
 ## Installation
 
 ```bash
-/plugin install typescript-toolkit@cameron-tools
+/plugin install typescript-toolkit@cameronsjo
 ```
 
 ## Agents

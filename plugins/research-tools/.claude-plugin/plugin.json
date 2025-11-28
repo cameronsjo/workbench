@@ -3,8 +3,14 @@
   "description": "Research and analysis: comprehensive research, web search, academic sources, synthesis",
   "version": "1.0.0",
   "author": {
-    "name": "Cameron"
+    "name": "https://github.com/cameronsjo"
   },
-  "keywords": ["research", "search", "analysis", "synthesis", "academic"],
+  "keywords": [
+    "research",
+    "search",
+    "analysis",
+    "synthesis",
+    "academic"
+  ],
   "category": "research"
 }

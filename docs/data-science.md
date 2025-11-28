@@ -5,7 +5,7 @@ SQL optimization, ML pipelines, and data engineering.
 ## Installation
 
 ```bash
-/plugin install data-science@cameron-tools
+/plugin install data-science@cameronsjo
 ```
 
 ## Agents

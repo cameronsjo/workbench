@@ -5,7 +5,7 @@ Model Context Protocol server development, testing, and deployment.
 ## Installation
 
 ```bash
-/plugin install mcp-development@cameron-tools
+/plugin install mcp-development@cameronsjo
 ```
 
 ## Agents

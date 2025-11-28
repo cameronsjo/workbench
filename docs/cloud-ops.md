@@ -5,7 +5,7 @@ Cloud infrastructure, Kubernetes, and DevOps automation.
 ## Installation
 
 ```bash
-/plugin install cloud-ops@cameron-tools
+/plugin install cloud-ops@cameronsjo
 ```
 
 ## Agents

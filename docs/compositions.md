@@ -24,8 +24,8 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 ```json
 {
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "pr-workflow@cameron-tools"
+    "core-productivity@cameronsjo",
+    "pr-workflow@cameronsjo"
   ]
 }
 ```
@@ -47,10 +47,10 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 ```json
 {
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "pr-workflow@cameron-tools",
-    "typescript-toolkit@cameron-tools",
-    "api-development@cameron-tools"
+    "core-productivity@cameronsjo",
+    "pr-workflow@cameronsjo",
+    "typescript-toolkit@cameronsjo",
+    "api-development@cameronsjo"
   ]
 }
 ```
@@ -71,10 +71,10 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 ```json
 {
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "pr-workflow@cameron-tools",
-    "python-toolkit@cameron-tools",
-    "api-development@cameron-tools"
+    "core-productivity@cameronsjo",
+    "pr-workflow@cameronsjo",
+    "python-toolkit@cameronsjo",
+    "api-development@cameronsjo"
   ]
 }
 ```
@@ -95,9 +95,9 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 ```json
 {
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "pr-workflow@cameron-tools",
-    "security-suite@cameron-tools"
+    "core-productivity@cameronsjo",
+    "pr-workflow@cameronsjo",
+    "security-suite@cameronsjo"
   ]
 }
 ```
@@ -118,9 +118,9 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 ```json
 {
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "obsidian-pkm@cameron-tools",
-    "research-tools@cameron-tools"
+    "core-productivity@cameronsjo",
+    "obsidian-pkm@cameronsjo",
+    "research-tools@cameronsjo"
   ]
 }
 ```
@@ -142,10 +142,10 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 ```json
 {
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "pr-workflow@cameron-tools",
-    "cloud-ops@cameron-tools",
-    "security-suite@cameron-tools"
+    "core-productivity@cameronsjo",
+    "pr-workflow@cameronsjo",
+    "cloud-ops@cameronsjo",
+    "security-suite@cameronsjo"
   ]
 }
 ```
@@ -166,10 +166,10 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 ```json
 {
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "pr-workflow@cameron-tools",
-    "python-toolkit@cameron-tools",
-    "data-science@cameron-tools"
+    "core-productivity@cameronsjo",
+    "pr-workflow@cameronsjo",
+    "python-toolkit@cameronsjo",
+    "data-science@cameronsjo"
   ]
 }
 ```
@@ -190,10 +190,10 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 ```json
 {
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "pr-workflow@cameron-tools",
-    "mcp-development@cameron-tools",
-    "typescript-toolkit@cameron-tools"
+    "core-productivity@cameronsjo",
+    "pr-workflow@cameronsjo",
+    "mcp-development@cameronsjo",
+    "typescript-toolkit@cameronsjo"
   ]
 }
 ```
@@ -215,7 +215,7 @@ Mix and match plugins based on your needs:
 ```json
 {
   "extraKnownMarketplaces": {
-    "cameron-tools": {
+    "cameronsjo": {
       "source": {
         "source": "github",
         "repo": "cameronsjo/claude-marketplace"
@@ -223,10 +223,10 @@ Mix and match plugins based on your needs:
     }
   },
   "enabledPlugins": [
-    "core-productivity@cameron-tools",
-    "python-toolkit@cameron-tools",
-    "security-suite@cameron-tools",
-    "research-tools@cameron-tools"
+    "core-productivity@cameronsjo",
+    "python-toolkit@cameronsjo",
+    "security-suite@cameronsjo",
+    "research-tools@cameronsjo"
   ]
 }
 ```

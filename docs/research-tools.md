@@ -5,7 +5,7 @@ Comprehensive research, academic sources, and information gathering.
 ## Installation
 
 ```bash
-/plugin install research-tools@cameron-tools
+/plugin install research-tools@cameronsjo
 ```
 
 ## Agents
