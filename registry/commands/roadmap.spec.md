@@ -10,65 +10,55 @@ Create a detailed specification for a roadmap item.
 
 ## Arguments
 
-$ARGUMENTS - The item to spec out (e.g., "thumbnail generation" or "keyboard shortcuts")
+$ARGUMENTS - The item to spec out
 
 ## Instructions
 
-1. Find the item in `docs/ROADMAP.md` (or create if it doesn't exist)
+1. Find the item in `docs/roadmap/ideas.md` or `docs/roadmap/research.md`
 
-2. Create a new file `docs/roadmap/{kebab-case-name}.md` using this structure:
+2. Create `docs/roadmap/completed/{kebab-case-name}.md` (as a draft/spec):
 
 ```markdown
-# Feature: [Title]
+# Feature Name
 
-> One-line summary of what this enables.
+> One-line summary
 
 ## Status
 
-- **Status**: planned
-- **Priority**: [from roadmap table]
-- **Effort**: [from roadmap table]
+- **Priority**: p0 | p1 | p2 | p3 | p4
+- **Effort**: small | medium | large
+- **Status**: Planned
 
 ## Problem
 
-What problem does this solve? Why does it matter?
+What problem does this solve?
 
-## Proposed Solution
+## Solution
 
-High-level approach. Include diagrams if helpful.
+High-level approach.
 
 ## Implementation Details
 
-### Backend Changes
-
-- Database schema changes
-- API endpoints
-- Services/logic
-
-### Frontend Changes
-
-- Components
-- State management
-- UI/UX
+- List of changes needed
 
 ## Alternatives Considered
 
-What else did we think about? Why not those?
+What else was considered?
 
 ## Open Questions
 
-- [ ] Question 1?
-- [ ] Question 2?
+- [ ] Unanswered question?
 
-## References
+## Related
 
-- Related docs
-- External resources
+- Links to other docs
 ```
 
-3. Update the ROADMAP.md table to link to the new file:
-   ```
-   | Item | `planned` | High | Medium | [item.md](roadmap/item.md) |
-   ```
+3. Update ideas.md details column to link: `[Spec](completed/item-name.md)`
 
-4. Discuss the implementation with the user to fill in details
+4. If item was in research.md, move to ideas.md with effort estimate
+
+## Notes
+
+- Creating a spec moves research → idea (with effort estimate)
+- The spec becomes the feature doc when shipped (update Status to "Shipped")

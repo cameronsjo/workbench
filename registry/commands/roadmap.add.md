@@ -10,42 +10,48 @@ Add a new item to the project roadmap.
 
 ## Arguments
 
-$ARGUMENTS - The item to add (e.g., "AVIF image support" or "better error messages")
+$ARGUMENTS - The item to add (e.g., "AVIF support" or "p0: auth broken" or "research: how should X work")
 
 ## Instructions
 
-1. Parse the item description from $ARGUMENTS
-2. Determine the best category:
-   - Performance (speed, rendering, caching)
-   - Features (new functionality)
-   - Technical Debt (cleanup, refactoring)
-   - UX Improvements (user experience)
-   - Infrastructure (devops, monitoring)
-   - Security (vulnerabilities, hardening, access control)
+1. Parse $ARGUMENTS for item and hints (p0-p4, research, effort)
 
-3. Determine Impact and Effort:
-   - If explicitly provided in $ARGUMENTS, use those values
-   - Otherwise, estimate based on your analysis:
-     - **Impact**: high (core functionality, security, frequently used) / medium (nice to have, occasional use) / low (edge case, cosmetic)
-     - **Effort**: small (< 1 day, simple change) / medium (1-3 days, design decisions needed) / large (> 3 days, significant work)
-   - Only ask the user if you're running interactively AND genuinely uncertain
+2. Determine if **Research** or **Idea**:
+   - Research: "research:", "investigate", "explore", "figure out"
+   - Idea: Everything else
 
-4. Add a row to the appropriate table in `docs/ROADMAP.md`:
-   ```
-   | [Item name] | `idea` | [Impact] | [Effort] | [Details or brief description] |
-   ```
+3. Determine Priority (user can specify p0-p4 directly):
+   - `p0` - Critical (also: "critical", "urgent")
+   - `p1` / `high` - Core functionality, security
+   - `p2` / `medium` - Nice to have
+   - `p3` / `low` - Edge case, cosmetic
+   - `p4` - Backlog
 
-5. If effort is medium or large AND running interactively, offer to create a detail spec file
+4. For Ideas, determine Effort:
+   - `small` (< 1 day)
+   - `medium` (1-3 days)
+   - `large` (> 3 days)
 
-## Concurrency Warning
+5. Add to appropriate file:
+   - Ideas: `docs/roadmap/ideas.md`
+   - Research: `docs/roadmap/research.md`
 
-If multiple agents may write to the roadmap simultaneously, collect items and add them in a single batch at the end of analysis rather than one at a time. This prevents race conditions.
+6. Maintain sort order: priority (p0→p4), then item name ascending
 
-## Example
+## Concurrency
 
-Input: `/roadmap.add AVIF image support for better compression`
+If multiple agents writing simultaneously, use `/roadmap.suggest` instead.
 
-Output: Added to Performance table:
-```
-| AVIF image support | `idea` | Medium | Small | 50% smaller than WebP |
-```
+## Examples
+
+`/roadmap.add AVIF image support`
+→ ideas.md: `| AVIF image support | p2 | small | Better compression |`
+
+`/roadmap.add caching to p3`
+→ ideas.md: `| Caching | p3 | small | Performance |`
+
+`/roadmap.add p0: auth bypass`
+→ ideas.md: `| Auth bypass | p0 | medium | Security vulnerability |`
+
+`/roadmap.add research: plugin dependency resolution`
+→ research.md: `| Plugin dependency resolution | p1 | How should deps work? |`

@@ -1,126 +1,184 @@
 # Roadmap Maintenance Skill
 
-Helps maintain the project roadmap and enhancement tracking system.
+Helps maintain the project roadmap - a living documentation system that tracks what's planned, what shipped, and what was rejected.
+
+## Core Concept
+
+The roadmap is **documentation that grows from planning**. It bridges incoming work and completed features, providing institutional memory for humans and agents.
+
+## Directory Structure
+
+```
+docs/roadmap/
+├── README.md           # Entry point - explains the system
+├── ideas.md            # Prioritized backlog (p0-p4)
+├── research.md         # Topics under investigation
+├── completed/          # Shipped features - THE DOCS
+│   └── {feature}.md
+└── rejected/           # Decided against - WHY NOT
+    └── {feature}.md
+```
+
+## Workflow
+
+```
+research.md ──→ ideas.md ──→ (branch/PR) ──→ completed/{feature}.md
+                    ↓
+              rejected/{feature}.md
+```
+
+- **Research**: Needs investigation before estimating
+- **Ideas**: Prioritized and estimated, ready to build
+- **Completed**: Shipped - becomes feature documentation
+- **Rejected**: Decided against - prevents relitigating
+
+Git blame provides all date tracking.
 
 ## Files
 
-- **MOC**: `docs/ROADMAP.md` - Main index with categorized tables
-- **Details**: `docs/roadmap/*.md` - Detailed specs for complex items
-- **Template**: `docs/roadmap/_template.md` - Template for new detail files
-
-## Categories
-
-| Category | Purpose |
-|----------|---------|
-| Active Migration Projects | Large ongoing refactoring efforts |
-| Performance | Speed, rendering, caching improvements |
-| Features | New user-facing functionality |
-| Technical Debt | Cleanup, refactoring, modernization |
-| UX Improvements | User experience enhancements |
-| Infrastructure | DevOps, monitoring, logging |
-
-## Status Values
-
-- `idea` - Captured, not yet evaluated
-- `planned` - Evaluated, will implement
-- `in-progress` - Currently being worked on
-- `done` - Completed (archive to CHANGELOG)
-- `wontfix` - Decided against
-
-## Commands
-
-### Add a new item
-
-When user says "add to roadmap" or "track this for later":
-
-1. Determine the appropriate category
-2. Ask for: title, impact (high/medium/low), effort (small/medium/large)
-3. Add row to the category table in `docs/ROADMAP.md`
-4. If complex (effort > small), create a detail file using the template
-
-### Create a detail spec
-
-When user says "spec out [item]" or "plan [feature]":
-
-1. Copy `docs/roadmap/_template.md` to `docs/roadmap/{kebab-case-name}.md`
-2. Fill in sections based on discussion
-3. Update the ROADMAP.md table to link to the new file
-
-### Update status
-
-When user says "mark [item] as [status]":
-
-1. Find the item in `docs/ROADMAP.md`
-2. Update the status column
-3. If `done`, suggest moving to CHANGELOG
-
-### Review roadmap
-
-When user says "review roadmap" or "what's stale":
-
-1. Read `docs/ROADMAP.md`
-2. Identify items that might need attention:
-   - `idea` items older than 30 days without activity
-   - `in-progress` items that may be stuck
-   - `planned` items ready to start
-3. Summarize findings and suggest actions
-
-### Prioritize
-
-When user asks "what should I work on next":
-
-1. List `planned` items sorted by impact (high first)
-2. Consider effort vs impact ratio
-3. Note any blockers or dependencies
-
-## Detail File Template
+### ideas.md
 
 ```markdown
-# Feature: [Title]
+| Item | Priority | Effort | Details |
+|------|----------|--------|---------|
+| Feature name | p1 | medium | Brief description |
+```
+
+Sorted by priority then item name.
+
+### research.md
+
+```markdown
+| Item | Priority | Details |
+|------|----------|---------|
+| Topic | p1 | What needs investigation |
+```
+
+No effort - can't estimate what you don't understand.
+
+### completed/{feature}.md
+
+```markdown
+# Feature Name
 
 > One-line summary
 
 ## Status
 
-- **Status**: idea | planned | in-progress | done
-- **Priority**: high | medium | low
-- **Effort**: small (< 1 day) | medium (1-3 days) | large (> 3 days)
+- **Priority**: p1
+- **Effort**: medium
+- **Shipped**: version or date context
 
 ## Problem
 
 What problem does this solve?
 
-## Proposed Solution
+## Solution
 
-High-level approach.
+How it works.
 
-## Implementation Details
+## Usage
 
-### Backend Changes
-### Frontend Changes
+How to use it.
 
-## Alternatives Considered
+## Related
 
-## Open Questions
-
-- [ ] Question 1?
-
-## References
+- Links to other features
 ```
+
+### rejected/{feature}.md
+
+```markdown
+# Feature Name
+
+> Rejected - brief reason
+
+## Request
+
+What users asked for.
+
+## Decision
+
+**Won't implement.**
+
+## Reasoning
+
+Why not.
+
+## Alternatives
+
+What to do instead.
+```
+
+## Priority
+
+| Value | Alias | Meaning |
+|-------|-------|---------|
+| `p0` | | Critical - drop everything |
+| `p1` | `high` | Core functionality, security |
+| `p2` | `medium` | Nice to have |
+| `p3` | `low` | Edge case, cosmetic |
+| `p4` | | Backlog, opportunistic |
+
+## Effort
+
+| Value | Meaning |
+|-------|---------|
+| `small` | < 1 day |
+| `medium` | 1-3 days |
+| `large` | > 3 days |
+
+## Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/roadmap` | Review status, suggest next steps |
+| `/roadmap.add <item>` | Add to ideas or research |
+| `/roadmap.suggest <item>` | Return JSON (for subagents) |
+| `/roadmap.spec <item>` | Create detail file |
+| `/roadmap.archive <item>` | Move to completed/ or rejected/ |
+| `/roadmap.dependencies <item>` | Show blockers and unlocks |
+| `/roadmap.metrics` | Stats and distribution |
+
+## Behaviors
+
+### Adding Items
+
+1. Determine: research (needs investigation) or idea (ready to estimate)
+2. For ideas: priority (p0-p4) and effort
+3. For research: just priority
+4. Add to appropriate file, maintain sort order
+
+### Completing Work
+
+When feature ships:
+1. Remove from ideas.md
+2. Create `completed/{feature}.md` with full documentation
+3. Update README.md highlights if significant
+
+### Rejecting Ideas
+
+When deciding against something:
+1. Remove from ideas.md or research.md
+2. Create `rejected/{feature}.md` with reasoning
+3. Document alternatives
+
+### For Agents
+
+- Search `completed/` to understand existing functionality
+- Search `rejected/` before suggesting previously-declined features
+- All files are markdown - grep-friendly, LLM-friendly
 
 ## Examples
 
-**User**: "Add thumbnail generation to the roadmap"
-**Action**: Already exists - show current status and link
+**User**: "Add caching to p2"
+→ Add to ideas.md at p2 priority
 
-**User**: "I want to add AVIF support as an idea"
-**Action**: Add row to Performance table with status `idea`, impact Medium, effort Small
+**User**: "Research how auth should work"
+→ Add to research.md
 
-**User**: "Spec out the keyboard shortcuts feature"
-**Action**: Create `docs/roadmap/keyboard-shortcuts.md` from template, fill in details
+**User**: "Ship the plugin versioning feature"
+→ Create completed/plugin-versioning.md, remove from ideas.md
 
-**User**: "Mark sort enums as done"
-**Action**: Update status in Technical Debt table to `done`
-
-**User**: "What's next on the roadmap?"
-**Action**: List high-impact planned items, suggest starting point
+**User**: "We're not doing cloud sync"
+→ Create rejected/cloud-sync.md with reasoning

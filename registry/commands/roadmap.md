@@ -9,30 +9,30 @@ Review the project roadmap and provide a status summary.
 
 ## Instructions
 
-1. Read `docs/ROADMAP.md` to get the current state
+1. Read `docs/roadmap/ideas.md` and `docs/roadmap/research.md`
 2. Summarize:
-   - **In Progress**: What's actively being worked on
-   - **Planned (High Impact)**: What's ready to start
-   - **Ideas Worth Considering**: High-impact ideas that should be evaluated
-3. Identify any stale items (ideas sitting too long without action)
-4. Suggest what to work on next based on impact/effort ratio
+   - **P0 Items**: Any critical items
+   - **Ready to Start**: High priority ideas with small/medium effort
+   - **Needs Research**: Items in research.md
+3. Identify stale items (use git blame to check age)
+4. Suggest what to work on next
 
 ## Output Format
 
 ```
 ## Roadmap Status
 
-### In Progress
-- [item] - brief status
+### P0 - Immediate
+- [item] - details (or "None")
 
-### Ready to Start (High Impact)
-- [item] - why it matters
+### Ready to Start
+- [item] (priority/effort) - why
 
-### Ideas to Evaluate
-- [item] - potential impact
+### Needs Research
+- [item] - what needs investigation
 
-### Suggestions
-- What to tackle next and why
+### Recommendation
+What to tackle next and why.
 ```
 
-Keep it concise - this is a quick status check, not a deep dive.
+Keep it concise.
