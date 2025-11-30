@@ -9,7 +9,6 @@ Prioritized backlog of work ready to be picked up.
 | Asset usage analytics | p2 | medium | Track which assets are most used across plugins |
 | Auto-update notifications | p3 | medium | Notify when installed plugins have updates |
 | Plugin templates | p3 | small | Starter templates for common plugin patterns |
-| Plugin versioning system | p1 | large | Semantic versioning, changelog generation |
 | Web-based plugin browser | p2 | large | Browse and preview plugins without CLI |
 
 ## obsidian-pkm Plugin
