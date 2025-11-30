@@ -11,6 +11,15 @@
   },
   "plugins": [
     {
+      "name": "essentials",
+      "source": "./plugins/essentials",
+      "description": "Cameron's development essentials: deep research hooks and core productivity enhancements",
+      "version": "1.0.0",
+      "category": "productivity",
+      "tags": ["essentials", "hooks", "research", "productivity"],
+      "strict": true
+    },
+    {
       "name": "core-productivity",
       "source": "./plugins/core-productivity",
       "description": "Essential productivity commands: git workflows, code review, project checks",
@@ -116,6 +125,15 @@
       "version": "1.0.0",
       "category": "data",
       "tags": ["data", "sql", "ml", "analytics"],
+      "strict": true
+    },
+    {
+      "name": "obsidian-plugin-dev",
+      "source": "./plugins/obsidian-plugin-dev",
+      "description": "Obsidian plugin development: TypeScript patterns, Release Please, BRAT beta channel, GitHub Actions",
+      "version": "1.0.0",
+      "category": "development",
+      "tags": ["obsidian", "plugin", "typescript", "brat", "release-please", "github-actions"],
       "strict": true
     }
   ]
