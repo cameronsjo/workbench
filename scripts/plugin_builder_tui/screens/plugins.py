@@ -12,11 +12,11 @@ from textual.widgets import (
     Label,
     ListItem,
     ListView,
-    OptionList,
+    SelectionList,
     Static,
     Tree,
 )
-from textual.widgets.option_list import Option
+from textual.widgets.selection_list import Selection
 
 from ..builder import AssetType, Plugin, PluginBuilder
 
@@ -40,11 +40,13 @@ class PluginListItem(ListItem):
             )
 
 
-class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
-    """Modal for adding an asset to a plugin."""
+class AddAssetModal(ModalScreen[list[tuple[str, AssetType]] | None]):
+    """Modal for adding assets to a plugin with multiselect."""
 
     BINDINGS = [
         ("escape", "cancel", "Cancel"),
+        ("space", "toggle", "Toggle"),
+        ("a", "select_all", "Select All"),
     ]
 
     CSS = """
@@ -53,9 +55,9 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
     }
 
     AddAssetModal > #add-asset-dialog {
-        width: 60;
+        width: 70;
         height: auto;
-        max-height: 80%;
+        max-height: 85%;
         border: round #5fafff;
         background: $background;
         padding: 1 2;
@@ -67,7 +69,7 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
     }
 
     AddAssetModal #available-assets {
-        height: 20;
+        height: 22;
         border: round #808080 30%;
         margin-bottom: 1;
     }
@@ -75,6 +77,11 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
     AddAssetModal .modal-title {
         text-style: bold;
         color: $text;
+        margin-bottom: 1;
+    }
+
+    AddAssetModal .selection-hint {
+        color: #808080;
         margin-bottom: 1;
     }
 
@@ -98,11 +105,12 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
         self.plugin = plugin
         self.builder = builder
         self.current_type = AssetType.COMMAND
-        self.selected_asset: str | None = None
+        self.selected_assets: list[tuple[str, AssetType]] = []
 
     def compose(self) -> ComposeResult:
         with Container(id="add-asset-dialog"):
-            yield Label(f"Add Asset to [bold]{self.plugin.name}[/]", classes="modal-title")
+            yield Label(f"Add Assets to [bold]{self.plugin.name}[/]", classes="modal-title")
+            yield Label("[dim]Space to toggle, A to select all[/]", classes="selection-hint")
 
             # Type selector buttons
             with Horizontal(id="asset-type-tabs"):
@@ -110,22 +118,21 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
                 yield Button("Agents", id="btn-agents")
                 yield Button("Skills", id="btn-skills")
 
-            # Available assets list
-            yield OptionList(id="available-assets")
+            # Available assets list with multiselect
+            yield SelectionList[str](id="available-assets")
 
             # Action buttons
             with Horizontal(classes="modal-buttons"):
                 yield Button("Cancel", id="btn-cancel")
-                yield Button("Add", id="btn-add", variant="success", disabled=True)
+                yield Button("Add Selected (0)", id="btn-add", variant="success", disabled=True)
 
     def on_mount(self) -> None:
         """Load initial assets."""
         self._load_assets(AssetType.COMMAND)
-        # Set initial focus to the option list
-        self.set_timer(0.1, lambda: self.query_one("#available-assets", OptionList).focus())
+        self.set_timer(0.1, lambda: self.query_one("#available-assets", SelectionList).focus())
 
     def _load_assets(self, asset_type: AssetType) -> None:
-        """Load available assets for the given type."""
+        """Load available assets for the given type, grouped by prefix."""
         self.current_type = asset_type
 
         # Update button styles
@@ -145,24 +152,70 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
         # Update modal title with count
         title = self.query_one(".modal-title", Label)
         title.update(
-            f"Add {asset_type.value[:-1].title()} to [bold]{self.plugin.name}[/] "
+            f"Add {asset_type.value.title()} to [bold]{self.plugin.name}[/] "
             f"[dim]({len(available)} available)[/]"
         )
 
-        # Update option list
-        option_list = self.query_one("#available-assets", OptionList)
-        option_list.clear_options()
+        # Group assets by prefix (e.g., roadmap.*, pr.*, review.*)
+        groups: dict[str, list] = {}
+        ungrouped = []
+        for asset in available:
+            if "." in asset.name:
+                prefix = asset.name.split(".")[0]
+                if prefix not in groups:
+                    groups[prefix] = []
+                groups[prefix].append(asset)
+            elif "-" in asset.name:
+                prefix = asset.name.split("-")[0]
+                # Only group if we have 2+ with same prefix
+                if prefix not in groups:
+                    groups[prefix] = []
+                groups[prefix].append(asset)
+            else:
+                ungrouped.append(asset)
+
+        # Move single-item groups to ungrouped
+        for prefix in list(groups.keys()):
+            if len(groups[prefix]) < 2:
+                ungrouped.extend(groups[prefix])
+                del groups[prefix]
+
+        # Update selection list
+        selection_list = self.query_one("#available-assets", SelectionList)
+        selection_list.clear_options()
 
         if not available:
-            msg = f"All {asset_type.value} are already in this plugin"
-            option_list.add_option(Option(f"[dim]{msg}[/]", disabled=True))
+            pass
         else:
-            for asset in available:
-                desc = f" - {asset.description[:40]}..." if asset.description else ""
-                option_list.add_option(Option(f"{asset.name}{desc}", id=asset.name))
+            # Add grouped items first
+            for prefix in sorted(groups.keys()):
+                items = sorted(groups[prefix], key=lambda a: a.name)
+                for asset in items:
+                    desc = f" - {asset.description[:30]}..." if asset.description else ""
+                    selection_list.add_option((f"[cyan]{prefix}[/] {asset.name}{desc}", asset.name))
 
-        self.selected_asset = None
-        self.query_one("#btn-add", Button).disabled = True
+            # Add ungrouped items
+            for asset in sorted(ungrouped, key=lambda a: a.name):
+                desc = f" - {asset.description[:35]}..." if asset.description else ""
+                selection_list.add_option((f"{asset.name}{desc}", asset.name))
+
+        self._update_add_button()
+
+    def _update_add_button(self) -> None:
+        """Update the Add button with selection count."""
+        selection_list = self.query_one("#available-assets", SelectionList)
+        selected = list(selection_list.selected)
+        count = len(selected)
+
+        btn = self.query_one("#btn-add", Button)
+        btn.label = f"Add Selected ({count})"
+        btn.disabled = count == 0
+
+    def on_selection_list_selection_toggled(
+        self, event: SelectionList.SelectionToggled
+    ) -> None:
+        """Handle selection changes."""
+        self._update_add_button()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
@@ -175,35 +228,29 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
         elif event.button.id == "btn-cancel":
             self.dismiss(None)
         elif event.button.id == "btn-add":
-            if self.selected_asset:
-                self.dismiss((self.selected_asset, self.current_type))
-
-    def on_option_list_option_highlighted(
-        self, event: OptionList.OptionHighlighted
-    ) -> None:
-        """Handle asset selection."""
-        if event.option and event.option.id and not event.option.disabled:
-            self.selected_asset = str(event.option.id)
-            self.query_one("#btn-add", Button).disabled = False
-        else:
-            self.selected_asset = None
-            self.query_one("#btn-add", Button).disabled = True
-
-    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
-        """Handle double-click/enter on asset."""
-        if event.option and event.option.id and not event.option.disabled:
-            self.dismiss((str(event.option.id), self.current_type))
+            selection_list = self.query_one("#available-assets", SelectionList)
+            selected = [(str(v), self.current_type) for v in selection_list.selected]
+            if selected:
+                self.dismiss(selected)
 
     def action_cancel(self) -> None:
         """Cancel the modal."""
         self.dismiss(None)
 
+    def action_select_all(self) -> None:
+        """Select all available assets."""
+        selection_list = self.query_one("#available-assets", SelectionList)
+        selection_list.select_all()
+        self._update_add_button()
 
-class RemoveAssetModal(ModalScreen[tuple[str, AssetType] | None]):
-    """Modal for removing an asset from a plugin."""
+
+class RemoveAssetModal(ModalScreen[list[tuple[str, AssetType]] | None]):
+    """Modal for removing assets from a plugin with multiselect."""
 
     BINDINGS = [
         ("escape", "cancel", "Cancel"),
+        ("space", "toggle", "Toggle"),
+        ("a", "select_all", "Select All"),
     ]
 
     CSS = """
@@ -212,16 +259,16 @@ class RemoveAssetModal(ModalScreen[tuple[str, AssetType] | None]):
     }
 
     RemoveAssetModal > #remove-asset-dialog {
-        width: 60;
+        width: 70;
         height: auto;
-        max-height: 80%;
+        max-height: 85%;
         border: round #ff5f5f;
         background: $background;
         padding: 1 2;
     }
 
     RemoveAssetModal #plugin-assets {
-        height: 20;
+        height: 22;
         border: round #808080 30%;
         margin-bottom: 1;
     }
@@ -229,6 +276,11 @@ class RemoveAssetModal(ModalScreen[tuple[str, AssetType] | None]):
     RemoveAssetModal .modal-title {
         text-style: bold;
         color: $text;
+        margin-bottom: 1;
+    }
+
+    RemoveAssetModal .selection-hint {
+        color: #808080;
         margin-bottom: 1;
     }
 
@@ -245,89 +297,80 @@ class RemoveAssetModal(ModalScreen[tuple[str, AssetType] | None]):
     def __init__(self, plugin: Plugin, **kwargs) -> None:
         super().__init__(**kwargs)
         self.plugin = plugin
-        self.selected_asset: str | None = None
-        self.selected_type: AssetType | None = None
 
     def compose(self) -> ComposeResult:
+        total = len(self.plugin.commands) + len(self.plugin.agents) + len(self.plugin.skills)
         with Container(id="remove-asset-dialog"):
             yield Label(
-                f"Remove Asset from [bold]{self.plugin.name}[/]", classes="modal-title"
+                f"Remove Assets from [bold]{self.plugin.name}[/] [dim]({total} total)[/]",
+                classes="modal-title",
             )
+            yield Label("[dim]Space to toggle, A to select all[/]", classes="selection-hint")
 
-            # Plugin's current assets
-            yield OptionList(id="plugin-assets")
+            # Plugin's current assets with multiselect
+            yield SelectionList[str](id="plugin-assets")
 
             # Action buttons
             with Horizontal(classes="modal-buttons"):
                 yield Button("Cancel", id="btn-cancel")
-                yield Button("Remove", id="btn-remove", variant="error", disabled=True)
+                yield Button("Remove Selected (0)", id="btn-remove", variant="error", disabled=True)
 
     def on_mount(self) -> None:
         """Load plugin's assets."""
-        option_list = self.query_one("#plugin-assets", OptionList)
-
-        has_assets = False
+        selection_list = self.query_one("#plugin-assets", SelectionList)
 
         # Add commands
-        if self.plugin.commands:
-            option_list.add_option(Option("[bold]Commands[/]", disabled=True))
-            for cmd in self.plugin.commands:
-                option_list.add_option(Option(f"  /{cmd}", id=f"commands:{cmd}"))
-            has_assets = True
+        for cmd in self.plugin.commands:
+            selection_list.add_option((f"[cyan]cmd[/] /{cmd}", f"commands:{cmd}"))
 
         # Add agents
-        if self.plugin.agents:
-            option_list.add_option(Option("[bold]Agents[/]", disabled=True))
-            for agent in self.plugin.agents:
-                option_list.add_option(Option(f"  {agent}", id=f"agents:{agent}"))
-            has_assets = True
+        for agent in self.plugin.agents:
+            selection_list.add_option((f"[green]agent[/] {agent}", f"agents:{agent}"))
 
         # Add skills
-        if self.plugin.skills:
-            option_list.add_option(Option("[bold]Skills[/]", disabled=True))
-            for skill in self.plugin.skills:
-                option_list.add_option(Option(f"  {skill}", id=f"skills:{skill}"))
-            has_assets = True
+        for skill in self.plugin.skills:
+            selection_list.add_option((f"[yellow]skill[/] {skill}", f"skills:{skill}"))
 
-        if not has_assets:
-            option_list.add_option(Option("[dim]No assets in plugin[/]", disabled=True))
+        self.set_timer(0.1, lambda: selection_list.focus())
 
-        # Set initial focus to the option list
-        self.set_timer(0.1, lambda: option_list.focus())
+    def _update_remove_button(self) -> None:
+        """Update the Remove button with selection count."""
+        selection_list = self.query_one("#plugin-assets", SelectionList)
+        selected = list(selection_list.selected)
+        count = len(selected)
+
+        btn = self.query_one("#btn-remove", Button)
+        btn.label = f"Remove Selected ({count})"
+        btn.disabled = count == 0
+
+    def on_selection_list_selection_toggled(
+        self, event: SelectionList.SelectionToggled
+    ) -> None:
+        """Handle selection changes."""
+        self._update_remove_button()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
         if event.button.id == "btn-cancel":
             self.dismiss(None)
         elif event.button.id == "btn-remove":
-            if self.selected_asset and self.selected_type:
-                self.dismiss((self.selected_asset, self.selected_type))
-
-    def on_option_list_option_highlighted(
-        self, event: OptionList.OptionHighlighted
-    ) -> None:
-        """Handle asset selection."""
-        if event.option and event.option.id and not event.option.disabled:
-            option_id = str(event.option.id)
-            type_str, asset_name = option_id.split(":", 1)
-            self.selected_type = AssetType(type_str)
-            self.selected_asset = asset_name
-            self.query_one("#btn-remove", Button).disabled = False
-        else:
-            self.selected_asset = None
-            self.selected_type = None
-            self.query_one("#btn-remove", Button).disabled = True
-
-    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
-        """Handle double-click/enter on asset."""
-        if event.option and event.option.id and not event.option.disabled:
-            option_id = str(event.option.id)
-            type_str, asset_name = option_id.split(":", 1)
-            self.dismiss((asset_name, AssetType(type_str)))
+            selection_list = self.query_one("#plugin-assets", SelectionList)
+            results = []
+            for v in selection_list.selected:
+                type_str, asset_name = str(v).split(":", 1)
+                results.append((asset_name, AssetType(type_str)))
+            if results:
+                self.dismiss(results)
 
     def action_cancel(self) -> None:
         """Cancel the modal."""
         self.dismiss(None)
+
+    def action_select_all(self) -> None:
+        """Select all assets."""
+        selection_list = self.query_one("#plugin-assets", SelectionList)
+        selection_list.select_all()
+        self._update_remove_button()
 
 
 class PluginsScreen(Screen):
@@ -482,45 +525,43 @@ class PluginsScreen(Screen):
         )
 
     def action_add_asset(self) -> None:
-        """Add an asset to the selected plugin."""
+        """Add assets to the selected plugin (multiselect)."""
         if not self.selected_plugin:
             self.app.notify("Select a plugin first", severity="warning")
             return
 
         builder: PluginBuilder = self.app.builder  # type: ignore
 
-        def handle_add(result: tuple[str, AssetType] | None) -> None:
-            if result is None:
+        def handle_add(result: list[tuple[str, AssetType]] | None) -> None:
+            if result is None or not result:
                 return
 
-            asset_name, asset_type = result
-            try:
-                success = builder.add_asset_to_plugin(
-                    self.selected_plugin.name,  # type: ignore
-                    asset_name,
-                    asset_type,
-                )
+            added = 0
+            errors = 0
+            for asset_name, asset_type in result:
+                try:
+                    success = builder.add_asset_to_plugin(
+                        self.selected_plugin.name,  # type: ignore
+                        asset_name,
+                        asset_type,
+                    )
+                    if success:
+                        added += 1
+                    else:
+                        errors += 1
+                except Exception:
+                    errors += 1
 
-                if success:
-                    self.app.notify(
-                        f"Added {asset_type.value[:-1]} '{asset_name}' to {self.selected_plugin.name}",  # type: ignore
-                        severity="information",
-                    )
-                    self._refresh_plugin_list()
-                else:
-                    self.app.notify(
-                        f"Asset '{asset_name}' already exists in {self.selected_plugin.name}",  # type: ignore
-                        severity="warning",
-                    )
-            except ValueError as e:
+            if added > 0:
                 self.app.notify(
-                    f"Error: {str(e)}",
-                    severity="error",
+                    f"Added {added} asset(s) to {self.selected_plugin.name}",  # type: ignore
+                    severity="information",
                 )
-            except Exception as e:
+                self._refresh_plugin_list()
+            if errors > 0:
                 self.app.notify(
-                    f"Unexpected error: {str(e)}",
-                    severity="error",
+                    f"{errors} asset(s) failed to add",
+                    severity="warning",
                 )
 
         self.app.push_screen(
@@ -529,7 +570,7 @@ class PluginsScreen(Screen):
         )
 
     def action_remove_asset(self) -> None:
-        """Remove an asset from the selected plugin."""
+        """Remove assets from the selected plugin (multiselect)."""
         if not self.selected_plugin:
             self.app.notify("Select a plugin first", severity="warning")
             return
@@ -544,38 +585,36 @@ class PluginsScreen(Screen):
 
         builder: PluginBuilder = self.app.builder  # type: ignore
 
-        def handle_remove(result: tuple[str, AssetType] | None) -> None:
-            if result is None:
+        def handle_remove(result: list[tuple[str, AssetType]] | None) -> None:
+            if result is None or not result:
                 return
 
-            asset_name, asset_type = result
-            try:
-                success = builder.remove_asset_from_plugin(
-                    self.selected_plugin.name,  # type: ignore
-                    asset_name,
-                    asset_type,
-                )
+            removed = 0
+            errors = 0
+            for asset_name, asset_type in result:
+                try:
+                    success = builder.remove_asset_from_plugin(
+                        self.selected_plugin.name,  # type: ignore
+                        asset_name,
+                        asset_type,
+                    )
+                    if success:
+                        removed += 1
+                    else:
+                        errors += 1
+                except Exception:
+                    errors += 1
 
-                if success:
-                    self.app.notify(
-                        f"Removed {asset_type.value[:-1]} '{asset_name}' from {self.selected_plugin.name}",  # type: ignore
-                        severity="information",
-                    )
-                    self._refresh_plugin_list()
-                else:
-                    self.app.notify(
-                        f"Asset '{asset_name}' not found in {self.selected_plugin.name}",  # type: ignore
-                        severity="warning",
-                    )
-            except ValueError as e:
+            if removed > 0:
                 self.app.notify(
-                    f"Error: {str(e)}",
-                    severity="error",
+                    f"Removed {removed} asset(s) from {self.selected_plugin.name}",  # type: ignore
+                    severity="information",
                 )
-            except Exception as e:
+                self._refresh_plugin_list()
+            if errors > 0:
                 self.app.notify(
-                    f"Unexpected error: {str(e)}",
-                    severity="error",
+                    f"{errors} asset(s) failed to remove",
+                    severity="warning",
                 )
 
         self.app.push_screen(
