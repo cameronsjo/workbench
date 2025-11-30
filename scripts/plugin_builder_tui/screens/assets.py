@@ -14,11 +14,11 @@ class AssetsScreen(Screen):
     """Screen for browsing assets in the registry."""
 
     BINDINGS = [
-        ("f", "filter", "Filter", True),
-        ("ctrl+f", "filter", "Filter", False),
+        ("f", "filter", "Filter"),
+        ("ctrl+f", "filter"),
         ("enter", "select", "Select"),
         ("delete", "delete_asset", "Delete"),
-        ("escape", "clear_filter", "Clear Filter", False),
+        ("escape", "clear_filter"),
     ]
 
     def __init__(self, **kwargs) -> None:

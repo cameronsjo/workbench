@@ -335,8 +335,8 @@ class PluginsScreen(Screen):
 
     BINDINGS = [
         ("n", "new_plugin", "New Plugin"),
-        ("a", "add_asset", "Add Asset", True),
-        ("r", "remove_asset", "Remove Asset", True),
+        ("a", "add_asset", "Add Asset"),
+        ("r", "remove_asset", "Remove Asset"),
         ("enter", "select", "Select"),
     ]
 
