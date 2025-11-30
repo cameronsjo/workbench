@@ -56,7 +56,7 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
         width: 60;
         height: auto;
         max-height: 80%;
-        border: round $primary;
+        border: round #5fafff;
         background: $surface;
         padding: 1 2;
     }
@@ -68,7 +68,7 @@ class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
 
     #available-assets {
         height: 20;
-        border: round $muted 30%;
+        border: round #808080 30%;
         margin-bottom: 1;
     }
 
@@ -200,14 +200,14 @@ class RemoveAssetModal(ModalScreen[tuple[str, AssetType] | None]):
         width: 60;
         height: auto;
         max-height: 80%;
-        border: round $error;
+        border: round #ff5f5f;
         background: $surface;
         padding: 1 2;
     }
 
     #plugin-assets {
         height: 20;
-        border: round $muted 30%;
+        border: round #808080 30%;
         margin-bottom: 1;
     }
 
