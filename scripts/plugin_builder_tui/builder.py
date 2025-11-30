@@ -53,7 +53,6 @@ class Plugin:
     agents: list[str] = field(default_factory=list)
     skills: list[str] = field(default_factory=list)
     keywords: list[str] = field(default_factory=list)
-    category: str = "productivity"
 
     @property
     def total_assets(self) -> int:
@@ -199,7 +198,6 @@ class PluginBuilder:
                         description=data.get("description", ""),
                         version=data.get("version", "1.0.0"),
                         keywords=data.get("keywords", []),
-                        category=data.get("category", "productivity"),
                     )
 
                     plugin.commands = self._list_plugin_assets(plugin_dir, "commands")
@@ -339,7 +337,6 @@ class PluginBuilder:
             "version": "1.0.0",
             "author": {"name": "Cameron Sjo"},
             "keywords": [],
-            "category": "productivity",
         }
 
         (plugin_dir / ".claude-plugin" / "plugin.json").write_text(
@@ -529,6 +526,78 @@ class PluginBuilder:
 
         is_valid = not any(i.issue_type == "broken" for i in issues)
         return is_valid, issues
+
+    def rename_asset(
+        self, old_name: str, new_name: str, asset_type: AssetType
+    ) -> None:
+        """Rename an asset in the registry and update all plugin symlinks."""
+        type_dir = self.registry_dir / asset_type.value
+
+        # Find the asset
+        old_path = type_dir / old_name
+        if not old_path.exists():
+            old_path = type_dir / f"{old_name}.md"
+        if not old_path.exists():
+            raise ValueError(f"Asset '{old_name}' not found in {asset_type.value}")
+
+        # Determine new path
+        if old_path.is_file():
+            new_path = type_dir / f"{new_name}.md"
+        else:
+            new_path = type_dir / new_name
+
+        if new_path.exists():
+            raise ValueError(f"Asset '{new_name}' already exists")
+
+        # Rename in registry
+        old_path.rename(new_path)
+
+        # Update symlinks in all plugins
+        for plugin in self.get_plugins():
+            plugin_dir = self.plugins_dir / plugin.name
+            assets_dir = plugin_dir / asset_type.value
+            if not assets_dir.exists():
+                continue
+
+            for item in assets_dir.iterdir():
+                if item.is_symlink():
+                    try:
+                        target = item.resolve()
+                        if target == old_path.resolve() or (
+                            not target.exists()
+                            and old_name in str(item)
+                        ):
+                            # Remove old symlink
+                            item.unlink()
+                            # Create new symlink with new name
+                            new_link_name = (
+                                f"{new_name}.md" if new_path.suffix == ".md" else new_name
+                            )
+                            new_link = assets_dir / new_link_name
+                            rel_path = os.path.relpath(new_path, assets_dir)
+                            os.symlink(rel_path, new_link)
+                    except Exception:
+                        pass
+
+    def rename_plugin(self, old_name: str, new_name: str) -> None:
+        """Rename a plugin directory and update its plugin.json."""
+        old_dir = self.plugins_dir / old_name
+        new_dir = self.plugins_dir / new_name
+
+        if not old_dir.exists():
+            raise ValueError(f"Plugin '{old_name}' not found")
+        if new_dir.exists():
+            raise ValueError(f"Plugin '{new_name}' already exists")
+
+        # Rename directory
+        old_dir.rename(new_dir)
+
+        # Update plugin.json
+        plugin_json = new_dir / ".claude-plugin" / "plugin.json"
+        if plugin_json.exists():
+            data = json.loads(plugin_json.read_text(encoding="utf-8"))
+            data["name"] = new_name
+            plugin_json.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
     def export_json(self, output_path: Optional[Path] = None) -> dict:
         """Export marketplace as JSON."""

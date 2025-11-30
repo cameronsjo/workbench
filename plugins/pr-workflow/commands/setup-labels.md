@@ -1,1 +1,0 @@
-../../../registry/commands/setup-labels.md

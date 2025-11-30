@@ -358,59 +358,16 @@ def cmd_edit(args: argparse.Namespace, builder: PluginBuilder) -> None:
 
 
 def cmd_rename(args: argparse.Namespace, builder: PluginBuilder) -> None:
-    """Rename an asset."""
+    """Rename an asset in the registry and update all symlinks."""
     asset_type = AssetType(args.type)
-
-    # Need to re-implement rename since we moved the class
-    type_dir = builder.registry_dir / asset_type.value
-
-    old_path = type_dir / args.old_name
-    if not old_path.exists():
-        old_path = type_dir / f"{args.old_name}.md"
-
-    if not old_path.exists():
-        raise ValueError(
-            f"Asset '{args.old_name}' not found in registry/{asset_type.value}"
-        )
-
-    if old_path.is_file():
-        new_path = type_dir / f"{args.new_name}.md"
-    else:
-        new_path = type_dir / args.new_name
-
-    if new_path.exists():
-        raise ValueError(f"Asset '{args.new_name}' already exists")
-
-    import os
-
-    # Rename in registry
-    old_path.rename(new_path)
-
-    # Update symlinks in all plugins
-    for plugin in builder.get_plugins():
-        plugin_dir = builder.plugins_dir / plugin.name
-        assets_dir = plugin_dir / asset_type.value
-        if not assets_dir.exists():
-            continue
-
-        for item in assets_dir.iterdir():
-            if item.is_symlink():
-                try:
-                    target = item.resolve()
-                    if target == old_path.resolve():
-                        item.unlink()
-                        rel_path = os.path.relpath(new_path, item.parent)
-                        new_link = assets_dir / (
-                            f"{args.new_name}.md"
-                            if new_path.suffix == ".md"
-                            else args.new_name
-                        )
-                        os.symlink(rel_path, new_link)
-                        print(f"  Updated symlink in {plugin.name}")
-                except Exception:
-                    pass
-
+    builder.rename_asset(args.old_name, args.new_name, asset_type)
     print(f"{Colors.GREEN}Renamed '{args.old_name}' to '{args.new_name}'{Colors.RESET}")
+
+
+def cmd_rename_plugin(args: argparse.Namespace, builder: PluginBuilder) -> None:
+    """Rename a plugin."""
+    builder.rename_plugin(args.old_name, args.new_name)
+    print(f"{Colors.GREEN}Renamed plugin '{args.old_name}' to '{args.new_name}'{Colors.RESET}")
 
 
 def cmd_delete(args: argparse.Namespace, builder: PluginBuilder) -> None:
@@ -688,6 +645,13 @@ Examples:
         "--type", "-t", required=True, choices=["commands", "agents", "skills"]
     )
 
+    # rename-plugin
+    rename_plugin_parser = subparsers.add_parser(
+        "rename-plugin", help="Rename a plugin"
+    )
+    rename_plugin_parser.add_argument("old_name", help="Current plugin name")
+    rename_plugin_parser.add_argument("new_name", help="New plugin name")
+
     # delete
     delete_parser = subparsers.add_parser("delete", aliases=["rm"], help="Delete asset")
     delete_parser.add_argument("name", help="Asset name")
@@ -752,6 +716,7 @@ Examples:
         "create": cmd_create,
         "edit": cmd_edit,
         "rename": cmd_rename,
+        "rename-plugin": cmd_rename_plugin,
         "delete": cmd_delete,
         "rm": cmd_delete,
         "validate": cmd_validate,

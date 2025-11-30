@@ -1,0 +1,15 @@
+{
+  "name": "dx",
+  "description": "Developer experience: debugging, optimization, prompt engineering, code analysis",
+  "version": "1.0.0",
+  "author": {
+    "name": "https://github.com/cameronsjo"
+  },
+  "keywords": [
+    "dx",
+    "debugging",
+    "optimization",
+    "prompts",
+    "tooling"
+  ]
+}

@@ -5,6 +5,10 @@
   "author": {
     "name": "Cameron Sjo"
   },
-  "keywords": ["hooks", "research", "productivity", "deep-dive"],
-  "category": "productivity"
+  "keywords": [
+    "hooks",
+    "research",
+    "productivity",
+    "deep-dive"
+  ]
 }

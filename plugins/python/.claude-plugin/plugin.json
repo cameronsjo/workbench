@@ -1,0 +1,15 @@
+{
+  "name": "python",
+  "description": "Python development expertise: async patterns, decorators, testing, uv package management, type hints",
+  "version": "1.0.0",
+  "author": {
+    "name": "https://github.com/cameronsjo"
+  },
+  "keywords": [
+    "python",
+    "uv",
+    "testing",
+    "async",
+    "typing"
+  ]
+}

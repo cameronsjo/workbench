@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from typing import TYPE_CHECKING
 
 from textual.app import ComposeResult
@@ -209,12 +210,21 @@ class AddAssetModal(ModalScreen[list[tuple[str, AssetType]] | None]):
 
         # Update preset buttons based on available groups
         preset_container = self.query_one("#preset-tabs", Horizontal)
-        preset_container.remove_children()
+        # Remove existing preset buttons
+        for child in list(preset_container.children):
+            child.remove()
 
         # Add preset buttons for groups that have available assets
+        # Use asset type in ID to avoid collisions when switching types
+        ts = int(time.time() * 1000) % 100000
         for group_name in sorted(self.groups.keys()):
             count = len(self.groups[group_name])
-            btn = Button(f"{group_name} ({count})", id=f"preset-{group_name}", classes="preset-btn")
+            btn = Button(
+                f"{group_name} ({count})",
+                id=f"preset-{asset_type.value}-{group_name}-{ts}",
+                classes="preset-btn",
+            )
+            btn.data = group_name  # Store group name for handler
             preset_container.mount(btn)
 
         # Update selection list
@@ -285,8 +295,10 @@ class AddAssetModal(ModalScreen[list[tuple[str, AssetType]] | None]):
             if selected:
                 self.dismiss(selected)
         elif btn_id.startswith("preset-"):
-            group_name = btn_id[7:]  # Remove "preset-" prefix
-            self._select_group(group_name)
+            # Use stored data attribute for group name
+            group_name = getattr(event.button, "data", None)
+            if group_name:
+                self._select_group(group_name)
 
     def action_cancel(self) -> None:
         """Cancel the modal."""
@@ -434,6 +446,124 @@ class RemoveAssetModal(ModalScreen[list[tuple[str, AssetType]] | None]):
         self._update_remove_button()
 
 
+class NewPluginModal(ModalScreen[tuple[str, str] | None]):
+    """Modal for creating a new plugin."""
+
+    BINDINGS = [
+        ("escape", "cancel", "Cancel"),
+    ]
+
+    CSS = """
+    NewPluginModal {
+        align: center middle;
+    }
+
+    NewPluginModal > #new-plugin-dialog {
+        width: 60;
+        height: auto;
+        border: round #5fafff;
+        background: $background;
+        padding: 1 2;
+    }
+
+    NewPluginModal .modal-title {
+        text-style: bold;
+        color: $text;
+        margin-bottom: 1;
+    }
+
+    NewPluginModal .field-label {
+        margin-top: 1;
+        margin-bottom: 0;
+    }
+
+    NewPluginModal Input {
+        margin-bottom: 1;
+    }
+
+    NewPluginModal .modal-buttons {
+        height: 3;
+        align: right middle;
+        margin-top: 1;
+    }
+
+    NewPluginModal Button {
+        margin: 0 1;
+    }
+
+    NewPluginModal .error-text {
+        color: #ff5f5f;
+        margin-bottom: 1;
+    }
+    """
+
+    def __init__(self, existing_names: set[str], **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.existing_names = existing_names
+
+    def compose(self) -> ComposeResult:
+        from textual.widgets import Input
+
+        with Container(id="new-plugin-dialog"):
+            yield Label("Create New Plugin", classes="modal-title")
+
+            yield Label("Plugin Name:", classes="field-label")
+            yield Input(placeholder="my-plugin", id="plugin-name")
+
+            yield Label("Description:", classes="field-label")
+            yield Input(placeholder="A brief description of the plugin", id="plugin-desc")
+
+            yield Label("", id="error-label", classes="error-text")
+
+            with Horizontal(classes="modal-buttons"):
+                yield Button("Cancel", id="btn-cancel")
+                yield Button("Create", id="btn-create", variant="success", disabled=True)
+
+    def on_mount(self) -> None:
+        """Focus the name input."""
+        from textual.widgets import Input
+        self.query_one("#plugin-name", Input).focus()
+
+    def on_input_changed(self, event) -> None:
+        """Validate input as user types."""
+        from textual.widgets import Input
+
+        name_input = self.query_one("#plugin-name", Input)
+        name = name_input.value.strip()
+
+        error_label = self.query_one("#error-label", Label)
+        create_btn = self.query_one("#btn-create", Button)
+
+        if not name:
+            error_label.update("")
+            create_btn.disabled = True
+        elif not name.replace("-", "").replace("_", "").isalnum():
+            error_label.update("Name can only contain letters, numbers, hyphens, underscores")
+            create_btn.disabled = True
+        elif name in self.existing_names:
+            error_label.update(f"Plugin '{name}' already exists")
+            create_btn.disabled = True
+        else:
+            error_label.update("")
+            create_btn.disabled = False
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Handle button presses."""
+        from textual.widgets import Input
+
+        if event.button.id == "btn-cancel":
+            self.dismiss(None)
+        elif event.button.id == "btn-create":
+            name = self.query_one("#plugin-name", Input).value.strip()
+            desc = self.query_one("#plugin-desc", Input).value.strip()
+            if name:
+                self.dismiss((name, desc))
+
+    def action_cancel(self) -> None:
+        """Cancel the modal."""
+        self.dismiss(None)
+
+
 class PluginsScreen(Screen):
     """Screen for browsing and editing plugins."""
 
@@ -506,7 +636,7 @@ class PluginsScreen(Screen):
         details = self.query_one("#plugin-details", Static)
         details.update(
             f"{plugin.description}\n"
-            f"[dim]Version: {plugin.version} | Category: {plugin.category}[/]"
+            f"[dim]Version: {plugin.version}[/]"
         )
 
         # Update tree
@@ -580,10 +710,36 @@ class PluginsScreen(Screen):
 
     def action_new_plugin(self) -> None:
         """Create a new plugin."""
-        self.app.notify(
-            "Use CLI: python plugin-builder.py create <name>",
-            severity="information",
-        )
+        builder: PluginBuilder = self.app.builder  # type: ignore
+        existing_names = {p.name for p in builder.get_plugins()}
+
+        def handle_create(result: tuple[str, str] | None) -> None:
+            if result is None:
+                return
+
+            name, description = result
+            try:
+                builder.create_plugin(name, description)
+                self.app.notify(
+                    f"Created plugin '{name}'",
+                    severity="information",
+                )
+                self._refresh_plugin_list()
+
+                # Select the new plugin
+                plugins = builder.get_plugins()
+                for p in plugins:
+                    if p.name == name:
+                        self.selected_plugin = p
+                        self._update_plugin_details()
+                        break
+            except Exception as e:
+                self.app.notify(
+                    f"Failed to create plugin: {e}",
+                    severity="error",
+                )
+
+        self.app.push_screen(NewPluginModal(existing_names), handle_create)
 
     def action_add_asset(self) -> None:
         """Add assets to the selected plugin (multiselect)."""

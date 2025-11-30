@@ -1,0 +1,1 @@
+../../../registry/commands/modernize-deps.md

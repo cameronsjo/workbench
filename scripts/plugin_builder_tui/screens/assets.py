@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from textual.app import ComposeResult
-from textual.containers import Container, Vertical
+from textual.containers import Container
 from textual.screen import Screen
 from textual.widgets import DataTable, Input, Label, TabbedContent, TabPane
 
@@ -26,46 +26,49 @@ class AssetsScreen(Screen):
         self.filter_text = ""
 
     def compose(self) -> ComposeResult:
-        builder: PluginBuilder = self.app.builder  # type: ignore
-
         with Container(id="content"):
             yield Label("[bold]Registry Assets[/]", id="screen-title")
             yield Input(placeholder="Type to filter...", id="asset-filter")
 
             with TabbedContent():
                 with TabPane("Commands", id="tab-commands"):
-                    yield self._create_asset_table(builder, AssetType.COMMAND)
+                    yield DataTable(id=f"table-{AssetType.COMMAND.value}")
 
                 with TabPane("Agents", id="tab-agents"):
-                    yield self._create_asset_table(builder, AssetType.AGENT)
+                    yield DataTable(id=f"table-{AssetType.AGENT.value}")
 
                 with TabPane("Skills", id="tab-skills"):
-                    yield self._create_asset_table(builder, AssetType.SKILL)
+                    yield DataTable(id=f"table-{AssetType.SKILL.value}")
 
-    def _create_asset_table(
-        self, builder: PluginBuilder, asset_type: AssetType
-    ) -> DataTable:
-        """Create a data table for an asset type."""
-        table = DataTable(id=f"table-{asset_type.value}")
-        table.add_columns("Name", "Description", "Used By")
-        table.cursor_type = "row"
+    def on_mount(self) -> None:
+        """Populate tables after mount."""
+        for asset_type in AssetType:
+            table = self.query_one(f"#table-{asset_type.value}", DataTable)
+            table.add_columns("Name", "Description", "Used By")
+            table.cursor_type = "row"
 
-        assets = builder.get_registry_assets(asset_type)
+        self._load_all_tables()
+
+    def _load_all_tables(self) -> None:
+        """Load data into all tables."""
+        builder: PluginBuilder = self.app.builder  # type: ignore
         usage = builder.get_usage_info()
 
-        for asset in assets:
-            key = f"{asset.asset_type.value}:{asset.name}"
-            used_by = usage.get(key)
-            plugins_str = ", ".join(used_by.plugins) if used_by and used_by.plugins else "-"
+        for asset_type in AssetType:
+            table = self.query_one(f"#table-{asset_type.value}", DataTable)
+            assets = builder.get_registry_assets(asset_type)
 
-            table.add_row(
-                asset.name,
-                asset.description[:50] + "..." if len(asset.description) > 50 else asset.description or "-",
-                plugins_str,
-                key=asset.name,
-            )
+            for asset in assets:
+                key = f"{asset.asset_type.value}:{asset.name}"
+                used_by = usage.get(key)
+                plugins_str = ", ".join(used_by.plugins) if used_by and used_by.plugins else "-"
 
-        return table
+                table.add_row(
+                    asset.name,
+                    asset.description[:50] + "..." if len(asset.description) > 50 else asset.description or "-",
+                    plugins_str,
+                    key=asset.name,
+                )
 
     def on_input_changed(self, event: Input.Changed) -> None:
         """Handle filter input changes."""
