@@ -1,54 +1,633 @@
 # MCP Development Skill
 
-Build production-ready Model Context Protocol (MCP) servers with fastmcp, PII sanitization, and OpenTelemetry integration.
+Build production-ready Model Context Protocol (MCP) servers with modern transports, proper tool annotations, and best practices from the latest specification.
 
 ## Overview
 
-This skill provides comprehensive expertise for building, testing, and deploying MCP servers following best practices for security, performance, and observability.
+This skill provides comprehensive expertise for building, testing, and deploying MCP servers following the **MCP specification 2025-11-25** (one-year anniversary release) and Anthropic's tool design guidance.
 
 ## When to Use This Skill
 
 Trigger this skill when:
 
-- Building MCP servers with fastmcp (Python)
-- Implementing MCP tools, resources, or prompts
-- Adding PII sanitization to MCP contexts
-- Upgrading fastmcp dependencies safely
-- Configuring Kubernetes deployments for MCP servers
-- Integrating OpenTelemetry (OpenTelemetry)
-- Debugging MCP server implementations
-- Optimizing MCP server performance
-- Creating MCP client integrations
-- Validating MCP protocol compliance
+- Building MCP servers (Python with FastMCP or TypeScript with official SDK)
+- Building MCP clients (single or multi-server connections)
+- Implementing MCP tools, resources, prompts, or tasks
+- Choosing between transport mechanisms (stdio vs Streamable HTTP)
+- Adding tool annotations for proper client behavior
+- Optimizing token usage with Tool Search or code execution patterns
+- Implementing server discovery and capability negotiation
+- Building agentic workflows with Sampling (server-side LLM orchestration)
+- Configuring production deployments and scaling patterns
+- Debugging MCP server/client implementations
 
-**Keywords:** MCP, fastmcp, Model Context Protocol, PII sanitization, Kubernetes deployment, OpenTelemetry, tool definition, resource definition
+**Keywords:** MCP, fastmcp, Model Context Protocol, Streamable HTTP, tool annotations, TypeScript SDK, token optimization, sampling, tasks, multi-server, agentic
 
-## Core Principles
+## MCP Protocol Fundamentals
 
-### MCP Security Standards
+### The Four Primitives
 
-- **PII Protection**: Never expose PII through MCP tools/resources without sanitization
-- **Input Validation**: Validate all tool inputs with JSON schemas using Pydantic
-- **Rate Limiting**: Implement rate limiting for MCP endpoints
-- **Audit Logging**: Log all MCP interactions with context (sanitized)
-- **Least Privilege**: MCP tools should request minimum necessary permissions
+MCP defines four core primitives with different control models:
 
-### Observability Requirements
+| Primitive | Controller | Purpose |
+|-----------|------------|---------|
+| **Tools** | Model-controlled | Actions the LLM can invoke |
+| **Resources** | Application-controlled | Data the app exposes to the LLM |
+| **Prompts** | User-controlled | Templates users can select |
+| **Tasks** | Server-controlled | Long-running operations with progress tracking |
 
-- **Structured Logging**: Use Python logging with JSON formatting
-- **OpenTelemetry Tracing**: Instrument all MCP operations with spans
-- **Metrics Collection**: Track tool invocation counts, latency, errors
-- **Error Context**: Include sanitized context in error logs
+See `resources/tasks-primitive.md` for detailed task implementation patterns.
 
-### Protocol Best Practices
+### Protocol Version
 
-- **Tool Descriptions**: Write clear, LLM-friendly tool descriptions
-- **Schema Validation**: Use Pydantic models for type safety
-- **Error Handling**: Return meaningful error messages
-- **Graceful Degradation**: Handle partial failures elegantly
-- **Idempotency**: Design tools to be safely retryable
+Always specify the protocol version in HTTP requests:
 
-## FastMCP Server Patterns
+```http
+MCP-Protocol-Version: 2025-11-25
+```
+
+For the latest specification, authentication patterns, and advanced features, always reference: <https://modelcontextprotocol.io/specification/2025-11-25>
+
+### What's New in 2025-11-25
+
+The one-year anniversary release includes major features:
+
+- **Tasks (SEP-1686)**: New primitive for long-running operations with states (`working`, `input_required`, `completed`, `failed`, `cancelled`)
+- **Sampling with Tools (SEP-1577)**: Servers can run agentic loops using client tokens
+- **URL Mode Elicitation (SEP-1036)**: Secure out-of-band credential acquisition (OAuth flows, API keys)
+- **Simplified Authorization (SEP-991)**: OAuth Client ID Metadata Documents replace Dynamic Client Registration
+- **Extensions Framework**: Optional, composable protocol extensions for specialized capabilities
+- **Standardized Tool Naming (SEP-986)**: Consistent naming format across servers
+
+No breaking changes - fully backward compatible with 2025-06-18.
+
+### Extended Documentation
+
+This skill includes detailed resource guides for advanced topics:
+
+| Resource | Topics Covered |
+|----------|----------------|
+| `resources/client-development.md` | Multi-server clients, reconnection, tool aggregation |
+| `resources/tasks-primitive.md` | Long-running tasks, states, cancellation, input requests |
+| `resources/server-discovery.md` | Well-known URLs, DNS-SD, registries, capability negotiation |
+| `resources/sampling-with-tools.md` | Agentic loops, server-side LLM orchestration |
+| `resources/architecture-patterns.md` | Scaling, load balancing, multi-region deployment |
+
+---
+
+## Transport Mechanisms
+
+### stdio Transport (Local/CLI)
+
+Best for local integrations and CLI tools. Client launches server as subprocess.
+
+```python
+# Python client
+from mcp.client.stdio import stdio_client
+from mcp import ClientSession
+
+async def connect_stdio():
+    async with stdio_client(
+        command="uv",
+        args=["run", "python", "server.py"]
+    ) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            tools = await session.list_tools()
+            return tools
+```
+
+```typescript
+// TypeScript client
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+
+const transport = new StdioClientTransport({
+  command: "node",
+  args: ["server.js"],
+});
+
+const client = new Client({ name: "my-client", version: "1.0.0" });
+await client.connect(transport);
+```
+
+**Constraints:**
+
+- Messages delimited by newlines, MUST NOT contain embedded newlines
+- Server writes only valid MCP messages to stdout
+- stderr reserved for logging (UTF-8)
+
+### Streamable HTTP Transport (Remote/Production)
+
+**This is the current standard for remote servers.** SSE transport was deprecated in protocol version 2025-03-26 and remains deprecated in 2025-11-25.
+
+**Why SSE was deprecated:**
+
+- Required two endpoints (`/sse` + `/messages`) with coordination overhead
+- Long-lived connections consume resources during idle
+- Connection drops lose responses without recovery
+- Limited bidirectionality
+
+**Streamable HTTP advantages:**
+
+- Single `/mcp` endpoint for all communication
+- Supports both stateless and stateful servers
+- Dynamic upgrade to SSE for long-running operations
+- Built-in session management and event resumability
+- Compatible with serverless platforms (scale to zero)
+
+#### Server Implementation (Python)
+
+```python
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import StreamingResponse
+from mcp.server import Server
+import json
+
+app = FastAPI()
+mcp_server = Server("my-server")
+
+# Session storage
+sessions: dict[str, ServerSession] = {}
+
+@app.post("/mcp")
+async def handle_mcp(request: Request):
+    """Handle all MCP messages via POST."""
+    # Validate origin for DNS rebinding protection
+    origin = request.headers.get("Origin")
+    if origin and origin not in ALLOWED_ORIGINS:
+        return Response(status_code=403)
+
+    # Get or create session
+    session_id = request.headers.get("Mcp-Session-Id")
+    if session_id and session_id not in sessions:
+        return Response(status_code=404)  # Session expired
+
+    body = await request.json()
+
+    # Check Accept header for streaming capability
+    accept = request.headers.get("Accept", "")
+    supports_streaming = "text/event-stream" in accept
+
+    # Process message
+    result = await mcp_server.handle_message(body, session_id)
+
+    # For requests (not notifications), return response
+    if "id" in body:
+        if supports_streaming and is_long_running(body):
+            # Upgrade to SSE for streaming response
+            return StreamingResponse(
+                stream_response(result),
+                media_type="text/event-stream",
+                headers={"Mcp-Session-Id": session_id} if session_id else {}
+            )
+        else:
+            # Standard JSON response
+            return Response(
+                content=json.dumps(result),
+                media_type="application/json",
+                headers={"Mcp-Session-Id": session_id} if session_id else {}
+            )
+
+    # Notifications return 202 Accepted
+    return Response(status_code=202)
+
+@app.get("/mcp")
+async def handle_mcp_stream(request: Request):
+    """Optional: Server-initiated communication stream."""
+    session_id = request.headers.get("Mcp-Session-Id")
+    last_event_id = request.headers.get("Last-Event-ID")
+
+    async def event_stream():
+        # Resume from last event if reconnecting
+        if last_event_id:
+            for event in get_events_after(last_event_id):
+                yield format_sse(event)
+
+        # Stream new events
+        async for event in mcp_server.events(session_id):
+            yield format_sse(event)
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream"
+    )
+```
+
+#### Server Implementation (TypeScript)
+
+```typescript
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamable-http.js";
+import express from "express";
+
+const app = express();
+const server = new Server({ name: "my-server", version: "1.0.0" });
+
+// Configure tools, resources, prompts on server...
+
+const transport = new StreamableHTTPServerTransport({
+  sessionIdGenerator: () => crypto.randomUUID(),
+  endpoint: "/mcp",
+});
+
+app.use("/mcp", transport.requestHandler());
+
+await server.connect(transport);
+app.listen(8000);
+```
+
+#### Client Implementation
+
+```python
+# Python client with fallback
+from mcp.client.streamable_http import streamable_http_client
+from mcp.client.sse import sse_client  # Legacy fallback
+
+async def connect_remote(base_url: str):
+    try:
+        # Try Streamable HTTP first (current standard)
+        async with streamable_http_client(
+            f"{base_url}/mcp",
+            headers={"MCP-Protocol-Version": "2025-11-25"}
+        ) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                return session
+    except Exception:
+        # Fall back to legacy SSE for older servers
+        async with sse_client(f"{base_url}/sse") as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                return session
+```
+
+---
+
+## Tool Annotations
+
+Tool annotations provide metadata about behavior, helping clients show appropriate UI, warnings, and approval flows.
+
+### The Four Behavioral Hints
+
+| Annotation | Type | Default | Meaning |
+|------------|------|---------|---------|
+| `readOnlyHint` | boolean | `false` | Tool does NOT modify environment |
+| `destructiveHint` | boolean | `true` | Tool MAY perform destructive updates |
+| `idempotentHint` | boolean | `false` | Repeated calls with same args have no additional effect |
+| `openWorldHint` | boolean | `true` | Tool interacts with external entities |
+
+**Important:** `destructiveHint` and `idempotentHint` only matter when `readOnlyHint: false`.
+
+### Annotation Decision Matrix
+
+```
+Is it read-only?
+├── YES → readOnlyHint: true (other hints irrelevant)
+└── NO → readOnlyHint: false
+         ├── Does it delete/modify irreversibly? → destructiveHint: true
+         ├── Can you safely retry it? → idempotentHint: true
+         └── Does it touch external systems? → openWorldHint: true
+```
+
+### Examples by Category
+
+```python
+# READ-ONLY: Search/query tools
+@mcp.tool(annotations={
+    "readOnlyHint": True,
+    "openWorldHint": False  # Internal database
+})
+async def search_documents(query: str) -> str:
+    """Search internal document store."""
+    ...
+
+# READ-ONLY + EXTERNAL: Web search
+@mcp.tool(annotations={
+    "readOnlyHint": True,
+    "openWorldHint": True  # External API
+})
+async def web_search(query: str) -> str:
+    """Search the web."""
+    ...
+
+# DESTRUCTIVE: Delete operations
+@mcp.tool(annotations={
+    "readOnlyHint": False,
+    "destructiveHint": True,
+    "idempotentHint": False,  # Deleting twice = error
+    "openWorldHint": False
+})
+async def delete_document(doc_id: str) -> str:
+    """Permanently delete a document. Cannot be undone."""
+    ...
+
+# IDEMPOTENT WRITE: Upsert/PUT semantics
+@mcp.tool(annotations={
+    "readOnlyHint": False,
+    "destructiveHint": False,
+    "idempotentHint": True,  # Safe to retry
+    "openWorldHint": True
+})
+async def update_crm_record(record_id: str, data: dict) -> str:
+    """Update CRM record (creates if not exists)."""
+    ...
+
+# NON-IDEMPOTENT WRITE: Create operations
+@mcp.tool(annotations={
+    "readOnlyHint": False,
+    "destructiveHint": False,
+    "idempotentHint": False,  # Creates duplicate if retried
+    "openWorldHint": False
+})
+async def create_document(title: str, content: str) -> str:
+    """Create a new document."""
+    ...
+```
+
+### TypeScript Annotations
+
+```typescript
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [
+    {
+      name: "delete_file",
+      description: "Permanently delete a file",
+      inputSchema: {
+        type: "object",
+        properties: { path: { type: "string" } },
+        required: ["path"],
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
+    },
+  ],
+}));
+```
+
+---
+
+## Tool Design Best Practices
+
+Based on Anthropic's guidance for writing effective tools for AI agents.
+
+### Principle 1: Thoughtful Selection Over Quantity
+
+Build consolidated, high-impact tools instead of wrapping every API endpoint.
+
+```python
+# BAD: Too granular
+# list_users, get_user, list_events, get_event, create_event,
+# list_rooms, book_room, send_invite...
+
+# GOOD: Consolidated workflow
+@mcp.tool()
+async def schedule_meeting(
+    title: str,
+    attendees: list[str],
+    duration_minutes: int,
+    preferred_times: list[str]
+) -> str:
+    """
+    Schedule a meeting by finding availability and creating the event.
+
+    Automatically:
+    - Finds available time slots for all attendees
+    - Creates the calendar event
+    - Sends invitations
+    - Reserves a conference room if needed
+
+    Args:
+        title: Meeting title
+        attendees: List of email addresses
+        duration_minutes: Meeting length (15, 30, 45, 60, 90, 120)
+        preferred_times: Preferred time windows, e.g. ["morning", "2pm-4pm"]
+
+    Returns:
+        JSON with meeting details and calendar link
+    """
+```
+
+### Principle 2: Context Efficiency
+
+Return filtered, relevant data - not exhaustive dumps.
+
+```python
+# BAD: Returns everything (10K contacts = massive token usage)
+@mcp.tool()
+async def list_contacts() -> str:
+    return json.dumps(await db.get_all_contacts())
+
+# GOOD: Search-first with format control
+@mcp.tool()
+async def search_contacts(
+    query: str,
+    response_format: Literal["detailed", "concise"] = "concise"
+) -> str:
+    """
+    Search contacts by name, email, or company.
+
+    Use 'detailed' format when you need IDs for follow-up operations.
+    Use 'concise' format (default) to minimize token usage.
+    """
+    results = await db.search_contacts(query, limit=20)
+
+    if response_format == "concise":
+        return json.dumps([
+            {"name": c.name, "email": c.email}
+            for c in results
+        ])
+    else:
+        return json.dumps([c.to_dict() for c in results])
+```
+
+### Principle 3: LLM-Friendly Descriptions
+
+Write descriptions as if explaining to a new team member.
+
+```python
+@mcp.tool()
+async def query_sales_data(
+    query: str,
+    date_range: Optional[str] = None
+) -> str:
+    """
+    Query the sales database using natural language.
+
+    The query is translated to SQL internally. You can ask:
+    - "Total revenue last quarter"
+    - "Top 10 customers by order value"
+    - "Products with declining sales"
+
+    Date range format: "YYYY-MM-DD to YYYY-MM-DD" or relative like
+    "last 30 days", "this quarter", "YTD"
+
+    Returns JSON with columns and rows. Large results paginated
+    (max 100 rows per response).
+
+    Note: Only SELECT queries are supported. Aggregations and
+    JOINs work but may be slower for complex queries.
+    """
+```
+
+### Principle 4: Meaningful Field Names
+
+Return semantically meaningful names, not raw IDs.
+
+```python
+# BAD: Low-level identifiers
+{
+    "uuid": "a1b2c3d4",
+    "256px_image_url": "...",
+    "mime_type": "image/jpeg"
+}
+
+# GOOD: Meaningful names
+{
+    "name": "Product Photo",
+    "image_url": "...",
+    "file_type": "jpeg"
+}
+```
+
+### Principle 5: Actionable Error Messages
+
+```python
+# BAD
+raise ValueError("Invalid input")
+
+# GOOD
+raise ValueError(
+    f"Invalid date format '{date_str}'. "
+    f"Expected YYYY-MM-DD (e.g., '2025-01-15') or relative format "
+    f"(e.g., 'last 30 days', 'this quarter'). "
+    f"Try: search_sales(date_range='last 30 days')"
+)
+```
+
+---
+
+## Token Optimization Patterns
+
+### Tool Search Tool (Defer Loading)
+
+Instead of loading all tool definitions upfront (55K+ tokens), use progressive discovery.
+
+```python
+# Mark tools for deferred loading
+tools = [
+    {
+        "name": "search_documents",
+        "description": "Search internal documents",
+        "defer_loading": False,  # Critical - always available
+    },
+    {
+        "name": "export_to_pdf",
+        "description": "Export document to PDF format",
+        "defer_loading": True,   # Discovered on-demand
+    },
+    # ... hundreds more deferred tools
+]
+```
+
+**Anthropic's benchmarks:**
+
+- Opus 4: 49% → 74% accuracy
+- Opus 4.5: 79.5% → 88.1% accuracy
+- Token usage: 77K → 8.7K (85% reduction)
+
+### Code Execution Pattern
+
+Transform discrete tool calls into programmatic access. See the **mcp-tools-as-code** skill for detailed implementation.
+
+**Before (150K tokens):**
+
+```
+Tool call: gdrive.getDocument → Process 50K transcript
+Tool call: summarize → Process transcript again
+Tool call: salesforce.update → Process summary
+```
+
+**After (2K tokens):**
+
+```typescript
+const transcript = (await gdrive.getDocument({ id })).content;
+const summary = extractKeyPoints(transcript); // Runs in sandbox
+await salesforce.updateRecord({ data: { notes: summary } });
+// Transcript never leaves sandbox
+```
+
+**98.7% token reduction** for multi-step workflows.
+
+---
+
+## Security Requirements
+
+### Origin Validation (Required)
+
+From the spec: *"Servers MUST validate the Origin header on all incoming connections to prevent DNS rebinding attacks."*
+
+```python
+ALLOWED_ORIGINS = {
+    "http://localhost:3000",
+    "https://app.example.com",
+    "vscode-webview://",  # VS Code extensions
+}
+
+@app.middleware("http")
+async def validate_origin(request: Request, call_next):
+    origin = request.headers.get("Origin")
+    if origin and origin not in ALLOWED_ORIGINS:
+        logger.warning("Rejected request from origin: %s", origin)
+        return Response(status_code=403, content="Invalid origin")
+    return await call_next(request)
+```
+
+### Session Security
+
+```python
+import secrets
+
+def generate_session_id() -> str:
+    """Generate cryptographically secure session ID."""
+    return secrets.token_urlsafe(32)  # 256 bits of entropy
+```
+
+### Input Validation
+
+Always validate at the tool level:
+
+```python
+from pydantic import BaseModel, Field, validator
+import re
+
+class FileOperationInput(BaseModel):
+    path: str = Field(..., description="File path to operate on")
+
+    @validator('path')
+    def validate_path(cls, v):
+        # Prevent path traversal
+        if '..' in v or v.startswith('/'):
+            raise ValueError("Invalid path: no traversal or absolute paths")
+        # Allowlist directories
+        if not v.startswith(('documents/', 'exports/')):
+            raise ValueError("Path must be in documents/ or exports/")
+        return v
+```
+
+### Authentication
+
+For OAuth 2.1, PKCE, session management, and other auth patterns, reference the latest MCP specification: <https://modelcontextprotocol.io/specification/2025-11-25>
+
+The 2025-11-25 release simplifies auth with OAuth Client ID Metadata Documents (SEP-991) replacing Dynamic Client Registration.
+
+---
+
+## FastMCP Server Patterns (Python)
 
 ### Server Initialization
 
@@ -56,24 +635,21 @@ Trigger this skill when:
 from fastmcp import FastMCP
 import logging
 
-# Configure structured logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# Initialize MCP server with metadata
 mcp = FastMCP(
-    "server-name",
-    dependencies=["dependency1>=1.0.0", "dependency2>=2.0.0"]
+    "my-server",
+    dependencies=["httpx>=0.25.0", "pydantic>=2.0.0"]
 )
 
-# Server lifecycle hooks
 @mcp.on_startup
 async def startup():
-    logger.info("MCP server starting", extra={"server": "server-name"})
-    # Initialize resources (DB connections, API clients, etc.)
+    logger.info("MCP server starting")
+    # Initialize DB connections, API clients, etc.
 
 @mcp.on_shutdown
 async def shutdown():
@@ -81,407 +657,272 @@ async def shutdown():
     # Cleanup resources
 ```
 
-### Tool Definition Pattern
+### Tool with Full Patterns
 
 ```python
-from pydantic import BaseModel, Field, validator
-from typing import Optional
+from pydantic import BaseModel, Field
+from typing import Literal
 
-class ToolInput(BaseModel):
-    """Well-documented input schema for LLM consumption"""
-
+class SearchInput(BaseModel):
+    """Search parameters with validation."""
     query: str = Field(
         ...,
-        description="The search query to execute",
+        description="Search query",
         min_length=1,
         max_length=500
     )
-
     limit: int = Field(
         10,
-        description="Maximum number of results to return",
+        description="Max results (1-100)",
         ge=1,
         le=100
     )
+    format: Literal["detailed", "concise"] = Field(
+        "concise",
+        description="Response format"
+    )
 
-    @validator('query')
-    def validate_query(cls, v):
-        """Additional validation beyond Pydantic constraints"""
-        if not v.strip():
-            raise ValueError("Query cannot be empty or whitespace")
-        return v.strip()
-
-@mcp.tool()
-async def search_documents(input: ToolInput) -> str:
+@mcp.tool(annotations={
+    "readOnlyHint": True,
+    "openWorldHint": False
+})
+async def search_documents(input: SearchInput) -> str:
     """
-    Search through document corpus and return relevant results.
+    Search internal document store.
 
-    Use this tool when the user needs to find specific information
-    from the knowledge base. Returns up to {limit} results ranked
-    by relevance.
-
-    Args:
-        input: Validated search parameters
-
-    Returns:
-        JSON string with search results and metadata
-
-    Raises:
-        ValueError: If search query is invalid
-        RuntimeError: If search service is unavailable
+    Use 'detailed' format when you need document IDs for
+    follow-up operations like get_document or update_document.
     """
     from opentelemetry import trace
-
     tracer = trace.get_tracer(__name__)
 
     with tracer.start_as_current_span("search_documents") as span:
-        # Sanitize PII from input before logging
-        sanitized_query = sanitize_pii(input.query)
-
         span.set_attribute("query.length", len(input.query))
-        span.set_attribute("query.limit", input.limit)
-
-        logger.info(
-            "Executing search",
-            extra={
-                "query": sanitized_query,
-                "limit": input.limit
-            }
-        )
+        span.set_attribute("limit", input.limit)
 
         try:
-            # Business logic with error handling
             results = await perform_search(input.query, input.limit)
 
-            # Sanitize PII from results
-            sanitized_results = sanitize_pii(results)
+            if input.format == "concise":
+                output = [{"title": r.title, "snippet": r.snippet[:200]}
+                          for r in results]
+            else:
+                output = [r.to_dict() for r in results]
 
             span.set_attribute("results.count", len(results))
-
-            return sanitized_results
+            return json.dumps(output)
 
         except Exception as e:
-            logger.error(
-                "Search failed",
-                exc_info=True,
-                extra={"query": sanitized_query}
-            )
             span.record_exception(e)
-            raise RuntimeError(f"Search operation failed: {str(e)}")
+            raise RuntimeError(f"Search failed: {e}")
 ```
 
-### Resource Definition Pattern
+### Resource Pattern
 
 ```python
-@mcp.resource("resource://documents/{doc_id}")
+@mcp.resource("documents/{doc_id}")
 async def get_document(doc_id: str) -> str:
     """
-    Retrieve a document by ID from the knowledge base.
+    Retrieve document by ID.
 
-    Returns the full document content with metadata.
-    Use when Claude needs to access specific document content.
-
-    Args:
-        doc_id: Unique document identifier
-
-    Returns:
-        JSON string with document content and metadata
+    Returns full document content with metadata.
     """
-    # Validate input
-    if not is_valid_doc_id(doc_id):
+    if not re.match(r'^[a-zA-Z0-9_-]+$', doc_id):
         raise ValueError(f"Invalid document ID format: {doc_id}")
 
-    logger.info("Fetching document", extra={"doc_id": doc_id})
-
-    # Fetch and sanitize
     document = await fetch_document(doc_id)
-
     if not document:
         raise ValueError(f"Document not found: {doc_id}")
-
-    # Sanitize PII before returning
-    sanitized_content = sanitize_pii(document.content)
 
     return json.dumps({
         "id": document.id,
         "title": document.title,
-        "content": sanitized_content,
+        "content": document.content,
         "created_at": document.created_at.isoformat(),
-        "updated_at": document.updated_at.isoformat()
     })
 ```
 
-### Prompt Definition Pattern
+---
+
+## Client Development
+
+Building MCP clients that connect to servers. For comprehensive patterns including multi-server aggregation and reconnection, see `resources/client-development.md`.
+
+### Basic Client Connection
 
 ```python
-@mcp.prompt()
-async def summarize_document(doc_id: str) -> str:
-    """
-    Generate a prompt for Claude to summarize a specific document.
-
-    This prompt template helps Claude provide consistent, high-quality
-    document summaries with proper structure.
-
-    Args:
-        doc_id: Document to summarize
-
-    Returns:
-        Formatted prompt for Claude
-    """
-    document = await fetch_document(doc_id)
-    sanitized_content = sanitize_pii(document.content)
-
-    return f"""Please provide a comprehensive summary of the following document:
-
-Title: {document.title}
-Created: {document.created_at}
-
-Content:
-{sanitized_content}
-
-Generate a summary that includes:
-1. Main topics and key points (3-5 bullet points)
-2. Important conclusions or recommendations
-3. Any action items or next steps mentioned
-
-Keep the summary concise (2-3 paragraphs) but capture all essential information."""
-```
-
-## PII Sanitization Implementation
-
-### Core Sanitization Patterns
-
-```python
-import re
-from typing import Any, Dict, Union
-
-# PII detection patterns
-EMAIL_PATTERN = re.compile(
-    r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-)
-SSN_PATTERN = re.compile(
-    r'\b\d{3}-\d{2}-\d{4}\b'
-)
-PHONE_PATTERN = re.compile(
-    r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b'
-)
-CREDIT_CARD_PATTERN = re.compile(
-    r'\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b'
-)
-# Add more patterns as needed
-
-def sanitize_pii(text: Union[str, dict, list]) -> Union[str, dict, list]:
-    """
-    Remove PII from text, dictionaries, or lists recursively.
-
-    Args:
-        text: Content to sanitize
-
-    Returns:
-        Sanitized content with PII replaced by placeholders
-    """
-    if isinstance(text, dict):
-        return sanitize_dict(text)
-    elif isinstance(text, list):
-        return [sanitize_pii(item) for item in text]
-    elif isinstance(text, str):
-        return sanitize_string(text)
-    else:
-        return text
-
-def sanitize_string(text: str) -> str:
-    """Sanitize PII from a string"""
-    if not text:
-        return text
-
-    # Apply all sanitization patterns
-    text = EMAIL_PATTERN.sub('[EMAIL]', text)
-    text = SSN_PATTERN.sub('[SSN]', text)
-    text = PHONE_PATTERN.sub('[PHONE]', text)
-    text = CREDIT_CARD_PATTERN.sub('[CREDIT_CARD]', text)
-
-    return text
-
-def sanitize_dict(
-    data: Dict[str, Any],
-    sensitive_keys: Optional[list[str]] = None
-) -> Dict[str, Any]:
-    """
-    Sanitize dictionary values recursively.
-
-    Args:
-        data: Dictionary to sanitize
-        sensitive_keys: List of keys that should be redacted completely
-
-    Returns:
-        Sanitized dictionary
-    """
-    if sensitive_keys is None:
-        sensitive_keys = [
-            'password', 'secret', 'token', 'api_key',
-            'ssn', 'social_security', 'credit_card',
-            'email', 'phone', 'address'
-        ]
-
-    sanitized = {}
-    for key, value in data.items():
-        # Redact sensitive keys completely
-        if any(sensitive in key.lower() for sensitive in sensitive_keys):
-            sanitized[key] = '[REDACTED]'
-        # Recursively sanitize nested structures
-        elif isinstance(value, dict):
-            sanitized[key] = sanitize_dict(value, sensitive_keys)
-        elif isinstance(value, list):
-            sanitized[key] = [sanitize_pii(item) for item in value]
-        elif isinstance(value, str):
-            sanitized[key] = sanitize_string(value)
-        else:
-            sanitized[key] = value
-
-    return sanitized
-```
-
-### PII Sanitization Checklist
-
-Critical for all MCP implementations:
-
-- [ ] Sanitize before logging (never log raw PII)
-- [ ] Sanitize before external API calls
-- [ ] Sanitize before caching or storage
-- [ ] Sanitize in error messages and exceptions
-- [ ] Sanitize in tool return values
-- [ ] Sanitize in resource content
-- [ ] Test with PII patterns (emails, SSNs, credit cards, phones)
-- [ ] Implement field-level redaction for sensitive keys
-- [ ] Use regex patterns for common PII types
-- [ ] Validate sanitization with comprehensive test suite (22+ tests)
-- [ ] Handle nested data structures (dicts, lists)
-- [ ] Document PII handling in tool descriptions
-
-## MCP Client Integration
-
-### Stdio Transport (Recommended)
-
-```python
-from mcp.client.stdio import stdio_client
+from mcp.client.streamable_http import streamable_http_client
 from mcp import ClientSession
 
-async def connect_to_mcp_server():
-    """Connect to MCP server via stdio transport"""
-
-    async with stdio_client(
-        command="uv",
-        args=["run", "python", "server.py"]
+async def connect_to_server(url: str):
+    """Connect to an MCP server via Streamable HTTP."""
+    async with streamable_http_client(
+        url,
+        headers={"MCP-Protocol-Version": "2025-11-25"}
     ) as (read, write):
         async with ClientSession(read, write) as session:
-            # Initialize connection
             await session.initialize()
-
-            logger.info("Connected to MCP server")
 
             # List available tools
             tools = await session.list_tools()
-            logger.info(f"Available tools: {[t.name for t in tools]}")
+            print(f"Available tools: {[t.name for t in tools.tools]}")
 
             # Call a tool
             result = await session.call_tool(
                 "search_documents",
-                {
-                    "query": "machine learning",
-                    "limit": 5
-                }
+                {"query": "quarterly report"}
             )
-
             return result
 ```
 
-### SSE Transport (Server-Sent Events)
+### Multi-Server Client Architecture
 
-```python
-from mcp.client.sse import sse_client
-from mcp import ClientSession
-
-async def connect_via_sse():
-    """Connect to MCP server via SSE transport"""
-
-    async with sse_client("http://localhost:8000/sse") as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-
-            # Use session...
-            tools = await session.list_tools()
-            return tools
+```
+┌─────────────────────────────────────────┐
+│              MCP Client                  │
+│  ┌───────────────────────────────────┐  │
+│  │      Tool Aggregation Layer       │  │
+│  │  server_a.tool_1                  │  │
+│  │  server_b.tool_2                  │  │
+│  └───────────────────────────────────┘  │
+│         │                   │           │
+│    ┌────▼────┐         ┌────▼────┐     │
+│    │Server A │         │Server B │     │
+│    └─────────┘         └─────────┘     │
+└─────────────────────────────────────────┘
 ```
 
-## Kubernetes Deployment
+Key patterns:
 
-### Kubernetes Deployment Configuration
-
-For deploying MCP servers to Kubernetes:
-
-**See Related Skill:** Reference the `kubernetes-deployment` skill for complete Kubernetes deployment patterns.
-
-```yaml
-# kubernetes.yml for MCP server deployment
-apiVersion: v1
-kind: Service
-metadata:
-  name: mcp-server
-  namespace: your-namespace
-spec:
-  type: ClusterIP
-  ports:
-    - name: http
-      port: 8000
-      targetPort: 8000
-  selector:
-    app: mcp-server
+- **Namespaced tools**: Prefix tool names with server name to prevent collisions
+- **Independent connections**: Each server connection managed separately
+- **Reconnection with backoff**: Exponential backoff on connection failures
+- **Capability caching**: Cache tool lists, refresh on `listChanged` notification
 
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mcp-server
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: mcp-server
-  template:
-    metadata:
-      labels:
-        app: mcp-server
-    spec:
-      containers:
-        - name: mcp-server
-          image: registry.example.com/your-team/mcp-server:latest
-          ports:
-            - containerPort: 8000
-          env:
-            - name: LOG_LEVEL
-              value: "INFO"
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "http://universal-tracing:4318"
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 5
+
+## TypeScript SDK Patterns
+
+### Server Setup
+
+```typescript
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from "@modelcontextprotocol/sdk/types.js";
+
+const server = new Server(
+  { name: "my-server", version: "1.0.0" },
+  { capabilities: { tools: { listChanged: true } } }
+);
+
+// List tools
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [
+    {
+      name: "search_documents",
+      description: "Search internal document store",
+      inputSchema: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "Search query" },
+          limit: { type: "number", default: 10 },
+        },
+        required: ["query"],
+      },
+      annotations: {
+        readOnlyHint: true,
+        openWorldHint: false,
+      },
+    },
+  ],
+}));
+
+// Handle tool calls
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  switch (name) {
+    case "search_documents":
+      const results = await searchDocuments(args.query, args.limit);
+      return {
+        content: [{ type: "text", text: JSON.stringify(results) }],
+      };
+
+    default:
+      throw new Error(`Unknown tool: ${name}`);
+  }
+});
 ```
+
+### Error Handling
+
+Two-layer error model:
+
+```typescript
+// Protocol errors (unknown tool, invalid args)
+throw new McpError(
+  ErrorCode.InvalidParams,
+  `Unknown tool: ${name}`
+);
+
+// Tool execution errors (return in result)
+return {
+  content: [{ type: "text", text: "API rate limited" }],
+  isError: true,
+};
+```
+
+---
+
+## PII Sanitization
+
+Critical for all MCP implementations. See `resources/pii-patterns.json` for comprehensive patterns.
+
+```python
+import re
+from typing import Any, Union
+
+PATTERNS = {
+    'email': re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'),
+    'ssn': re.compile(r'\b\d{3}-\d{2}-\d{4}\b'),
+    'phone': re.compile(r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b'),
+    'credit_card': re.compile(r'\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b'),
+}
+
+SENSITIVE_KEYS = {'password', 'secret', 'token', 'api_key', 'ssn', 'credit_card'}
+
+def sanitize(data: Any) -> Any:
+    """Recursively sanitize PII from any data structure."""
+    if isinstance(data, dict):
+        return {
+            k: '[REDACTED]' if any(s in k.lower() for s in SENSITIVE_KEYS)
+            else sanitize(v)
+            for k, v in data.items()
+        }
+    elif isinstance(data, list):
+        return [sanitize(item) for item in data]
+    elif isinstance(data, str):
+        result = data
+        for name, pattern in PATTERNS.items():
+            result = pattern.sub(f'[{name.upper()}]', result)
+        return result
+    return data
+```
+
+### Sanitization Checklist
+
+- [ ] Before logging
+- [ ] Before external API calls
+- [ ] Before caching
+- [ ] In error messages
+- [ ] In tool return values
+- [ ] In resource content
+
+---
+
+## Observability
 
 ### OpenTelemetry Integration
 
@@ -493,444 +934,211 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.resources import Resource
 
 def setup_tracing(service_name: str):
-    """
-    Configure OpenTelemetry.
-
-    Args:
-        service_name: Name of the MCP server for trace identification
-    """
     resource = Resource.create({"service.name": service_name})
+    provider = TracerProvider(resource=resource)
 
-    tracer_provider = TracerProvider(resource=resource)
+    exporter = OTLPSpanExporter(endpoint="http://otel-collector:4318/v1/traces")
+    provider.add_span_processor(BatchSpanProcessor(exporter))
 
-    # Configure OTLP exporter for OpenTelemetry
-    otlp_exporter = OTLPSpanExporter(
-        endpoint="http://universal-tracing:4318/v1/traces"
-    )
+    trace.set_tracer_provider(provider)
 
-    span_processor = BatchSpanProcessor(otlp_exporter)
-    tracer_provider.add_span_processor(span_processor)
-
-    trace.set_tracer_provider(tracer_provider)
-
-    logger.info(f"OpenTelemetry configured for {service_name}")
-
-# Use in MCP server
 tracer = trace.get_tracer(__name__)
-
-@mcp.tool()
-async def traced_tool(input: ToolInput) -> str:
-    """Tool with OpenTelemetry tracing"""
-
-    with tracer.start_as_current_span("tool_execution") as span:
-        # Add attributes (sanitized)
-        span.set_attribute("input.param", sanitize_pii(str(input)))
-        span.set_attribute("tool.name", "traced_tool")
-
-        try:
-            result = await process(input)
-            span.set_attribute("result.length", len(result))
-            return result
-        except Exception as e:
-            span.record_exception(e)
-            span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
-            raise
 ```
 
-## Testing Strategies
+### Structured Logging
 
-### Unit Testing with pytest
+```python
+import structlog
+
+logger = structlog.get_logger()
+
+@mcp.tool()
+async def my_tool(input: ToolInput) -> str:
+    logger.info(
+        "tool_invoked",
+        tool="my_tool",
+        input_length=len(str(input)),
+        # Never log raw PII
+        query_sanitized=sanitize(input.query)
+    )
+```
+
+---
+
+## Sampling with Tools (Agentic Loops)
+
+Sampling with Tools (SEP-1577) enables servers to run agentic loops using the client's LLM. The server orchestrates multi-step workflows while the client provides token budget.
+
+For full implementation details, see `resources/sampling-with-tools.md`.
+
+### Basic Flow
+
+```
+Server                    Client                    LLM
+   │  sampling/createMessage │                        │
+   │  (with tools array)     │                        │
+   │────────────────────────▶│───────────────────────▶│
+   │                         │◀───────────────────────│
+   │◀────────────────────────│  tool_use response     │
+   │  [Execute tool locally] │                        │
+   │  sampling/createMessage │                        │
+   │  (with tool_result)     │                        │
+   │────────────────────────▶│───────────────────────▶│
+```
+
+### Example: Server-Side Agentic Tool
+
+```python
+@mcp.tool()
+async def analyze_and_report(request: str) -> str:
+    """Run multi-step analysis using client's LLM."""
+
+    tools = [
+        {"name": "query_database", "description": "Execute SQL query", ...},
+        {"name": "create_chart", "description": "Generate visualization", ...}
+    ]
+
+    messages = [{"role": "user", "content": {"type": "text", "text": request}}]
+
+    while True:
+        response = await mcp.sample(
+            messages=messages,
+            tools=tools,
+            max_tokens=4096
+        )
+
+        if response.stop_reason == "end_turn":
+            return extract_result(response)
+
+        if response.stop_reason == "tool_use":
+            # Execute tools locally, add results to messages
+            tool_results = await execute_tools(response.content)
+            messages.append({"role": "assistant", "content": response.content})
+            messages.append({"role": "user", "content": tool_results})
+```
+
+Key considerations:
+
+- **Token budgets**: Track and limit token usage per request
+- **Iteration limits**: Prevent infinite agentic loops
+- **Tool allowlisting**: Only expose safe tools for server-side execution
+- **Parallel execution**: Execute independent tool calls concurrently
+
+---
+
+## Architecture Patterns
+
+For production deployments, see `resources/architecture-patterns.md` for complete patterns.
+
+### Pattern Overview
+
+| Pattern | Use Case | Complexity |
+|---------|----------|------------|
+| Single server | Development, simple apps | Low |
+| Multi-server aggregation | Tool composition | Medium |
+| Gateway/proxy | Auth, routing, caching | Medium |
+| Load-balanced | High availability | High |
+| Serverless | Variable load, cost optimization | Medium |
+| Multi-region | Global low latency | High |
+
+### Session Persistence Options
+
+| Strategy | Latency | Durability | Scaling |
+|----------|---------|------------|---------|
+| In-memory | ~1ms | None | Single instance |
+| Redis | ~5ms | Configurable | Horizontal |
+| Database | ~20ms | High | Horizontal |
+| Hybrid | ~5ms | High | Horizontal |
+
+### Deployment Checklist
+
+- [ ] Origin validation enabled
+- [ ] Health check endpoint (`/health`)
+- [ ] Session persistence configured
+- [ ] Rate limiting in place
+- [ ] OpenTelemetry tracing
+- [ ] Graceful shutdown handling
+
+---
+
+## Testing
+
+### MCP Test Client
 
 ```python
 import pytest
 from fastmcp.testing import MCPTestClient
 
 @pytest.fixture
-async def test_client():
-    """Fixture providing MCP test client"""
+async def client():
     client = MCPTestClient(mcp)
     await client.connect()
     yield client
     await client.disconnect()
 
-# Test tool execution
-async def test_search_documents_success(test_client):
-    """Test successful search operation"""
-    result = await test_client.call_tool(
+async def test_search_returns_results(client):
+    result = await client.call_tool(
         "search_documents",
-        {"query": "test query", "limit": 10}
+        {"query": "test", "limit": 5}
     )
+    assert not result.isError
+    data = json.loads(result.content[0].text)
+    assert len(data) <= 5
 
-    assert result.success
-    assert "results" in result.content
-
-# Test input validation
-async def test_search_documents_invalid_input(test_client):
-    """Test search with invalid input"""
-    with pytest.raises(ValueError, match="Query cannot be empty"):
-        await test_client.call_tool(
-            "search_documents",
-            {"query": "   ", "limit": 10}
-        )
-
-# Test PII sanitization
-async def test_pii_sanitization(test_client):
-    """Test that PII is properly sanitized"""
-    result = await test_client.call_tool(
+async def test_invalid_input_returns_error(client):
+    result = await client.call_tool(
         "search_documents",
-        {"query": "email test@example.com phone 555-123-4567", "limit": 5}
+        {"query": "", "limit": 5}  # Empty query
     )
-
-    # PII should be redacted in result
-    assert "[EMAIL]" in result.content
-    assert "[PHONE]" in result.content
-    assert "test@example.com" not in result.content
-    assert "555-123-4567" not in result.content
-
-# Test error handling
-async def test_tool_error_handling(test_client):
-    """Test proper error handling and messaging"""
-    with pytest.raises(RuntimeError, match="Search operation failed"):
-        await test_client.call_tool(
-            "search_documents",
-            {"query": "trigger_error", "limit": 10}
-        )
+    assert result.isError
 ```
 
-### PII Sanitization Test Suite
-
-```python
-import pytest
-from sanitization import sanitize_pii, sanitize_string, sanitize_dict
-
-# Email sanitization tests
-def test_sanitize_email():
-    assert sanitize_string("Contact: test@example.com") == "Contact: [EMAIL]"
-
-def test_sanitize_multiple_emails():
-    text = "Emails: a@test.com and b@test.com"
-    assert sanitize_string(text) == "Emails: [EMAIL] and [EMAIL]"
-
-# SSN sanitization tests
-def test_sanitize_ssn():
-    assert sanitize_string("SSN: 123-45-6789") == "SSN: [SSN]"
-
-# Phone sanitization tests
-def test_sanitize_phone():
-    assert sanitize_string("Call 555-123-4567") == "Call [PHONE]"
-    assert sanitize_string("Call 5551234567") == "Call [PHONE]"
-
-# Credit card sanitization tests
-def test_sanitize_credit_card():
-    text = "Card: 1234-5678-9012-3456"
-    assert sanitize_string(text) == "Card: [CREDIT_CARD]"
-
-# Dictionary sanitization tests
-def test_sanitize_dict_sensitive_keys():
-    data = {"password": "secret123", "username": "john"}
-    result = sanitize_dict(data)
-    assert result["password"] == "[REDACTED]"
-    assert result["username"] == "john"
-
-def test_sanitize_nested_dict():
-    data = {
-        "user": {
-            "email": "test@example.com",
-            "name": "John Doe"
-        }
-    }
-    result = sanitize_dict(data)
-    assert result["user"]["email"] == "[REDACTED]"
-    assert result["user"]["name"] == "John Doe"
-
-# Edge case tests
-def test_sanitize_empty_string():
-    assert sanitize_string("") == ""
-    assert sanitize_string(None) is None
-
-def test_sanitize_no_pii():
-    text = "This is clean text with no PII"
-    assert sanitize_string(text) == text
-
-def test_sanitize_mixed_pii():
-    text = "Contact test@example.com or 555-1234 SSN: 123-45-6789"
-    result = sanitize_string(text)
-    assert "[EMAIL]" in result
-    assert "[PHONE]" in result
-    assert "[SSN]" in result
-    assert "test@example.com" not in result
-
-# List sanitization tests
-def test_sanitize_list():
-    data = ["email: test@example.com", "phone: 555-1234"]
-    result = sanitize_pii(data)
-    assert "[EMAIL]" in result[0]
-    assert "[PHONE]" in result[1]
-
-# 22+ tests total covering all PII types and edge cases
-```
-
-## Performance Optimization
-
-### Connection Pooling
-
-```python
-from aiohttp import ClientSession
-from typing import Optional
-
-class OptimizedMCPServer:
-    """MCP server with connection pooling"""
-
-    def __init__(self):
-        self._session: Optional[ClientSession] = None
-        self._cache = {}
-
-    async def get_session(self) -> ClientSession:
-        """Get or create HTTP session"""
-        if self._session is None or self._session.closed:
-            self._session = ClientSession(
-                timeout=ClientTimeout(total=30),
-                connector=TCPConnector(limit=100)
-            )
-        return self._session
-
-    async def cleanup(self):
-        """Cleanup resources"""
-        if self._session and not self._session.closed:
-            await self._session.close()
-
-# Use in server lifecycle
-server = OptimizedMCPServer()
-
-@mcp.on_shutdown
-async def shutdown():
-    await server.cleanup()
-```
-
-### Caching Strategy
-
-```python
-from functools import lru_cache
-from aiocache import cached, Cache
-from aiocache.serializers import JsonSerializer
-
-# Sync cache for deterministic lookups
-@lru_cache(maxsize=128)
-def get_config(key: str) -> str:
-    """Cache configuration values"""
-    return load_config(key)
-
-# Async cache with TTL
-@cached(
-    ttl=300,  # 5 minute cache
-    cache=Cache.MEMORY,
-    serializer=JsonSerializer()
-)
-async def fetch_expensive_data(id: str) -> dict:
-    """Cache expensive operations"""
-    return await perform_expensive_operation(id)
-
-# Cache invalidation
-async def invalidate_cache(id: str):
-    """Invalidate specific cache entry"""
-    cache = Cache(Cache.MEMORY)
-    await cache.delete(f"fetch_expensive_data_{id}")
-```
-
-## FastMCP Dependency Management
-
-### Safe Upgrade Process
-
-1. **Research Changes**: Review fastmcp changelog and breaking changes
-2. **Version Constraints**: Use appropriate version ranges
-3. **Test Thoroughly**: Run comprehensive test suite
-4. **Verify Protocol**: Check MCP protocol compatibility
-5. **Update Documentation**: Document any API changes
-
-### pyproject.toml Configuration
-
-```toml
-[project]
-name = "mcp-server"
-version = "0.1.0"
-description = "Production MCP server"
-requires-python = ">=3.10"
-
-dependencies = [
-    "fastmcp>=2.13.0,<3.0.0",  # Pin to major version
-    "pydantic>=2.0.0,<3.0.0",
-    "opentelemetry-api>=1.20.0",
-    "opentelemetry-sdk>=1.20.0",
-    "opentelemetry-exporter-otlp>=1.20.0",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-asyncio>=0.21.0",
-    "pytest-cov>=4.0.0",
-    "mypy>=1.0.0",
-    "ruff>=0.1.0",
-]
-
-[tool.pytest.ini_options]
-asyncio_mode = "auto"
-testpaths = ["tests"]
-
-[tool.ruff]
-line-length = 88
-target-version = "py310"
-select = ["E", "F", "I", "N", "W"]
-
-[tool.mypy]
-python_version = "3.10"
-strict = true
-```
-
-## Common Patterns and Solutions
-
-### Health Check Endpoint
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/health")
-async def health_check():
-    """Kubernetes liveness probe"""
-    return {"status": "healthy"}
-
-@app.get("/ready")
-async def readiness_check():
-    """Kubernetes readiness probe"""
-    # Check dependencies (DB, external services)
-    try:
-        await check_dependencies()
-        return {"status": "ready"}
-    except Exception as e:
-        logger.error("Readiness check failed", exc_info=True)
-        raise HTTPException(status_code=503, detail="Not ready")
-```
-
-### Rate Limiting
-
-```python
-from collections import defaultdict
-from datetime import datetime, timedelta
-
-class RateLimiter:
-    """Simple in-memory rate limiter"""
-
-    def __init__(self, requests_per_minute: int = 60):
-        self.requests_per_minute = requests_per_minute
-        self.requests = defaultdict(list)
-
-    def is_allowed(self, client_id: str) -> bool:
-        """Check if request is allowed"""
-        now = datetime.now()
-        cutoff = now - timedelta(minutes=1)
-
-        # Remove old requests
-        self.requests[client_id] = [
-            req_time for req_time in self.requests[client_id]
-            if req_time > cutoff
-        ]
-
-        # Check limit
-        if len(self.requests[client_id]) >= self.requests_per_minute:
-            return False
-
-        self.requests[client_id].append(now)
-        return True
-
-rate_limiter = RateLimiter(requests_per_minute=100)
-
-@mcp.tool()
-async def rate_limited_tool(input: ToolInput) -> str:
-    """Tool with rate limiting"""
-    client_id = get_client_id()  # From MCP session
-
-    if not rate_limiter.is_allowed(client_id):
-        raise ValueError("Rate limit exceeded. Try again later.")
-
-    return await process(input)
-```
-
-## Troubleshooting Guide
-
-### Common Issues
-
-**Issue: PII leakage in logs**
-
-- **Symptom**: PII appears in log files or monitoring dashboards
-- **Solution**: Ensure `sanitize_pii()` is called before all logging statements
-- **Prevention**: Add tests that verify logs contain no PII patterns
-
-**Issue: fastmcp upgrade breaks protocol**
-
-- **Symptom**: Clients can't connect after fastmcp upgrade
-- **Solution**: Check fastmcp changelog for breaking changes, test with real clients
-- **Prevention**: Pin major version, test upgrades in dev environment first
-
-**Issue: Slow MCP tool execution**
-
-- **Symptom**: Tools take >5 seconds to respond
-- **Solution**: Implement connection pooling, caching, and async patterns
-- **Prevention**: Add performance tests, monitor latency metrics
-
-**Issue: JSON schema validation failures**
-
-- **Symptom**: Pydantic raises validation errors for valid inputs
-- **Solution**: Review Pydantic model definitions, ensure validators are correct
-- **Prevention**: Comprehensive input validation tests
-
-**Issue: Memory leaks in long-running servers**
-
-- **Symptom**: Memory usage grows over time
-- **Solution**: Ensure cleanup in shutdown hooks, check for circular references
-- **Prevention**: Profile memory usage, implement resource limits
+---
 
 ## Resources
 
-### Templates
+### Official Documentation
 
-- `resources/tool-schema-template.json` - JSON schema for tool definitions
-- `resources/resource-schema-template.json` - JSON schema for resource definitions
-- `resources/pii-patterns.json` - Comprehensive PII detection patterns
-- `resources/server-config-template.py` - Complete server configuration example
+- **MCP Specification**: <https://modelcontextprotocol.io/specification/2025-11-25>
+- **TypeScript SDK**: <https://github.com/modelcontextprotocol/typescript-sdk>
+- **Python SDK**: <https://github.com/modelcontextprotocol/python-sdk>
+- **FastMCP**: <https://github.com/jlowin/fastmcp>
 
-### Scripts
+### Anthropic Engineering
 
-- `scripts/validate-mcp-server.py` - Validate MCP server implementation
-- `scripts/test-pii-sanitization.py` - Comprehensive PII test runner
-- `scripts/generate-mcp-tool.py` - Generate new tool scaffolding
-- `scripts/benchmark-server.py` - Performance benchmarking tool
+- [Writing Effective Tools for Agents](https://www.anthropic.com/engineering/writing-tools-for-agents)
+- [Advanced Tool Use](https://www.anthropic.com/engineering/advanced-tool-use)
+- [Code Execution with MCP](https://www.anthropic.com/engineering/code-execution-with-mcp)
 
-### Documentation References
+### Related Skills
 
-- FastMCP Documentation: <https://github.com/jlowin/fastmcp>
-- MCP Protocol Spec: <https://modelcontextprotocol.io>
-- Kubernetes Skill: `~/.claude/skills/kubernetes-deployment/`
-- Security Standards: `~/.claude/docs/security/owasp-top-10.md`
-- CLAUDE.md Security Section: PII protection, input validation
-
-## Related Skills
-
-- **kubernetes-deployment**: Kubernetes deployment and secrets management
-- **security-review**: OWASP compliance, vulnerability scanning
+- **mcp-tools-as-code**: Convert MCP servers to typed TypeScript APIs
 - **api-design**: REST API patterns, OpenAPI specifications
-- **python-development**: Python best practices, type hints, async patterns
+- **security-review**: OWASP compliance, vulnerability scanning
 
 ## Best Practices Summary
 
-1. **Security First**: Sanitize PII, validate inputs, implement rate limiting
-2. **Observable by Default**: Structured logging, OpenTelemetry tracing, metrics
-3. **Type Safety**: Use Pydantic models, mypy type checking
-4. **Comprehensive Testing**: 22+ PII tests, integration tests, performance tests
-5. **Resource Management**: Connection pooling, graceful shutdown, cleanup
-6. **Error Handling**: Meaningful errors, proper exception types, retry logic
-7. **Documentation**: Clear tool descriptions, examples, troubleshooting guides
-8. **Performance**: Caching, async/await, connection pooling
-9. **Protocol Compliance**: Follow MCP specification, test with real clients
-10. **Production Ready**: Health checks, monitoring, rate limiting, Kubernetes deployment
+### Server Development
+
+1. **Use Streamable HTTP** for remote servers (SSE is deprecated)
+2. **Add tool annotations** - `readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`
+3. **Design consolidated tools** - workflows over granular endpoints
+4. **Optimize for tokens** - search-first, response formats, defer loading
+5. **Validate origins** - prevent DNS rebinding attacks
+6. **Sanitize PII** - before logging, caching, returning
+7. **Write LLM-friendly descriptions** - explain like to a new team member
+8. **Return actionable errors** - include examples and suggestions
+
+### Client Development
+
+9. **Namespace tools** - prevent collisions across multi-server setups
+10. **Implement reconnection** - exponential backoff with max retries
+11. **Handle listChanged** - subscribe to capability update notifications
+12. **Cache tool definitions** - minimize list_tools calls
+
+### Production Deployment
+
+13. **Instrument with OpenTelemetry** - traces, metrics, structured logs
+14. **Implement health checks** - `/health` endpoint for load balancers
+15. **Plan session persistence** - Redis or database for distributed setups
+16. **Reference the spec** - <https://modelcontextprotocol.io/specification/2025-11-25>
