@@ -57,7 +57,7 @@ class PluginBuilderApp(App):
     ):
         super().__init__(**kwargs)
         self.builder = PluginBuilder(marketplace_root)
-        self._current_main_screen = "dashboard"
+        self._current_main_screen: str | None = None
 
     def compose(self) -> ComposeResult:
         """Create child widgets."""
@@ -66,7 +66,7 @@ class PluginBuilderApp(App):
 
     def on_mount(self) -> None:
         """Called when app is mounted."""
-        self.push_screen("dashboard")
+        self._go_to_screen("dashboard")
 
     def action_quit(self) -> None:
         """Quit the application."""
@@ -80,27 +80,30 @@ class PluginBuilderApp(App):
         """Show search overlay."""
         self.push_screen(SearchScreen())
 
-    def _switch_main_screen(self, screen_name: str) -> None:
-        """Switch to a main screen, closing any overlays first."""
-        # Close any modal overlays first (keep at least 1 screen)
+    def _go_to_screen(self, screen_name: str) -> None:
+        """Navigate to a main screen."""
+        if self._current_main_screen == screen_name:
+            return
+
+        # Pop all screens down to just the base _default screen
         while len(self.screen_stack) > 1:
             self.pop_screen()
-        # Replace the current main screen with the new one
-        if self._current_main_screen != screen_name:
-            self.switch_screen(screen_name)
-            self._current_main_screen = screen_name
+
+        # Push the new screen
+        self.push_screen(screen_name)
+        self._current_main_screen = screen_name
 
     def action_dashboard(self) -> None:
         """Go to dashboard."""
-        self._switch_main_screen("dashboard")
+        self._go_to_screen("dashboard")
 
     def action_assets(self) -> None:
         """Go to assets screen."""
-        self._switch_main_screen("assets")
+        self._go_to_screen("assets")
 
     def action_plugins(self) -> None:
         """Go to plugins screen."""
-        self._switch_main_screen("plugins")
+        self._go_to_screen("plugins")
 
     def action_validate(self) -> None:
         """Run validation and show results."""
