@@ -2,15 +2,26 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING
 
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
-from textual.screen import Screen
-from textual.widgets import Button, Input, Label, ListItem, ListView, Static, Tree
-from textual.widgets.tree import TreeNode
+from textual.screen import ModalScreen, Screen
+from textual.widgets import (
+    Button,
+    Label,
+    ListItem,
+    ListView,
+    OptionList,
+    Static,
+    Tree,
+)
+from textual.widgets.option_list import Option
 
 from ..builder import AssetType, Plugin, PluginBuilder
+
+if TYPE_CHECKING:
+    pass
 
 
 class PluginListItem(ListItem):
@@ -29,6 +40,273 @@ class PluginListItem(ListItem):
             )
 
 
+class AddAssetModal(ModalScreen[tuple[str, AssetType] | None]):
+    """Modal for adding an asset to a plugin."""
+
+    BINDINGS = [
+        ("escape", "cancel", "Cancel"),
+    ]
+
+    CSS = """
+    AddAssetModal {
+        align: center middle;
+    }
+
+    #add-asset-dialog {
+        width: 60;
+        height: auto;
+        max-height: 80%;
+        border: round $primary;
+        background: $surface;
+        padding: 1 2;
+    }
+
+    #asset-type-tabs {
+        height: 3;
+        margin-bottom: 1;
+    }
+
+    #available-assets {
+        height: 20;
+        border: round $muted 30%;
+        margin-bottom: 1;
+    }
+
+    .modal-title {
+        text-style: bold;
+        margin-bottom: 1;
+    }
+
+    .modal-buttons {
+        height: 3;
+        align: right middle;
+    }
+    """
+
+    def __init__(
+        self,
+        plugin: Plugin,
+        builder: PluginBuilder,
+        **kwargs,
+    ) -> None:
+        super().__init__(**kwargs)
+        self.plugin = plugin
+        self.builder = builder
+        self.current_type = AssetType.COMMANDS
+        self.selected_asset: str | None = None
+
+    def compose(self) -> ComposeResult:
+        with Container(id="add-asset-dialog"):
+            yield Label(f"Add Asset to [bold]{self.plugin.name}[/]", classes="modal-title")
+
+            # Type selector buttons
+            with Horizontal(id="asset-type-tabs"):
+                yield Button("Commands", id="btn-commands", variant="primary")
+                yield Button("Agents", id="btn-agents")
+                yield Button("Skills", id="btn-skills")
+
+            # Available assets list
+            yield OptionList(id="available-assets")
+
+            # Action buttons
+            with Horizontal(classes="modal-buttons"):
+                yield Button("Cancel", id="btn-cancel")
+                yield Button("Add", id="btn-add", variant="success", disabled=True)
+
+    def on_mount(self) -> None:
+        """Load initial assets."""
+        self._load_assets(AssetType.COMMANDS)
+
+    def _load_assets(self, asset_type: AssetType) -> None:
+        """Load available assets for the given type."""
+        self.current_type = asset_type
+
+        # Update button styles
+        for btn_id, btn_type in [
+            ("btn-commands", AssetType.COMMANDS),
+            ("btn-agents", AssetType.AGENTS),
+            ("btn-skills", AssetType.SKILLS),
+        ]:
+            btn = self.query_one(f"#{btn_id}", Button)
+            btn.variant = "primary" if btn_type == asset_type else "default"
+
+        # Get assets not already in the plugin
+        all_assets = self.builder.get_registry_assets(asset_type)
+        existing = set(getattr(self.plugin, asset_type.value, []))
+        available = [a for a in all_assets if a.name not in existing]
+
+        # Update option list
+        option_list = self.query_one("#available-assets", OptionList)
+        option_list.clear_options()
+
+        if not available:
+            option_list.add_option(Option("[dim]No available assets[/]", disabled=True))
+        else:
+            for asset in available:
+                desc = f" - {asset.description[:40]}..." if asset.description else ""
+                option_list.add_option(Option(f"{asset.name}{desc}", id=asset.name))
+
+        self.selected_asset = None
+        self.query_one("#btn-add", Button).disabled = True
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Handle button presses."""
+        if event.button.id == "btn-commands":
+            self._load_assets(AssetType.COMMANDS)
+        elif event.button.id == "btn-agents":
+            self._load_assets(AssetType.AGENTS)
+        elif event.button.id == "btn-skills":
+            self._load_assets(AssetType.SKILLS)
+        elif event.button.id == "btn-cancel":
+            self.dismiss(None)
+        elif event.button.id == "btn-add":
+            if self.selected_asset:
+                self.dismiss((self.selected_asset, self.current_type))
+
+    def on_option_list_option_highlighted(
+        self, event: OptionList.OptionHighlighted
+    ) -> None:
+        """Handle asset selection."""
+        if event.option and event.option.id and not event.option.disabled:
+            self.selected_asset = str(event.option.id)
+            self.query_one("#btn-add", Button).disabled = False
+        else:
+            self.selected_asset = None
+            self.query_one("#btn-add", Button).disabled = True
+
+    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        """Handle double-click/enter on asset."""
+        if event.option and event.option.id and not event.option.disabled:
+            self.dismiss((str(event.option.id), self.current_type))
+
+    def action_cancel(self) -> None:
+        """Cancel the modal."""
+        self.dismiss(None)
+
+
+class RemoveAssetModal(ModalScreen[tuple[str, AssetType] | None]):
+    """Modal for removing an asset from a plugin."""
+
+    BINDINGS = [
+        ("escape", "cancel", "Cancel"),
+    ]
+
+    CSS = """
+    RemoveAssetModal {
+        align: center middle;
+    }
+
+    #remove-asset-dialog {
+        width: 60;
+        height: auto;
+        max-height: 80%;
+        border: round $error;
+        background: $surface;
+        padding: 1 2;
+    }
+
+    #plugin-assets {
+        height: 20;
+        border: round $muted 30%;
+        margin-bottom: 1;
+    }
+
+    .modal-title {
+        text-style: bold;
+        margin-bottom: 1;
+    }
+
+    .modal-buttons {
+        height: 3;
+        align: right middle;
+    }
+    """
+
+    def __init__(self, plugin: Plugin, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.plugin = plugin
+        self.selected_asset: str | None = None
+        self.selected_type: AssetType | None = None
+
+    def compose(self) -> ComposeResult:
+        with Container(id="remove-asset-dialog"):
+            yield Label(
+                f"Remove Asset from [bold]{self.plugin.name}[/]", classes="modal-title"
+            )
+
+            # Plugin's current assets
+            yield OptionList(id="plugin-assets")
+
+            # Action buttons
+            with Horizontal(classes="modal-buttons"):
+                yield Button("Cancel", id="btn-cancel")
+                yield Button("Remove", id="btn-remove", variant="error", disabled=True)
+
+    def on_mount(self) -> None:
+        """Load plugin's assets."""
+        option_list = self.query_one("#plugin-assets", OptionList)
+
+        has_assets = False
+
+        # Add commands
+        if self.plugin.commands:
+            option_list.add_option(Option("[bold]Commands[/]", disabled=True))
+            for cmd in self.plugin.commands:
+                option_list.add_option(Option(f"  /{cmd}", id=f"commands:{cmd}"))
+            has_assets = True
+
+        # Add agents
+        if self.plugin.agents:
+            option_list.add_option(Option("[bold]Agents[/]", disabled=True))
+            for agent in self.plugin.agents:
+                option_list.add_option(Option(f"  {agent}", id=f"agents:{agent}"))
+            has_assets = True
+
+        # Add skills
+        if self.plugin.skills:
+            option_list.add_option(Option("[bold]Skills[/]", disabled=True))
+            for skill in self.plugin.skills:
+                option_list.add_option(Option(f"  {skill}", id=f"skills:{skill}"))
+            has_assets = True
+
+        if not has_assets:
+            option_list.add_option(Option("[dim]No assets in plugin[/]", disabled=True))
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Handle button presses."""
+        if event.button.id == "btn-cancel":
+            self.dismiss(None)
+        elif event.button.id == "btn-remove":
+            if self.selected_asset and self.selected_type:
+                self.dismiss((self.selected_asset, self.selected_type))
+
+    def on_option_list_option_highlighted(
+        self, event: OptionList.OptionHighlighted
+    ) -> None:
+        """Handle asset selection."""
+        if event.option and event.option.id and not event.option.disabled:
+            option_id = str(event.option.id)
+            type_str, asset_name = option_id.split(":", 1)
+            self.selected_type = AssetType(type_str)
+            self.selected_asset = asset_name
+            self.query_one("#btn-remove", Button).disabled = False
+        else:
+            self.selected_asset = None
+            self.selected_type = None
+            self.query_one("#btn-remove", Button).disabled = True
+
+    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        """Handle double-click/enter on asset."""
+        if event.option and event.option.id and not event.option.disabled:
+            option_id = str(event.option.id)
+            type_str, asset_name = option_id.split(":", 1)
+            self.dismiss((asset_name, AssetType(type_str)))
+
+    def action_cancel(self) -> None:
+        """Cancel the modal."""
+        self.dismiss(None)
+
+
 class PluginsScreen(Screen):
     """Screen for browsing and editing plugins."""
 
@@ -41,7 +319,7 @@ class PluginsScreen(Screen):
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.selected_plugin: Optional[Plugin] = None
+        self.selected_plugin: Plugin | None = None
 
     def compose(self) -> ComposeResult:
         builder: PluginBuilder = self.app.builder  # type: ignore
@@ -133,6 +411,25 @@ class PluginsScreen(Screen):
         self.query_one("#btn-add", Button).disabled = False
         self.query_one("#btn-remove", Button).disabled = False
 
+    def _refresh_plugin_list(self) -> None:
+        """Refresh the plugin list after changes."""
+        builder: PluginBuilder = self.app.builder  # type: ignore
+        plugins = builder.get_plugins()
+
+        plugin_list = self.query_one("#plugin-list", ListView)
+        plugin_list.clear()
+
+        for p in plugins:
+            plugin_list.append(PluginListItem(p, id=f"plugin-{p.name}"))
+
+        # Re-select the current plugin if it still exists
+        if self.selected_plugin:
+            for p in plugins:
+                if p.name == self.selected_plugin.name:
+                    self.selected_plugin = p
+                    self._update_plugin_details()
+                    break
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
         if event.button.id == "btn-new":
@@ -144,8 +441,6 @@ class PluginsScreen(Screen):
 
     def action_new_plugin(self) -> None:
         """Create a new plugin."""
-        # For now, just show a notification
-        # In a full implementation, this would open a dialog
         self.app.notify(
             "Use CLI: python plugin-builder.py create <name>",
             severity="information",
@@ -157,9 +452,34 @@ class PluginsScreen(Screen):
             self.app.notify("Select a plugin first", severity="warning")
             return
 
-        self.app.notify(
-            f"Use CLI: python plugin-builder.py edit add {self.selected_plugin.name} <asset> -t <type>",
-            severity="information",
+        builder: PluginBuilder = self.app.builder  # type: ignore
+
+        def handle_add(result: tuple[str, AssetType] | None) -> None:
+            if result is None:
+                return
+
+            asset_name, asset_type = result
+            success = builder.add_asset_to_plugin(
+                self.selected_plugin.name,  # type: ignore
+                asset_name,
+                asset_type,
+            )
+
+            if success:
+                self.app.notify(
+                    f"Added {asset_name} to {self.selected_plugin.name}",  # type: ignore
+                    severity="information",
+                )
+                self._refresh_plugin_list()
+            else:
+                self.app.notify(
+                    f"Failed to add {asset_name}",
+                    severity="error",
+                )
+
+        self.app.push_screen(
+            AddAssetModal(self.selected_plugin, builder),
+            handle_add,
         )
 
     def action_remove_asset(self) -> None:
@@ -168,18 +488,32 @@ class PluginsScreen(Screen):
             self.app.notify("Select a plugin first", severity="warning")
             return
 
-        tree = self.query_one("#asset-tree", Tree)
-        cursor_node = tree.cursor_node
-        if not cursor_node or cursor_node.is_root:
-            self.app.notify("Select an asset to remove", severity="warning")
-            return
+        builder: PluginBuilder = self.app.builder  # type: ignore
 
-        # Get asset info from tree
-        asset_label = str(cursor_node.label)
-        if asset_label.startswith("/"):
-            asset_label = asset_label[1:]  # Remove leading slash for commands
+        def handle_remove(result: tuple[str, AssetType] | None) -> None:
+            if result is None:
+                return
 
-        self.app.notify(
-            f"Use CLI: python plugin-builder.py edit remove {self.selected_plugin.name} {asset_label} -t <type>",
-            severity="information",
+            asset_name, asset_type = result
+            success = builder.remove_asset_from_plugin(
+                self.selected_plugin.name,  # type: ignore
+                asset_name,
+                asset_type,
+            )
+
+            if success:
+                self.app.notify(
+                    f"Removed {asset_name} from {self.selected_plugin.name}",  # type: ignore
+                    severity="information",
+                )
+                self._refresh_plugin_list()
+            else:
+                self.app.notify(
+                    f"Failed to remove {asset_name}",
+                    severity="error",
+                )
+
+        self.app.push_screen(
+            RemoveAssetModal(self.selected_plugin),
+            handle_remove,
         )
