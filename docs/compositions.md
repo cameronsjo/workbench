@@ -33,7 +33,7 @@ Pre-configured plugin bundles for common workflows and project types. Install al
 **Includes:**
 
 - `/commit`, `/ready`, `/check`, `/clean`, `/turbo` - workflow commands
-- `/pr-review` - multi-perspective PR reviews
+- `/pr.review` - multi-perspective PR reviews
 - `/setup-labels` - repository label management
 - `code-reviewer` agent
 - `sass`, `hype`, `roast` communication modes
