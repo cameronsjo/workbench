@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "cc-web",
   "description": "Configure and optimize repositories for Claude Code on the web - SessionStart hooks, environment setup, and cloud execution expertise",
   "version": "1.0.0",
   "author": {
