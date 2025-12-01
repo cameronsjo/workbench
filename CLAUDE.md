@@ -91,8 +91,22 @@ When creating a new plugin:
 2. Add assets using `edit add` commands
 3. Add entry to `.claude-plugin/marketplace.json`
 
+## Versioning
+
+Auto-versioning on push to main via conventional commits:
+
+| Commit Prefix | Bump | Example |
+|--------------|------|---------|
+| `feat!:` or `BREAKING CHANGE` | MAJOR | 1.0.0 -> 2.0.0 |
+| `feat:` | MINOR | 1.0.0 -> 1.1.0 |
+| `fix:` | PATCH | 1.0.0 -> 1.0.1 |
+| `chore:`, `docs:`, `refactor:` | none | no release |
+
+The workflow updates `marketplace.json`, creates a git tag, and publishes a GitHub release.
+
 ## Key Files
 
 - `.claude-plugin/marketplace.json` - Plugin registry for Claude Code
+- `.github/workflows/release.yml` - Auto-versioning workflow
 - `scripts/plugin-builder.py` - CLI for managing assets and plugins
 - `docs/compositions.md` - Pre-configured plugin bundles for common workflows
