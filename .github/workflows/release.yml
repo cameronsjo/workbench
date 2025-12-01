@@ -1,4 +1,4 @@
-name: Release Please
+name: Auto Version
 
 on:
   push:
@@ -7,14 +7,109 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
-  release-please:
+  version:
     runs-on: ubuntu-latest
+    # Skip if commit is from this workflow (prevents infinite loop)
+    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: actions/checkout@v4
         with:
-          release-type: simple
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current version
+        id: current
+        run: |
+          VERSION=$(jq -r '.metadata.version' .claude-plugin/marketplace.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+
+      - name: Determine version bump
+        id: bump
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+
+          # Check for breaking change
+          if [[ "$COMMIT_MSG" =~ ^feat!:|^fix!:|BREAKING[[:space:]]CHANGE ]]; then
+            echo "type=major" >> $GITHUB_OUTPUT
+          # Check for feature
+          elif [[ "$COMMIT_MSG" =~ ^feat(\(.+\))?:|^feature(\(.+\))?: ]]; then
+            echo "type=minor" >> $GITHUB_OUTPUT
+          # Check for fix
+          elif [[ "$COMMIT_MSG" =~ ^fix(\(.+\))?: ]]; then
+            echo "type=patch" >> $GITHUB_OUTPUT
+          # Chore, docs, refactor, etc - no version bump
+          else
+            echo "type=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Calculate new version
+        id: new
+        if: steps.bump.outputs.type != 'none'
+        run: |
+          VERSION="${{ steps.current.outputs.version }}"
+          BUMP="${{ steps.bump.outputs.type }}"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          case $BUMP in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION (bump: $BUMP)"
+
+      - name: Update version files
+        if: steps.bump.outputs.type != 'none'
+        run: |
+          NEW_VERSION="${{ steps.new.outputs.version }}"
+
+          # Update marketplace.json metadata version
+          jq --arg v "$NEW_VERSION" '.metadata.version = $v' .claude-plugin/marketplace.json > tmp.json
+          mv tmp.json .claude-plugin/marketplace.json
+
+          # Update all plugin versions
+          jq --arg v "$NEW_VERSION" '.plugins[].version = $v' .claude-plugin/marketplace.json > tmp.json
+          mv tmp.json .claude-plugin/marketplace.json
+
+      - name: Commit and tag
+        if: steps.bump.outputs.type != 'none'
+        run: |
+          NEW_VERSION="${{ steps.new.outputs.version }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .claude-plugin/marketplace.json
+          git commit -m "chore(release): v$NEW_VERSION [skip-ci]"
+          git tag "v$NEW_VERSION"
+          git push origin main --tags
+
+      - name: Create GitHub Release
+        if: steps.bump.outputs.type != 'none'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW_VERSION="${{ steps.new.outputs.version }}"
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+
+          # Create release with commit message as body
+          gh release create "v$NEW_VERSION" \
+            --title "v$NEW_VERSION" \
+            --notes "$COMMIT_MSG" \
+            --latest
