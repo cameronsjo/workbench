@@ -580,7 +580,7 @@ class PluginBuilder:
                         pass
 
     def rename_plugin(self, old_name: str, new_name: str) -> None:
-        """Rename a plugin directory and update its plugin.json."""
+        """Rename a plugin directory and update its plugin.json and marketplace.json."""
         old_dir = self.plugins_dir / old_name
         new_dir = self.plugins_dir / new_name
 
@@ -598,6 +598,19 @@ class PluginBuilder:
             data = json.loads(plugin_json.read_text(encoding="utf-8"))
             data["name"] = new_name
             plugin_json.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+        # Update marketplace.json
+        marketplace_json = self.root / ".claude-plugin" / "marketplace.json"
+        if marketplace_json.exists():
+            data = json.loads(marketplace_json.read_text(encoding="utf-8"))
+            for plugin in data.get("plugins", []):
+                if plugin.get("name") == old_name:
+                    plugin["name"] = new_name
+                    plugin["source"] = f"./plugins/{new_name}"
+                    break
+            marketplace_json.write_text(
+                json.dumps(data, indent=2), encoding="utf-8"
+            )
 
     def export_json(self, output_path: Optional[Path] = None) -> dict:
         """Export marketplace as JSON."""
