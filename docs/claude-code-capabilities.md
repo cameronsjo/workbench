@@ -12,6 +12,8 @@ A comprehensive reference for Claude Code's extensibility features: hooks, agent
 6. [Plugins & Marketplaces](#plugins--marketplaces)
 7. [Claude Agent SDK](#claude-agent-sdk)
 8. [Feature Comparison](#feature-comparison)
+9. [CLI Reference](#cli-reference)
+10. [Interactive Mode](#interactive-mode)
 
 ---
 
@@ -507,10 +509,121 @@ CLAUDE.md                     # Project context
 
 ---
 
+## CLI Reference
+
+### CLI Commands
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `claude` | Start interactive REPL | `claude` |
+| `claude "query"` | Start REPL with initial prompt | `claude "explain this project"` |
+| `claude -p "query"` | Query via SDK, then exit | `claude -p "explain this function"` |
+| `cat file \| claude -p "query"` | Process piped content | `cat logs.txt \| claude -p "explain"` |
+| `claude -c` | Continue most recent conversation | `claude -c` |
+| `claude -r "<id>" "query"` | Resume session by ID | `claude -r "abc123" "Finish PR"` |
+| `claude update` | Update to latest version | `claude update` |
+| `claude mcp` | Configure MCP servers | `claude mcp` |
+
+### CLI Flags
+
+| Flag | Description | Example |
+|------|-------------|---------|
+| `--add-dir` | Add additional working directories | `claude --add-dir ../apps ../lib` |
+| `--agents` | Define custom subagents via JSON | See below |
+| `--allowedTools` | Tools allowed without permission | `"Bash(git log:*)" "Read"` |
+| `--disallowedTools` | Tools to block | `"Bash(rm:*)" "Edit"` |
+| `--print`, `-p` | Print mode (non-interactive) | `claude -p "query"` |
+| `--system-prompt` | Replace entire system prompt | `claude --system-prompt "..."` |
+| `--append-system-prompt` | Append to default prompt | `claude --append-system-prompt "..."` |
+| `--output-format` | Output format: `text`, `json`, `stream-json` | `claude -p --output-format json` |
+| `--verbose` | Enable verbose logging | `claude --verbose` |
+| `--max-turns` | Limit agentic turns | `claude -p --max-turns 3` |
+| `--model` | Set model (`sonnet`, `opus`, or full name) | `claude --model opus` |
+| `--permission-mode` | Set permission mode | `claude --permission-mode plan` |
+| `--resume` | Resume session by ID | `claude --resume abc123` |
+| `--continue` | Load most recent conversation | `claude --continue` |
+| `--dangerously-skip-permissions` | Skip permission prompts | Use with caution |
+
+### Dynamic Agents via CLI
+
+```bash
+claude --agents '{
+  "code-reviewer": {
+    "description": "Expert code reviewer. Use proactively after code changes.",
+    "prompt": "You are a senior code reviewer. Focus on quality and security.",
+    "tools": ["Read", "Grep", "Glob", "Bash"],
+    "model": "sonnet"
+  }
+}'
+```
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `description` | Yes | When the subagent should be invoked |
+| `prompt` | Yes | System prompt for the subagent |
+| `tools` | No | Array of tools (inherits all if omitted) |
+| `model` | No | `sonnet`, `opus`, or `haiku` |
+
+### System Prompt Flags
+
+| Flag | Behavior | Modes |
+|------|----------|-------|
+| `--system-prompt` | **Replaces** entire prompt | Interactive + Print |
+| `--system-prompt-file` | **Replaces** with file contents | Print only |
+| `--append-system-prompt` | **Appends** to default prompt | Interactive + Print |
+
+---
+
+## Interactive Mode
+
+### Keyboard Shortcuts
+
+| Shortcut | Description |
+|----------|-------------|
+| `Ctrl+C` | Cancel current input/generation |
+| `Ctrl+D` | Exit Claude Code session |
+| `Ctrl+L` | Clear terminal screen |
+| `Ctrl+O` | Toggle verbose output |
+| `Ctrl+R` | Reverse search command history |
+| `Ctrl+V` / `Alt+V` | Paste image from clipboard |
+| `Up/Down` | Navigate command history |
+| `Esc` + `Esc` | Rewind code/conversation |
+| `Tab` | Toggle extended thinking |
+| `Shift+Tab` | Toggle permission modes |
+
+### Quick Commands
+
+| Shortcut | Description |
+|----------|-------------|
+| `#` at start | Add memory to CLAUDE.md |
+| `/` at start | Slash command |
+| `!` at start | Bash mode (run directly) |
+| `@` | File path autocomplete |
+
+### Multiline Input
+
+| Method | Shortcut |
+|--------|----------|
+| Quick escape | `\` + `Enter` |
+| macOS | `Option+Enter` |
+| After `/terminal-setup` | `Shift+Enter` |
+| Control sequence | `Ctrl+J` |
+
+### Background Commands
+
+Run commands in the background while continuing to work:
+- Press `Ctrl+B` to background a running command
+- Claude can retrieve output later with `BashOutput` tool
+- Useful for dev servers, builds, test runners
+
+---
+
 ## Resources
 
 ### Official Documentation
 - [Claude Code Overview](https://docs.anthropic.com/en/docs/claude-code/overview)
+- [CLI Reference](https://docs.anthropic.com/en/docs/claude-code/cli-reference)
+- [Interactive Mode](https://docs.anthropic.com/en/docs/claude-code/interactive-mode)
 - [Hooks Reference](https://docs.anthropic.com/en/docs/claude-code/hooks)
 - [Skills Guide](https://www.anthropic.com/news/skills)
 - [Plugins Guide](https://www.anthropic.com/news/claude-code-plugins)
