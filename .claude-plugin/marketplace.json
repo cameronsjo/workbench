@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Personal Claude Code productivity toolkit - agents, commands, and skills for software development",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -14,7 +14,7 @@
       "name": "essentials",
       "source": "./plugins/essentials",
       "description": "Cameron's development essentials: deep research hooks and core productivity enhancements",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "productivity",
       "tags": [
         "essentials",
@@ -28,7 +28,7 @@
       "name": "core",
       "source": "./plugins/core",
       "description": "Essential productivity commands: git workflows, code review, project checks",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "productivity",
       "tags": [
         "git",
@@ -42,7 +42,7 @@
       "name": "python",
       "source": "./plugins/python",
       "description": "Python development expertise: async, testing, uv, type hints",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "language",
       "tags": [
         "python",
@@ -56,7 +56,7 @@
       "name": "typescript",
       "source": "./plugins/typescript",
       "description": "TypeScript/JavaScript development: React, Next.js, Node.js patterns",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "language",
       "tags": [
         "typescript",
@@ -70,7 +70,7 @@
       "name": "api",
       "source": "./plugins/api",
       "description": "API design and review: REST best practices, OpenAPI, architecture",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "architecture",
       "tags": [
         "api",
@@ -84,7 +84,7 @@
       "name": "security",
       "source": "./plugins/security",
       "description": "Security auditing and review: OWASP, vulnerability scanning, auth patterns",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "security",
       "tags": [
         "security",
@@ -98,7 +98,7 @@
       "name": "pr",
       "source": "./plugins/pr",
       "description": "Pull request automation: multi-perspective reviews, labels, fixes",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "workflow",
       "tags": [
         "pr",
@@ -112,7 +112,7 @@
       "name": "research",
       "source": "./plugins/research",
       "description": "Research and analysis: comprehensive research, web search, synthesis",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "research",
       "tags": [
         "research",
@@ -126,7 +126,7 @@
       "name": "obsidian",
       "source": "./plugins/obsidian",
       "description": "Obsidian knowledge management: markdown, MOCs, tags, linking",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "productivity",
       "tags": [
         "obsidian",
@@ -140,7 +140,7 @@
       "name": "mcp",
       "source": "./plugins/mcp",
       "description": "MCP server development: architecture, testing, deployment",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "development",
       "tags": [
         "mcp",
@@ -154,7 +154,7 @@
       "name": "dx",
       "source": "./plugins/dx",
       "description": "Developer experience: debugging, optimization, prompt engineering",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "development",
       "tags": [
         "dx",
@@ -168,7 +168,7 @@
       "name": "cloud",
       "source": "./plugins/cloud",
       "description": "Cloud operations: AWS/Azure/GCP, Kubernetes, DevOps, deployment",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "infrastructure",
       "tags": [
         "cloud",
@@ -182,7 +182,7 @@
       "name": "data",
       "source": "./plugins/data",
       "description": "Data science and analytics: SQL, ML pipelines, data engineering",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "data",
       "tags": [
         "data",
@@ -196,7 +196,7 @@
       "name": "obsidian-dev",
       "source": "./plugins/obsidian-dev",
       "description": "Obsidian plugin development: TypeScript patterns, Release Please, BRAT beta channel, GitHub Actions",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "development",
       "tags": [
         "obsidian",
@@ -212,7 +212,7 @@
       "name": "meta",
       "source": "./plugins/meta",
       "description": "Meta plugin for marketplace development: analyze plugins, suggest improvements, detect gaps, curate compositions",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "development",
       "tags": [
         "marketplace",
@@ -228,7 +228,7 @@
       "name": "cc-web",
       "source": "./plugins/cc-web",
       "description": "Configure repositories for Claude Code on the web: SessionStart hooks, environment setup, cloud execution",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "development",
       "tags": [
         "cloud",
