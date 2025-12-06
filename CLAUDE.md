@@ -10,47 +10,22 @@ This is a Claude Code plugin marketplace - a collection of agents, commands, and
 
 ### Flat File Structure
 
-Plugins contain real files (not symlinks) because Claude Code's plugin system doesn't follow symlinks when scanning for commands/agents/skills. The registry serves as the canonical source, and files are copied into plugins.
+Plugins contain real files (not symlinks) because Claude Code doesn't follow symlinks when scanning. Each plugin is self-contained.
 
 ```
-registry/               # Source of truth for all assets
-├── agents/            # Agent prompts (.md files)
-├── commands/          # Slash command prompts (.md files)
-└── skills/            # Skill directories (SKILL.md + resources/)
-
-plugins/               # Installable plugin packages (real files, not symlinks)
+plugins/
 ├── {plugin-name}/
 │   ├── .claude-plugin/plugin.json  # Plugin metadata
-│   ├── agents/        # Copied from registry/agents/
-│   ├── commands/      # Copied from registry/commands/
-│   └── skills/        # Copied from registry/skills/
+│   ├── agents/                     # Agent prompts (.md files)
+│   ├── commands/                   # Slash command prompts (.md files)
+│   └── skills/                     # Skill directories (SKILL.md + resources/)
 ```
 
-**Important:** When updating assets, edit the file in `registry/` then copy to all plugins that use it. The plugin-builder CLI can help manage this.
+> **Why no central registry?** See [ADR 0001: Flat File Architecture](docs/adr/0001-flat-file-architecture.md) for the decision record. TL;DR: Claude Code doesn't follow symlinks, so we use real files with accepted duplication.
 
-### Plugin Builder CLI
+### Duplication is Intentional
 
-`scripts/plugin-builder.py` manages the marketplace:
-
-```bash
-# Show dashboard with stats and health
-python scripts/plugin-builder.py dashboard
-
-# List all assets in registry
-python scripts/plugin-builder.py list
-
-# Show which plugins use each asset
-python scripts/plugin-builder.py usage
-
-# Find orphaned (unused) assets
-python scripts/plugin-builder.py orphans
-
-# Add asset to a plugin (copies from registry)
-python scripts/plugin-builder.py edit add {plugin} {asset} -t {commands|agents|skills}
-
-# Interactive mode
-python scripts/plugin-builder.py
-```
+Some assets appear in multiple plugins. This is by design - it keeps plugins self-contained and avoids symlink issues. When updating a shared asset, check if other plugins need the same update.
 
 ### Marketplace Configuration
 
@@ -62,39 +37,50 @@ python scripts/plugin-builder.py
 
 ## Asset Formats
 
-### Commands (registry/commands/*.md)
+### Commands (`commands/*.md`)
 
-YAML frontmatter with description, category, and allowed-tools. Body contains the prompt template.
+YAML frontmatter with description and allowed-tools. Body contains the prompt template.
 
-### Agents (registry/agents/*.md)
+```yaml
+---
+description: Brief description of what the command does
+argument-hint: "[optional-args]"
+allowed-tools: Bash, Read, Write, Edit
+disable-model-invocation: true  # Optional: keeps out of context
+---
+```
+
+### Agents (`agents/*.md`)
 
 YAML frontmatter defining the agent persona. Body contains system prompt and behavioral guidelines.
 
-### Skills (registry/skills/{name}/)
+### Skills (`skills/{name}/`)
 
 Directory structure:
 
-- `SKILL.md` - Main skill definition with frontmatter
+- `SKILL.md` - Main skill definition with YAML frontmatter (`name`, `description`)
 - `README.md` - Optional documentation
 - `resources/` - Additional reference files
 
 ## Development Workflow
 
-When adding new assets:
+### Adding a New Asset
 
-1. Create the asset in `registry/{type}/`
-2. Use plugin-builder to add it to plugins: `python scripts/plugin-builder.py edit add {plugin} {asset} -t {type}`
+1. Create the asset directly in the plugin's directory
+2. If the asset should be shared, copy it to other relevant plugins
 
-When creating a new plugin:
+### Creating a New Plugin
 
-1. `python scripts/plugin-builder.py create {name} -d "description"`
-2. Add assets using `edit add` commands
-3. Add entry to `.claude-plugin/marketplace.json`
+1. Create directory: `plugins/{name}/`
+2. Add `.claude-plugin/plugin.json` with metadata
+3. Add agents, commands, and/or skills
+4. Add entry to `.claude-plugin/marketplace.json`
 
-When updating existing assets:
+### Updating Shared Assets
 
-1. Edit the file in `registry/{type}/`
-2. The change needs to be propagated to all plugins using that asset (plugin-builder can help identify which plugins)
+1. Edit the asset in one plugin
+2. Copy the updated file to other plugins that use it
+3. Use `grep` or search to find other copies if unsure
 
 ## Versioning
 
@@ -113,5 +99,5 @@ The workflow updates `marketplace.json`, creates a git tag, and publishes a GitH
 
 - `.claude-plugin/marketplace.json` - Plugin registry for Claude Code
 - `.github/workflows/release.yml` - Auto-versioning workflow
-- `scripts/plugin-builder.py` - CLI for managing assets and plugins
+- `docs/adr/` - Architecture decision records
 - `docs/compositions.md` - Pre-configured plugin bundles for common workflows

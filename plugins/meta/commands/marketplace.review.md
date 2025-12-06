@@ -1,8 +1,8 @@
 ---
 description: Analyze marketplace for gaps, improvements, and composition opportunities
-category: development
 argument-hint: "[plugin-name | --full | --compositions | --gaps]"
 allowed-tools: Bash, Read, Glob, Grep, Task
+disable-model-invocation: true
 ---
 
 # Claude Command: Marketplace Review

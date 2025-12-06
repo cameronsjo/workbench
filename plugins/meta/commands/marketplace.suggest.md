@@ -1,8 +1,8 @@
 ---
 description: Suggest a new plugin based on current project context or described need
-category: development
 argument-hint: "[description or --from-context]"
 allowed-tools: Bash, Read, Glob, Grep, Task
+disable-model-invocation: true
 ---
 
 # Claude Command: Marketplace Suggest

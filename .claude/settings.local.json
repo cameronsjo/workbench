@@ -14,7 +14,9 @@
       "WebFetch(domain:spec.modelcontextprotocol.io)",
       "WebFetch(domain:den.dev)",
       "WebFetch(domain:mingzilla.github.io)",
-      "SlashCommand(/roadmap.add:*)"
+      "SlashCommand(/roadmap.add:*)",
+      "Bash(do basename \"$f\" .md)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []
