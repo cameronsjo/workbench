@@ -1,3 +1,8 @@
+---
+name: Prompt Engineering
+description: Expert guidance for crafting effective LLM prompts using proven techniques like chain-of-thought and few-shot learning
+---
+
 # Prompt Engineering Skill
 
 Expert guidance for crafting effective prompts for LLMs and AI systems using proven techniques and patterns.

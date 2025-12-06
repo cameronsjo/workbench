@@ -1,3 +1,8 @@
+---
+name: Deep Research
+description: Enables automatic deep research mode with comprehensive analysis when trigger phrases are detected
+---
+
 # Deep Research Skill
 
 Enables automatic deep research mode when trigger phrases are detected in user prompts.

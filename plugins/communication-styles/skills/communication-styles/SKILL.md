@@ -1,3 +1,8 @@
+---
+name: Communication Style Flexing
+description: Master communication style flexing to build rapport and influence stakeholders using the Social Styles Framework
+---
+
 # Communication Style Flexing Skill
 
 Master the art of flexing your communication style to build rapport, influence decisions, and collaborate effectively with any stakeholder.
