@@ -1,5 +1,5 @@
 ---
-name: Political Attack Neutralization
+name: political-attack-neutralization
 description: Neutralize workplace political attacks using the MOAR framework from Gartner research
 ---
 

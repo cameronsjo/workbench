@@ -1,5 +1,5 @@
 ---
-name: Executive Presence
+name: executive-presence
 description: Build executive presence through intentional personal brand development using Gartner research methodology
 ---
 

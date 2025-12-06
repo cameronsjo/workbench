@@ -1,5 +1,5 @@
 ---
-name: Communication Style Flexing
+name: communication-styles
 description: Master communication style flexing to build rapport and influence stakeholders using the Social Styles Framework
 ---
 

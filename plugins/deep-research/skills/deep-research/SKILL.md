@@ -1,5 +1,5 @@
 ---
-name: Deep Research
+name: deep-research
 description: Enables automatic deep research mode with comprehensive analysis when trigger phrases are detected
 ---
 

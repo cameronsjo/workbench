@@ -1,5 +1,5 @@
 ---
-name: Prompt Engineering
+name: prompt-engineering
 description: Expert guidance for crafting effective LLM prompts using proven techniques like chain-of-thought and few-shot learning
 ---
 

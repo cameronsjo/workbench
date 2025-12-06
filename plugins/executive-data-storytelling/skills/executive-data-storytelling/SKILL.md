@@ -1,5 +1,5 @@
 ---
-name: Executive Data Storytelling
+name: executive-data-storytelling
 description: Transform data into compelling executive narratives using the What/Why/Next framework from Gartner research
 ---
 
