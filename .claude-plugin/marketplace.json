@@ -224,6 +224,89 @@
         "claude-code"
       ],
       "strict": true
+    },
+    {
+      "name": "communication-styles",
+      "source": "./plugins/communication-styles",
+      "description": "Stakeholder communication patterns: email templates, presentation frameworks, style diagnostics",
+      "version": "1.0.0",
+      "keywords": [
+        "communication",
+        "stakeholders",
+        "presentations",
+        "email",
+        "soft-skills"
+      ],
+      "strict": true
+    },
+    {
+      "name": "deep-research",
+      "source": "./plugins/deep-research",
+      "description": "Research mode detection and deep-dive workflows for comprehensive analysis",
+      "version": "1.0.0",
+      "keywords": [
+        "research",
+        "analysis",
+        "deep-dive",
+        "investigation"
+      ],
+      "strict": true
+    },
+    {
+      "name": "executive-data-storytelling",
+      "source": "./plugins/executive-data-storytelling",
+      "description": "Data presentation for leadership: narrative frameworks, chart selection, CEO-focused insights",
+      "version": "1.0.0",
+      "keywords": [
+        "data",
+        "storytelling",
+        "executive",
+        "presentations",
+        "leadership"
+      ],
+      "strict": true
+    },
+    {
+      "name": "executive-presence",
+      "source": "./plugins/executive-presence",
+      "description": "Personal brand development: self-assessment, influence audits, brand promise frameworks",
+      "version": "1.0.0",
+      "keywords": [
+        "leadership",
+        "brand",
+        "presence",
+        "influence",
+        "executive"
+      ],
+      "strict": true
+    },
+    {
+      "name": "political-attack-neutralization",
+      "source": "./plugins/political-attack-neutralization",
+      "description": "Workplace politics navigation: risk assessment, message formulas, reputation restoration",
+      "version": "1.0.0",
+      "keywords": [
+        "politics",
+        "workplace",
+        "reputation",
+        "conflict",
+        "strategy"
+      ],
+      "strict": true
+    },
+    {
+      "name": "prompt-engineering",
+      "source": "./plugins/prompt-engineering",
+      "description": "LLM prompt optimization: templates, chain-of-thought, few-shot patterns, best practices",
+      "version": "1.0.0",
+      "keywords": [
+        "prompts",
+        "llm",
+        "ai",
+        "templates",
+        "optimization"
+      ],
+      "strict": true
     }
   ]
 }
