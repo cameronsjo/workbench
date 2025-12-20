@@ -4,6 +4,7 @@ Personal Claude Code plugin marketplace - a curated collection of agents, comman
 
 [![Support me on Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Me-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/cameronsjo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.0.74+-blueviolet)](https://claude.ai/code)
 
 ## Quick Start
 
@@ -96,6 +97,11 @@ Configure auto-installation in your project's `.claude/settings.json`:
   ]
 }
 ```
+
+## Requirements
+
+- **Claude Code v2.0.74+** - Uses `.claude/rules/`, path targeting, hooks
+- Obsidian + [Local REST API plugin](https://github.com/coddingtonbear/obsidian-local-rest-api) (optional, for session-sync)
 
 ## Documentation
 
