@@ -19,46 +19,20 @@ Create a new session timeline file for cross-device session continuity.
 
 ## Template
 
-Create the file with this content:
-
 ```markdown
 # Claude Code Timeline
 
-Cross-device session continuity for Claude Code.
+## Inbox
 
-## Current State
+> Async capture from any device. Claude reviews at session start.
 
-### Services
+## Work Log
 
-| Service | Port | Network | Status |
-|---------|------|---------|--------|
-| *Add running services here* | | | |
+### *Date*
 
-### Repositories
-
-| Repo | Purpose | Location |
-|------|---------|----------|
-| *Add project repos here* | | |
-
-### Secrets
-
-| Secret | Location | Fields |
-|--------|----------|--------|
-| *Document secret locations* | | |
-
-## TODOs
-
-- [ ] *Add pending tasks here*
-
-## Session Log
-
-*New session entries are added below this line*
-
----
+- *HH:MM* **Type**: *message*
 ```
 
 ## After Creation
 
-1. Confirm the file was created
-2. Suggest updating the Current State section with actual values
-3. Remind user to set `CLAUDE_TIMELINE_PATH` in their environment if not already persistent
+Confirm the file was created and remind user to set `CLAUDE_TIMELINE_PATH` in their environment if not already persistent.

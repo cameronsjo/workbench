@@ -1,68 +1,29 @@
 ---
-description: Update the session timeline with current session summary
-allowed-tools: Read, Edit, Write, mcp__obsidian-mcp-server__obsidian_read_note, mcp__obsidian-mcp-server__obsidian_update_note
+description: Add end-of-session summary to the work log
+allowed-tools: Read, Edit, mcp__obsidian-mcp-server__obsidian_read_note, mcp__obsidian-mcp-server__obsidian_update_note
 ---
 
 # Session Sync
 
-Update the session timeline with a summary of this session.
+Add a brief end-of-session summary line to the Work Log.
 
 ## Requirements
 
 - `CLAUDE_TIMELINE_PATH` environment variable must be set
-- Timeline file must exist (run `/session.init` if not)
 
 ## Process
 
-1. Read the current timeline from `$CLAUDE_TIMELINE_PATH`
-2. Summarize what was accomplished this session
-3. Identify any repos that were modified
-4. Note any state changes (services, configs, secrets)
-5. List any pending TODOs or blockers for next session
-6. Add a new session entry to the Session Log section
+1. Read timeline from `$CLAUDE_TIMELINE_PATH`
+2. Summarize what was accomplished this session (1-2 sentences)
+3. Add entry: `- HH:MM **Session**: summary`
+4. Review any Inbox items and address or acknowledge them
 
-## Entry Format
-
-Use this format for new entries (insert after "## Session Log"):
+## Example
 
 ```markdown
-### {DATE} {TIME} {TIMEZONE} ({DEVICE})
-
-**Session:** Brief description of what was accomplished
-
-**Changes:**
-- Change 1 with details
-- Change 2 with details
-
-**Repos touched:**
-- repo-name - what changed
-
-**State after:** Key state changes
-
-**Next steps:**
-- [ ] TODO 1
-- [ ] TODO 2
-
----
+- 21:30 **Session**: Refactored auth module, fixed 3 bugs, PR ready for review
 ```
 
-## Device Detection
+## MCP Preferred
 
-- Mac: macOS
-- Windows: Windows/WSL
-- Web: Claude Code on web
-- Linux: Native Linux
-
-## Reading/Writing
-
-**Prefer MCP if available:**
-- Read: `mcp__obsidian-mcp-server__obsidian_read_note`
-- Write: `mcp__obsidian-mcp-server__obsidian_update_note`
-
-**Fallback to filesystem:**
-- Read: `Read` tool
-- Write: `Edit` tool
-
-## After Updating
-
-Confirm the update was successful and show a summary of what was logged.
+Use `mcp__obsidian-mcp-server__*` if available, fall back to Read/Edit.

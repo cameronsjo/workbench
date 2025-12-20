@@ -16,7 +16,10 @@
       "WebFetch(domain:mingzilla.github.io)",
       "SlashCommand(/roadmap.add:*)",
       "Bash(do basename \"$f\" .md)",
-      "Bash(done)"
+      "Bash(done)",
+      "mcp__obsidian-mcp-server__obsidian_read_note",
+      "mcp__obsidian-mcp-server__obsidian_search_replace",
+      "mcp__obsidian-mcp-server__obsidian_update_note"
     ],
     "deny": [],
     "ask": []
