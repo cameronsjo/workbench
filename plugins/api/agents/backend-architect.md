@@ -1,4 +1,5 @@
 ---
+model: opus
 name: backend-architect
 description: Design scalable APIs, microservices, and database schemas. Use PROACTIVELY when creating backend services, defining service boundaries, or planning system architecture.
 category: development-architecture

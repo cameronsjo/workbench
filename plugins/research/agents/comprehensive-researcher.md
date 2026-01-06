@@ -1,4 +1,5 @@
 ---
+model: opus
 name: comprehensive-researcher
 category: specialized-domains
 description: Conduct in-depth research with multiple sources, cross-verification, and structured reports. Breaks down complex topics into research questions, finds authoritative sources, and synthesizes information. Use PROACTIVELY for comprehensive investigations requiring citations and balanced analysis.

@@ -1,4 +1,5 @@
 ---
+model: opus
 name: tag-agent
 category: specialized-domains
 description: Normalizes and hierarchically organizes tag taxonomy for knowledge management systems. Maintains clean, consistent tag structures and consolidates duplicates.

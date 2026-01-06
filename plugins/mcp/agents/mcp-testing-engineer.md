@@ -1,4 +1,5 @@
 ---
+model: opus
 name: mcp-testing-engineer
 category: quality-security
 description: Tests, debugs, and ensures quality for MCP servers including JSON schema validation, protocol compliance, security vulnerability assessment, load testing, and comprehensive debugging. Provides automated testing strategies and detailed quality reports.

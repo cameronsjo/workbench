@@ -1,4 +1,5 @@
 ---
+model: opus
 name: network-engineer
 category: infrastructure-operations
 description: Debug network connectivity, configure load balancers, and analyze traffic patterns. Handles DNS, SSL/TLS, CDN setup, and network security. Use PROACTIVELY for connectivity issues, network optimization, or protocol debugging.

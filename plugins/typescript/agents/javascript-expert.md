@@ -1,4 +1,5 @@
 ---
+model: opus
 name: javascript-expert
 description: Modern JavaScript (ES2024+), Node 22, and async patterns. Use PROACTIVELY for JS development when TypeScript isn't an option.
 category: language-expert

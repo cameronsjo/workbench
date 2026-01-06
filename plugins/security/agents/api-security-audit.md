@@ -1,4 +1,5 @@
 ---
+model: opus
 name: api-security-audit
 description: Conduct security audits for REST APIs and identify vulnerabilities. Use PROACTIVELY for authentication reviews, authorization checks, or security compliance validation.
 category: quality-security

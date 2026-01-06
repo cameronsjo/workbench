@@ -1,4 +1,5 @@
 ---
+model: opus
 name: academic-researcher
 description: Find and analyze scholarly sources, research papers, and academic literature. Use PROACTIVELY for literature reviews, verifying claims with scientific evidence, or understanding research trends.
 category: specialized-domains

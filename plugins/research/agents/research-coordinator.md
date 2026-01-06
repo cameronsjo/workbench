@@ -1,4 +1,5 @@
 ---
+model: opus
 name: research-coordinator
 description: Strategically plan and coordinate complex research tasks across multiple specialists. Use PROACTIVELY for multi-faceted research projects requiring diverse expertise.
 category: specialized-domains

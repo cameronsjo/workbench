@@ -1,4 +1,5 @@
 ---
+model: opus
 name: error-detective
 description: Search logs for error patterns and identify root causes. Use PROACTIVELY when debugging issues, analyzing logs, or investigating production errors.
 category: quality-security

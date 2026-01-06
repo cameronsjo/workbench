@@ -1,4 +1,5 @@
 ---
+model: opus
 name: marketplace-curator
 description: Use PROACTIVELY when working in claude-marketplace repo, creating plugins, or discussing marketplace improvements
 category: development

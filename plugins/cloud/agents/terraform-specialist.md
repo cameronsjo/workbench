@@ -1,4 +1,5 @@
 ---
+model: opus
 name: terraform-specialist
 description: Write Terraform modules and manage infrastructure as code. Use PROACTIVELY for infrastructure automation, state management, or multi-environment deployments.
 category: infrastructure-operations

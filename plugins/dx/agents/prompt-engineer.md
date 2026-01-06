@@ -1,4 +1,5 @@
 ---
+model: opus
 name: prompt-engineer
 description: Craft effective prompts for LLMs with modern techniques. Use PROACTIVELY for system prompts, agent design, or prompt optimization.
 category: data-ai

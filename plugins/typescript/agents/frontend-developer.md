@@ -1,4 +1,5 @@
 ---
+model: opus
 name: frontend-developer
 description: Modern Next.js 15 with React 19, Server Components, and Tailwind CSS. Use PROACTIVELY for frontend development, UI components, or SSR optimization.
 category: development-architecture

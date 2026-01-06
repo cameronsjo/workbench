@@ -1,4 +1,5 @@
 ---
+model: opus
 name: data-analyst
 description: Quantitative analysis, statistical insights, and data-driven research. Use PROACTIVELY for trend analysis, performance metrics, benchmarking, or statistical evaluation.
 category: specialized-domains

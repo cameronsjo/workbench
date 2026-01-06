@@ -1,4 +1,5 @@
 ---
+model: opus
 name: connection-agent
 category: specialized-domains
 description: Analyzes and suggests meaningful links between related content in knowledge management systems. Identifies entity-based connections, keyword overlaps, orphaned notes, and generates actionable link suggestions for manual curation.

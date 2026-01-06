@@ -1,4 +1,5 @@
 ---
+model: opus
 name: python-expert
 description: Modern Python (3.12+) with type hints, async, and performance optimization. Use PROACTIVELY for Python development, refactoring, or complex features.
 category: language-expert

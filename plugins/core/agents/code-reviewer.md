@@ -1,4 +1,5 @@
 ---
+model: opus
 name: code-reviewer
 description: Expert code review for quality, security, and maintainability. Use PROACTIVELY after writing code or before PRs.
 category: quality-security

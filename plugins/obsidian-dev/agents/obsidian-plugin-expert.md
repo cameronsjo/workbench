@@ -1,4 +1,5 @@
 ---
+model: opus
 name: obsidian-plugin-expert
 description: Use PROACTIVELY for Obsidian plugin development, TypeScript patterns, modal/settings UI, release automation, and BRAT beta testing
 category: language-expert

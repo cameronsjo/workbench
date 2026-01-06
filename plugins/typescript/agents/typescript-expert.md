@@ -1,4 +1,5 @@
 ---
+model: opus
 name: typescript-expert
 description: Modern TypeScript 5.x with strict types, advanced patterns, and Biome. Use PROACTIVELY for TypeScript development, type system design, or JS migration.
 category: language-expert

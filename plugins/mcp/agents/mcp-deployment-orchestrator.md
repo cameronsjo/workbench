@@ -1,4 +1,5 @@
 ---
+model: opus
 name: mcp-deployment-orchestrator
 category: specialized-domains
 description: Deploys MCP servers to production with containerization, Kubernetes deployments, autoscaling, monitoring, and high-availability operations. Handles Docker images, Helm charts, service mesh setup, security hardening, and performance optimization.

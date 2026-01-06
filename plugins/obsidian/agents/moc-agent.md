@@ -1,4 +1,5 @@
 ---
+model: opus
 name: moc-agent
 category: specialized-domains
 description: Identifies and generates missing Maps of Content (MOCs) and organizes orphaned assets. Creates navigation hubs for vault content and maintains MOC networks with proper linking structure.

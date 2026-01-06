@@ -1,4 +1,5 @@
 ---
+model: opus
 name: cloud-architect
 description: Modern cloud infrastructure with Terraform, containers, and cost optimization. Use PROACTIVELY for cloud architecture, IaC, or migration planning.
 category: infrastructure-operations

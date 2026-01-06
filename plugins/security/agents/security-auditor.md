@@ -1,4 +1,5 @@
 ---
+model: opus
 name: security-auditor
 description: Security reviews, vulnerability assessment, and OWASP compliance. Use PROACTIVELY for security audits, auth implementation, or before deployments.
 category: quality-security

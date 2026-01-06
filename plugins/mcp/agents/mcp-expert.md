@@ -1,4 +1,5 @@
 ---
+model: opus
 name: mcp-expert
 description: Create Model Context Protocol integrations and servers. Specializes in fastmcp, PII sanitization, and production deployments. Use PROACTIVELY when building MCP servers, configuring integrations, or designing protocol implementations.
 category: specialized-domains

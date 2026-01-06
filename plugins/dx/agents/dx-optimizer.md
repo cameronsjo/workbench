@@ -1,4 +1,5 @@
 ---
+model: opus
 name: dx-optimizer
 description: Developer Experience specialist for tooling, workflows, and productivity. Use PROACTIVELY for project setup, reducing friction, or improving dev workflows.
 category: quality-security

@@ -1,4 +1,5 @@
 ---
+model: opus
 name: api-documenter
 description: Expert API documenter specializing in creating comprehensive, developer-friendly API documentation. Masters OpenAPI/Swagger specifications, interactive documentation portals, and documentation automation. Use PROACTIVELY for API documentation or client library generation. Follows API standards.
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch

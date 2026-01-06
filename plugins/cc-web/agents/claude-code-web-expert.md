@@ -1,4 +1,5 @@
 ---
+model: opus
 name: claude-code-web-expert
 description: Expert on Claude Code on the web - cloud execution, SessionStart hooks, environment configuration, network policies, and web-to-terminal workflows
 category: development
