@@ -1,82 +1,77 @@
 # Claude Code Marketplace
 
-Lean Claude Code toolkit - actual tools and workflows, not prompt wrappers.
+Three plugins. That's it.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Philosophy
-
-This marketplace contains **actual tools and automation**, not "expert prompts" that duplicate Claude's built-in capabilities.
-
-**What's here:**
-- CLI tool wrappers (`/ready`)
-- Behavior mode commands (`/turbo`, `/roast`)
-- MCP servers with real code
-- Scripts and templates with actual functionality
-
-**What's NOT here:**
-- "Be a Python expert" prompts (use built-in `python-expert` agent)
-- "Be a security expert" prompts (use built-in `security-auditor` agent)
-- Prompt wrappers that duplicate built-in agents
-
-## Quick Start
-
-```bash
-# Add marketplace
-/plugin marketplace add cameronsjo/claude-marketplace
-
-# Install core workflow commands
-/plugin install core@cameronsjo
-
-# Install user memory MCP + PR workflows
-/plugin install essentials@cameronsjo
-```
-
 ## Plugins
 
-| Plugin | What It Actually Does |
-|--------|----------------------|
-| **core** | Workflow modes (`/turbo`, `/roast`, `/hype`), `/ready` CLI wrapper, `/check`, `/clean` |
-| **essentials** | User memory MCP server (actual code), PR review commands, roadmap tracking |
-| **research** | Conversation indexing tool - semantic search over past sessions |
-| **security** | Python scripts: OWASP checklist, secret scanning, security audit |
-| **api** | OpenAPI templates, validation scripts, naming checkers |
-| **dx** | Feature flags TypeScript toolkit with generators and stale detection |
-| **cc-web** | Session start hook templates for cloud Claude Code |
+| Plugin | What It Is | Lines of Code |
+|--------|-----------|---------------|
+| **core** | Workflow modes (`/turbo`, `/roast`) + tool wrappers (`/ready`) | ~1500 |
+| **essentials** | User memory MCP server - persists context across sessions | ~800 TypeScript |
+| **research** | Conversation search - indexes and searches past Claude sessions | ~1200 TypeScript |
 
-## Installation
+## Install
 
 ```bash
-# Minimal - just workflow modes
-/plugin install core@cameronsjo
-
-# Recommended - core + memory + PR workflows
+/plugin marketplace add cameronsjo/claude-marketplace
 /plugin install core@cameronsjo
 /plugin install essentials@cameronsjo
 ```
 
-Or configure in `.claude/settings.json`:
+## Philosophy
 
-```json
-{
-  "extraKnownMarketplaces": {
-    "cameronsjo": {
-      "source": { "source": "github", "repo": "cameronsjo/claude-marketplace" }
-    }
-  },
-  "enabledPlugins": ["core@cameronsjo", "essentials@cameronsjo"]
-}
+See [ADR-0002](docs/adr/0002-lean-marketplace-philosophy.md).
+
+**TL;DR:** This marketplace only contains things with actual running code or unique UX value.
+
+### What's NOT here
+
+| Category | Use Instead |
+|----------|-------------|
+| "Be a Python expert" | Built-in `python-expert` agent |
+| "Be a security expert" | Built-in `security-auditor` agent |
+| OWASP/secret scanning | gitleaks, semgrep, trivy |
+| OpenAPI validation | spectral, openapi-generator |
+| Feature flags | Your own tooling |
+
+If it's a prompt that tells Claude to be good at something, use a built-in agent or put it in your dotfiles.
+
+## Commands (core plugin)
+
+| Command | What It Does |
+|---------|-------------|
+| `/turbo` | Maximum speed mode - parallelize everything |
+| `/roast` | Maximum scrutiny mode - thorough analysis |
+| `/hype` | Encouragement mode |
+| `/sass` | Personality mode |
+| `/ready` | Commit, push, create PR (wraps `claude-ready` CLI) |
+| `/check` | Run project checks |
+| `/clean` | Fix linting/formatting |
+| `/catchup` | Read uncommitted changes after `/clear` |
+| `/context-prime` | Load project context |
+
+## Tools (essentials + research plugins)
+
+### User Memory MCP
+
+Persists user preferences and context across Claude Code sessions.
+
+```bash
+/plugin install essentials@cameronsjo
+# Configure MCP server in settings
 ```
 
-## Why So Few Plugins?
+### Conversation Search
 
-Claude Code v2.0+ has excellent built-in agents:
-- `python-expert`, `typescript-expert` for language expertise
-- `security-auditor`, `api-security-audit` for security
-- `mcp-expert`, `mcp-server-architect` for MCP development
-- `Explore` agent for codebase investigation
+Indexes past Claude sessions for semantic search.
 
-**Use those.** This marketplace only contains things that provide value beyond prompts.
+```bash
+/plugin install research@cameronsjo
+cd ~/.claude/plugins/cache/.../research
+npm install && npm run build
+```
 
 ## License
 

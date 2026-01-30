@@ -5,7 +5,7 @@
     "github": "cameronsjo"
   },
   "metadata": {
-    "description": "Lean Claude Code toolkit - actual tools and workflows, not prompt wrappers",
+    "description": "Lean Claude Code toolkit - actual tools, not prompt wrappers",
     "version": "3.0.0",
     "pluginRoot": "./plugins"
   },
@@ -13,7 +13,7 @@
     {
       "name": "core",
       "source": "./plugins/core",
-      "description": "Workflow modes and commands: turbo, roast, check, ready (CLI wrapper)",
+      "description": "Workflow modes (/turbo, /roast) and tool wrappers (/ready, /check)",
       "version": "3.0.0",
       "keywords": ["workflow", "modes", "productivity"],
       "strict": true
@@ -21,49 +21,17 @@
     {
       "name": "essentials",
       "source": "./plugins/essentials",
-      "description": "User memory MCP server, PR workflows, roadmap tracking",
+      "description": "User memory MCP server - persists preferences across sessions",
       "version": "3.0.0",
-      "keywords": ["memory", "mcp", "pr", "roadmap"],
+      "keywords": ["memory", "mcp", "persistence"],
       "strict": true
     },
     {
       "name": "research",
       "source": "./plugins/research",
-      "description": "Conversation indexing and semantic search tool",
+      "description": "Conversation search - indexes and searches past Claude sessions",
       "version": "3.0.0",
-      "keywords": ["search", "conversations", "memory"],
-      "strict": true
-    },
-    {
-      "name": "security",
-      "source": "./plugins/security",
-      "description": "Security review scripts: OWASP checklist, secret scanning, audit tools",
-      "version": "3.0.0",
-      "keywords": ["security", "owasp", "secrets", "audit"],
-      "strict": true
-    },
-    {
-      "name": "api",
-      "source": "./plugins/api",
-      "description": "API design resources: OpenAPI templates, validation scripts",
-      "version": "3.0.0",
-      "keywords": ["api", "openapi", "validation"],
-      "strict": true
-    },
-    {
-      "name": "dx",
-      "source": "./plugins/dx",
-      "description": "Feature flags toolkit with TypeScript generators and stale flag detection",
-      "version": "3.0.0",
-      "keywords": ["feature-flags", "dx"],
-      "strict": true
-    },
-    {
-      "name": "cc-web",
-      "source": "./plugins/cc-web",
-      "description": "Session start hook templates for Claude Code cloud execution",
-      "version": "3.0.0",
-      "keywords": ["cloud", "hooks", "session"],
+      "keywords": ["search", "conversations", "history"],
       "strict": true
     }
   ]
