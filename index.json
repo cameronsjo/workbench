@@ -15,6 +15,18 @@
       "version": "1.0.0",
       "path": "./obsidian-dev",
       "description": "Complete toolkit for Obsidian plugin development: scaffolding, TypeScript patterns, GitHub Actions, Release Please, BRAT integration"
+    },
+    {
+      "name": "essentials",
+      "version": "1.0.0",
+      "path": "./essentials",
+      "description": "Personality commands - hype, sass, roast, turbo mode, and context catchup"
+    },
+    {
+      "name": "development",
+      "version": "1.0.0",
+      "path": "./development",
+      "description": "Development workflow tools - logging agents, project checks, linting, and context loading"
     }
   ]
 }
