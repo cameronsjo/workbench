@@ -1,0 +1,18 @@
+{
+  "name": "release-pipelines",
+  "description": "Three-stage release pipeline (Beta → RC → Stable) for Node/TypeScript projects using release-please and commit keywords",
+  "version": "1.0.0",
+  "author": {
+    "name": "cameronsjo"
+  },
+  "keywords": [
+    "release",
+    "github-actions",
+    "release-please",
+    "beta",
+    "rc",
+    "ci-cd",
+    "node",
+    "typescript"
+  ]
+}

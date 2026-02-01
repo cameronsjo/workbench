@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/schemas/marketplace.json",
+  "name": "cameronsjo",
+  "description": "Personal Claude Code plugins for release automation, Obsidian development, and more",
+  "author": "cameronsjo",
+  "plugins": [
+    {
+      "name": "release-pipelines",
+      "version": "1.0.0",
+      "path": "./release-pipelines",
+      "description": "Three-stage release pipeline (Beta → RC → Stable) for Node/TypeScript projects"
+    },
+    {
+      "name": "obsidian-dev",
+      "version": "1.0.0",
+      "path": "./obsidian-dev",
+      "description": "Complete toolkit for Obsidian plugin development: scaffolding, TypeScript patterns, GitHub Actions, Release Please, BRAT integration"
+    }
+  ]
+}

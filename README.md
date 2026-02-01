@@ -1,27 +1,44 @@
-# Claude Code Marketplace (Archived)
+# Claude Marketplace
 
-**This repository has been deprecated.** Content has moved to [cameronsjo/claude-settings](https://github.com/cameronsjo/claude-settings).
+Personal Claude Code plugin marketplace.
 
-## What Happened
+## Installation
 
-The marketplace concept didn't pan out. Most plugins were just prompts that duplicated Claude Code's built-in agents. The valuable content has been moved to dotfiles.
+```bash
+# Add this marketplace
+/plugin marketplace add cameronsjo/claude-marketplace
 
-## New Home
-
-```
-~/.claude/
-├── commands/     # /turbo, /roast, /ready, etc.
-├── rules/        # Code standards, language-specific rules
-└── tools/        # Actual code: user-memory MCP, conversation-search
+# Install plugins
+/plugin install release-pipelines
+/plugin install obsidian-dev
 ```
 
-See [cameronsjo/claude-settings](https://github.com/cameronsjo/claude-settings).
+## Plugins
 
-## Lessons Learned
+### release-pipelines
 
-1. **Prompts aren't plugins** - If it just tells Claude to be good at something, use built-in agents
-2. **Dotfiles > marketplaces** - Rules files work better for personal configuration
-3. **Only ship actual tools** - MCP servers, CLI tools, things that run
+Three-stage release pipeline (Beta → RC → Stable) for Node/TypeScript projects.
+
+**Commands:**
+- `/setup-release-pipeline` - Generate GitHub Actions workflows for release automation
+
+**Usage:**
+```bash
+git commit -m "feat: add feature [beta]"   # Beta prerelease
+git commit -m "chore: prepare [rc]"        # Release candidate
+# Merge release-please PR                  # Stable release
+```
+
+### obsidian-dev
+
+Complete toolkit for Obsidian plugin development.
+
+**Commands:**
+- `/obsidian.init` - Scaffold new Obsidian plugin with modern tooling
+- `/obsidian.release` - Trigger beta/RC/stable releases
+
+**Agent:**
+- `obsidian-plugin-expert` - TypeScript patterns, Obsidian API, esbuild config, BRAT integration
 
 ## License
 
