@@ -1,0 +1,12 @@
+{
+  "name": "mcp",
+  "description": "MCP server development toolkit - architecture patterns, client/server dev, tools-as-code",
+  "version": "1.0.0",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "server",
+    "client",
+    "tools"
+  ]
+}

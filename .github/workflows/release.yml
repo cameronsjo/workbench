@@ -1,0 +1,115 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    # Skip if commit is from this workflow
+    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current version
+        id: current
+        run: |
+          VERSION=$(jq -r '.plugins[0].version' index.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+
+      - name: Determine version bump
+        id: bump
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          # Check for breaking change
+          if [[ "$COMMIT_MSG" =~ ^feat!:|^fix!:|BREAKING[[:space:]]CHANGE ]]; then
+            echo "type=major" >> $GITHUB_OUTPUT
+          # Check for feature
+          elif [[ "$COMMIT_MSG" =~ ^feat(\(.+\))?:|^feature(\(.+\))?: ]]; then
+            echo "type=minor" >> $GITHUB_OUTPUT
+          # Check for fix
+          elif [[ "$COMMIT_MSG" =~ ^fix(\(.+\))?: ]]; then
+            echo "type=patch" >> $GITHUB_OUTPUT
+          # Chore, docs, refactor, etc - no version bump
+          else
+            echo "type=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Calculate new version
+        id: new
+        if: steps.bump.outputs.type != 'none'
+        env:
+          VERSION: ${{ steps.current.outputs.version }}
+          BUMP: ${{ steps.bump.outputs.type }}
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          case $BUMP in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION (bump: $BUMP)"
+
+      - name: Update version files
+        if: steps.bump.outputs.type != 'none'
+        env:
+          NEW_VERSION: ${{ steps.new.outputs.version }}
+        run: |
+          # Update all plugin versions in index.json
+          jq --arg v "$NEW_VERSION" '.plugins[].version = $v' index.json > tmp.json
+          mv tmp.json index.json
+
+          # Update each plugin.json
+          find src -name "plugin.json" -path "*/.claude-plugin/*" | while read pj; do
+            echo "Updating $pj to $NEW_VERSION"
+            jq --arg v "$NEW_VERSION" '.version = $v' "$pj" > tmp.json && mv tmp.json "$pj"
+          done
+
+      - name: Commit and tag
+        if: steps.bump.outputs.type != 'none'
+        env:
+          NEW_VERSION: ${{ steps.new.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add index.json src/
+          git commit -m "chore(release): v$NEW_VERSION [skip-ci]"
+          git tag "v$NEW_VERSION"
+          git push origin main --tags
+
+      - name: Create GitHub Release
+        if: steps.bump.outputs.type != 'none'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ steps.new.outputs.version }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          gh release create "v$NEW_VERSION" \
+            --title "v$NEW_VERSION" \
+            --notes "$COMMIT_MSG" \
+            --latest

@@ -1,0 +1,9 @@
+{
+  "name": "development",
+  "description": "Development workflow tools - logging agents, project checks, linting, and context loading",
+  "version": "1.0.0",
+  "author": {
+    "name": "cameronsjo"
+  },
+  "keywords": ["development", "logging", "linting", "checks", "workflow", "observability"]
+}
