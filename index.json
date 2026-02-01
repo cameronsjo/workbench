@@ -7,25 +7,25 @@
     {
       "name": "release-pipelines",
       "version": "1.0.0",
-      "path": "./release-pipelines",
+      "path": "./src/release-pipelines",
       "description": "Three-stage release pipeline (Beta → RC → Stable) for Node/TypeScript projects"
     },
     {
       "name": "obsidian-dev",
       "version": "1.0.0",
-      "path": "./obsidian-dev",
+      "path": "./src/obsidian-dev",
       "description": "Complete toolkit for Obsidian plugin development: scaffolding, TypeScript patterns, GitHub Actions, Release Please, BRAT integration"
     },
     {
       "name": "essentials",
       "version": "1.0.0",
-      "path": "./essentials",
+      "path": "./src/essentials",
       "description": "Personality commands - hype, sass, roast, turbo mode, and context catchup"
     },
     {
       "name": "development",
       "version": "1.0.0",
-      "path": "./development",
+      "path": "./src/development",
       "description": "Development workflow tools - logging agents, project checks, linting, and context loading"
     }
   ]

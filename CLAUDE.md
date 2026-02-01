@@ -6,10 +6,11 @@ Plugin marketplace for Claude Code.
 
 ```
 ├── index.json              # Marketplace registry
-├── essentials/             # Personality commands
-├── development/            # Dev workflow tools
-├── release-pipelines/      # CI/CD automation
-└── obsidian-dev/           # Obsidian plugin toolkit
+└── src/
+    ├── essentials/         # Personality commands
+    ├── development/        # Dev workflow tools
+    ├── release-pipelines/  # CI/CD automation
+    └── obsidian-dev/       # Obsidian plugin toolkit
 ```
 
 ## Plugin Format
