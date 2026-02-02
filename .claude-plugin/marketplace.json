@@ -9,8 +9,7 @@
     "plugins": [                                                                                                                                 
       {                                                                                                                                          
         "name": "obsidian-plugin",                                                                                                               
-        "description": "Complete toolkit for Obsidian plugin development: scaffolding, TypeScript patterns, GitHub Actions, Release Please, BRAT 
-  integration",                                                                                                                                  
+        "description": "Complete toolkit for Obsidian plugin development: scaffolding, TypeScript patterns, GitHub Actions, Release Please, BRAT integration",                                                                                                                                  
         "version": "1.0.0",                                                                                                                      
         "source": "./src/obsidian-plugin-development"                                                                                            
       },                                                                                                                                         
