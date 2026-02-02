@@ -1,0 +1,12 @@
+{
+  "name": "homebridge",
+  "description": "Homebridge plugin development toolkit - HAP mappings, accessory patterns, config schemas, debugging",
+  "version": "1.0.0",
+  "keywords": [
+    "homebridge",
+    "homekit",
+    "hap",
+    "smart-home",
+    "iot"
+  ]
+}

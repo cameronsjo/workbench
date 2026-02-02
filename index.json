@@ -33,6 +33,12 @@
       "version": "1.0.0",
       "path": "./src/mcp",
       "description": "MCP server development toolkit - architecture patterns, client/server dev, tools-as-code"
+    },
+    {
+      "name": "homebridge",
+      "version": "1.0.0",
+      "path": "./src/homebridge",
+      "description": "Homebridge plugin development toolkit - HAP mappings, accessory patterns, config schemas, debugging"
     }
   ]
 }
