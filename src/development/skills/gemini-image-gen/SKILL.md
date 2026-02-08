@@ -219,6 +219,57 @@ Aspect ratio drives composition and narrative -- it is not just a technical sett
 
 **Critical: 9:16 requires full recomposition.** Simply cropping a 16:9 prompt produces unusable results. Write a dedicated prompt that places subject and environment within the vertical frame from the start.
 
+## Pre-Flight Validation
+
+Image generation is an **expensive** cost tier (~$0.13/call). Every call MUST pass a quality gate before hitting the API. A bad prompt produces a bad image and wastes real money.
+
+### Validation Checklist
+
+Before sending a prompt to Gemini, verify:
+
+| Check | Rule | Why |
+|---|---|---|
+| Non-empty body | Prompt body has content after frontmatter split | Empty string = $0.13 for nothing |
+| Minimum length | At least 50 words | Short prompts produce generic, unusable images |
+| Quality floor | At least 150 words for production images | 300-500 words is the sweet spot; under 150 lacks the specificity that makes generation worthwhile |
+| Has subject | First section describes a concrete visual subject | Abstract prompts ("a feeling of hope") produce garbage |
+| No contradictions | No opposing directives ("vibrant and muted", "minimal and detailed") | Model picks one randomly, wastes the call |
+| Style specified | Prompt includes medium, palette, or texture language | Without style, output is generic stock-photo aesthetic |
+| Frontmatter valid | `aspect_ratio` is a supported value, `resolution` is `1K`/`2K`/`4K` | Invalid config = API error = wasted call |
+
+### Script-Level Validation
+
+Add this before the API call in generation scripts:
+
+```python
+def validate_prompt(body: str, frontmatter: dict) -> list[str]:
+    """Pre-flight check before expensive image generation."""
+    errors = []
+    words = body.split()
+
+    if not body.strip():
+        errors.append("Empty prompt body -- refusing to send")
+    elif len(words) < 50:
+        errors.append(f"Prompt too short ({len(words)} words, minimum 50)")
+
+    if len(words) < 150:
+        errors.append(f"Warning: prompt is {len(words)} words (recommend 300-500 for best results)")
+
+    valid_ratios = {"1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"}
+    ratio = frontmatter.get("aspect_ratio", "")
+    if ratio and ratio not in valid_ratios:
+        errors.append(f"Invalid aspect_ratio '{ratio}' -- must be one of {valid_ratios}")
+
+    valid_sizes = {"1K", "2K", "4K"}
+    size = frontmatter.get("resolution", "")
+    if size and size not in valid_sizes:
+        errors.append(f"Invalid resolution '{size}' -- must be one of {valid_sizes} (uppercase K)")
+
+    return errors
+```
+
+Errors are hard stops. Warnings print but proceed. Integrate this into the `generate()` function before the API call.
+
 ## Workflow: Prompt-as-File Architecture
 
 For projects generating multiple images, use a file-based workflow:
