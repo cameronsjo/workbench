@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/schemas/marketplace.json",
-  "name": "cameronsjo",
-  "description": "Cameron's Claude Code plugins and curated obra/superpowers forks",
+  "name": "workbench",
+  "description": "Cameron's Claude Code plugins - personal tools and curated obra/superpowers forks",
   "author": "cameronsjo",
   "plugins": [
     {
@@ -10,8 +10,26 @@
         "source": "url",
         "url": "https://github.com/cameronsjo/essentials.git"
       },
-      "description": "Personality commands - hype, sass, roast, turbo, catchup, doc-to-reference",
-      "version": "1.2.0"
+      "description": "Core developer workflow toolkit: productivity commands, brainstorming, git worktrees, skill building, enforcement hooks, and session management",
+      "version": "2.0.0"
+    },
+    {
+      "name": "vibes",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/vibes.git"
+      },
+      "description": "Communication style commands - hype, sass, roast, and unhinged modes for different energy levels",
+      "version": "1.0.0"
+    },
+    {
+      "name": "rules",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/rules.git"
+      },
+      "description": "Language and security rules for Claude Code - Python, TypeScript, JavaScript, Go, Rust, Java, C#",
+      "version": "1.0.0"
     },
     {
       "name": "dev-toolkit",
@@ -41,12 +59,12 @@
       "version": "1.2.0"
     },
     {
-      "name": "obsidian-dev",
+      "name": "obsidian",
       "source": {
         "source": "url",
-        "url": "https://github.com/cameronsjo/obsidian-dev.git"
+        "url": "https://github.com/cameronsjo/obsidian.git"
       },
-      "description": "Obsidian plugin development - scaffolding, TypeScript patterns, GitHub Actions, BRAT",
+      "description": "Obsidian toolkit: vault management, markdown reference, Bases, plugin development, and plugin patterns",
       "version": "1.2.0"
     },
     {
