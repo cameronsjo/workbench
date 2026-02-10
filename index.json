@@ -1,161 +1,163 @@
 {
-  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/schemas/marketplace.json",
   "name": "workbench",
-  "description": "Cameron's Claude Code plugins - personal tools and curated obra/superpowers forks",
-  "author": "cameronsjo",
+  "description": "Personal Claude Code plugins and curated obra/superpowers forks",
+  "owner": {
+    "name": "Cameron Sjo",
+    "github": "cameronsjo"
+  },
   "plugins": [
     {
       "name": "essentials",
+      "description": "Core developer workflow: brainstorming, git worktrees, skill building, enforcement hooks, session management",
+      "version": "2.0.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/essentials.git"
-      },
-      "description": "Core developer workflow toolkit: productivity commands, brainstorming, git worktrees, skill building, enforcement hooks, and session management",
-      "version": "2.0.0"
+      }
     },
     {
       "name": "vibes",
+      "description": "Communication style commands — hype, sass, roast, unhinged",
+      "version": "1.0.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/vibes.git"
-      },
-      "description": "Communication style commands - hype, sass, roast, and unhinged modes for different energy levels",
-      "version": "1.0.0"
+      }
     },
     {
       "name": "rules",
+      "description": "Language and security rules — Python, TypeScript, JavaScript, Go, Rust, Java, C#",
+      "version": "1.0.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/rules.git"
-      },
-      "description": "Language and security rules for Claude Code - Python, TypeScript, JavaScript, Go, Rust, Java, C#",
-      "version": "1.0.0"
+      }
     },
     {
       "name": "dev-toolkit",
+      "description": "Development workflow tools — logging agents, project checks, release pipelines",
+      "version": "1.2.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/dev-toolkit.git"
-      },
-      "description": "Development workflow tools - logging agents, project checks, release pipelines",
-      "version": "1.2.0"
+      }
     },
     {
       "name": "session-continuity",
+      "description": "Cross-session context with timeline logging and inbox capture",
+      "version": "1.2.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/session-continuity.git"
-      },
-      "description": "Cross-session context with timeline logging and inbox capture",
-      "version": "1.2.0"
+      }
     },
     {
       "name": "mcp-toolkit",
+      "description": "MCP server development — architecture patterns, tools-as-code",
+      "version": "1.2.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/mcp-toolkit.git"
-      },
-      "description": "MCP server development toolkit - architecture patterns, tools-as-code",
-      "version": "1.2.0"
+      }
     },
     {
       "name": "obsidian",
+      "description": "Obsidian toolkit — vault management, markdown, Bases, plugin development",
+      "version": "1.2.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/obsidian.git"
-      },
-      "description": "Obsidian toolkit: vault management, markdown reference, Bases, plugin development, and plugin patterns",
-      "version": "1.2.0"
+      }
     },
     {
       "name": "homebridge-dev",
+      "description": "Homebridge plugin development — HAP mappings, accessory patterns, debugging",
+      "version": "1.2.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/homebridge-dev.git"
-      },
-      "description": "Homebridge plugin development - HAP mappings, accessory patterns, debugging",
-      "version": "1.2.0"
+      }
     },
     {
       "name": "image-gen-toolkit",
+      "description": "Image generation toolkit for Gemini — prompt engineering, composition specs, visual grammar",
+      "version": "0.1.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/image-gen-toolkit.git"
-      },
-      "description": "Image generation toolkit for Gemini 3 Pro Image - prompt engineering, composition specs, visual grammar. Commercial license required.",
-      "version": "0.1.0"
+      }
     },
     {
       "name": "homelab",
+      "description": "Homelab infrastructure context — Unraid server, media stack, Docker services",
+      "version": "1.0.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/homelab.git"
-      },
-      "description": "Homelab infrastructure context - Unraid server, media stack, Docker services",
-      "version": "1.0.0"
+      }
     },
     {
       "name": "superpowers",
+      "description": "Core skills library — TDD, debugging, collaboration patterns",
+      "version": "4.2.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/superpowers.git"
-      },
-      "description": "Core skills library: TDD, debugging, collaboration patterns, and proven techniques",
-      "version": "4.2.0"
+      }
     },
     {
       "name": "superpowers-chrome",
+      "description": "Direct Chrome DevTools Protocol access — skill mode + MCP mode, zero dependencies",
+      "version": "1.6.4",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/superpowers-chrome.git"
-      },
-      "description": "Direct Chrome DevTools Protocol access - skill mode + MCP mode, zero dependencies",
-      "version": "1.6.4"
+      }
     },
     {
       "name": "superpowers-lab",
+      "description": "Experimental skills — tmux automation, MCP server discovery, duplicate detection",
+      "version": "0.3.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/superpowers-lab.git"
-      },
-      "description": "Experimental skills: tmux automation, MCP server discovery, duplicate detection, Slack messaging",
-      "version": "0.3.0"
+      }
     },
     {
       "name": "superpowers-developing-for-claude-code",
+      "description": "Skills and docs for developing Claude Code plugins, skills, and MCP servers",
+      "version": "0.3.1",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/superpowers-developing-for-claude-code.git"
-      },
-      "description": "Skills and docs for developing Claude Code plugins, skills, and MCP servers",
-      "version": "0.3.1"
+      }
     },
     {
       "name": "episodic-memory",
+      "description": "Semantic search for Claude Code conversations across sessions",
+      "version": "1.0.15",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/episodic-memory.git"
-      },
-      "description": "Semantic search for Claude Code conversations - remember past discussions across sessions",
-      "version": "1.0.15"
+      }
     },
     {
       "name": "double-shot-latte",
+      "description": "Auto-continues Claude Code work instead of stopping to ask permission",
+      "version": "1.1.5",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/double-shot-latte.git"
-      },
-      "description": "Auto-continues Claude Code work instead of stopping to ask permission",
-      "version": "1.1.5"
+      }
     },
     {
       "name": "elements-of-style",
+      "description": "Writing guidance based on Strunk's The Elements of Style (1918)",
+      "version": "1.0.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/the-elements-of-style.git"
-      },
-      "description": "Writing guidance based on Strunk's The Elements of Style (1918)",
-      "version": "1.0.0"
+      }
     }
   ]
 }
