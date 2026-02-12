@@ -17,7 +17,7 @@ Hub registry for all personal Claude Code plugins and curated obra/superpowers f
 
 Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 
-## Plugins (17)
+## Plugins (16)
 
 ### Personal
 
@@ -27,7 +27,6 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | vibes | Communication styles: hype, sass, roast, unhinged |
 | rules | Language rules (Python, TS, Go, Rust, Java, C#) + security with self-destructing init |
 | dev-toolkit | Development workflow: logging agents, project checks, release pipelines |
-| session-continuity | Cross-session context with timeline logging and inbox capture |
 | mcp-toolkit | MCP server development patterns |
 | obsidian | Vault management, markdown reference, Bases, plugin development |
 | homebridge-dev | Homebridge plugin development: HAP mappings, accessory patterns |

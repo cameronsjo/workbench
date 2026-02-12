@@ -12,7 +12,7 @@ Hub registry for all personal Claude Code plugins and curated obra/superpowers f
 └── docs/                   # Historical design docs
 ```
 
-## Plugins (17)
+## Plugins (16)
 
 ### Personal
 
@@ -22,7 +22,6 @@ Hub registry for all personal Claude Code plugins and curated obra/superpowers f
 | vibes | cameronsjo/vibes | Communication styles: hype, sass, roast, unhinged |
 | rules | cameronsjo/rules | Language rules (Python, TS, JS, Go, Rust, Java, C#) + security |
 | dev-toolkit | cameronsjo/dev-toolkit | Logging agents, project checks, release pipelines |
-| session-continuity | cameronsjo/session-continuity | Cross-session context with timeline logging |
 | mcp-toolkit | cameronsjo/mcp-toolkit | MCP server development patterns |
 | obsidian | cameronsjo/obsidian | Vault management, markdown, Bases, plugin dev |
 | homebridge-dev | cameronsjo/homebridge-dev | Homebridge plugin development |

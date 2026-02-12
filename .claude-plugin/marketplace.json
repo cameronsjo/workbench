@@ -43,15 +43,6 @@
       }
     },
     {
-      "name": "session-continuity",
-      "description": "Cross-session context with timeline logging and inbox capture",
-      "version": "1.2.0",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/session-continuity.git"
-      }
-    },
-    {
       "name": "mcp-toolkit",
       "description": "MCP server development — architecture patterns, tools-as-code",
       "version": "1.2.0",
