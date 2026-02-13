@@ -152,8 +152,8 @@
     },
     {
       "name": "git-guardrails",
-      "description": "Lightweight git workflow nudges: branch protection warnings and commit reminders after idle periods",
-      "version": "0.1.0",
+      "description": "Git safety hooks: block pushes and gh writes to repos you don't own, branch warnings, commit nudges",
+      "version": "0.2.0",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/git-guardrails.git"
