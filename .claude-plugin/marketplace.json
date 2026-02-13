@@ -149,6 +149,15 @@
         "source": "url",
         "url": "https://github.com/cameronsjo/the-elements-of-style.git"
       }
+    },
+    {
+      "name": "git-guardrails",
+      "description": "Lightweight git workflow nudges: branch protection warnings and commit reminders after idle periods",
+      "version": "0.1.0",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/git-guardrails.git"
+      }
     }
   ]
 }
