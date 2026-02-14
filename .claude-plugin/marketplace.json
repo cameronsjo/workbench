@@ -124,15 +124,6 @@
       }
     },
     {
-      "name": "episodic-memory",
-      "description": "Semantic search for Claude Code conversations across sessions",
-      "version": "1.0.15",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/episodic-memory.git"
-      }
-    },
-    {
       "name": "double-shot-latte",
       "description": "Auto-continues Claude Code work instead of stopping to ask permission",
       "version": "1.1.5",
