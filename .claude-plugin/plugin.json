@@ -1,1 +1,4 @@
-{ "name": "workbench" }
+{
+  "name": "workbench",
+  "version": "0.0.0"
+}
