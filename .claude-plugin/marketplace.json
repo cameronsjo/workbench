@@ -141,6 +141,14 @@
         "source": "url",
         "url": "https://github.com/cameronsjo/git-guardrails.git"
       }
+    },
+    {
+      "name": "pencil",
+      "description": "Design workflow for Pencil.dev — canvas design, .pen files, and design-to-code with MCP tools",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/pencil.git"
+      }
     }
   ]
 }
