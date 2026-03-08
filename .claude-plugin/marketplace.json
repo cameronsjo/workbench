@@ -15,6 +15,46 @@
       }
     },
     {
+      "name": "cadence-forge",
+      "description": "Development workflow tools — logging, dependency vetting, release pipelines, diagrams, and project checks",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-forge.git"
+      }
+    },
+    {
+      "name": "cadence-mcp",
+      "description": "MCP server development — architecture patterns, tools-as-code",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-mcp.git"
+      }
+    },
+    {
+      "name": "cadence-obsidian",
+      "description": "Obsidian plugin development and vault workflows — markdown, Bases, release automation",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-obsidian.git"
+      }
+    },
+    {
+      "name": "cadence-palette",
+      "description": "Image generation toolkit — Gemini prompt engineering, composition specs, visual grammar",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-palette.git"
+      }
+    },
+    {
+      "name": "cadence-lab",
+      "description": "Flair and experimental skills — macOS integrations, theming, tmux, MCP discovery",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-lab.git"
+      }
+    },
+    {
       "name": "codex",
       "description": "How to work with me — interaction patterns, session management, plan discipline, communication style",
       "source": {
