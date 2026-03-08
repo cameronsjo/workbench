@@ -7,6 +7,14 @@
   },
   "plugins": [
     {
+      "name": "cadence",
+      "description": "Context management framework — four-tier workflow router, daily rhythm, session capture, authoring methodology",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence.git"
+      }
+    },
+    {
       "name": "codex",
       "description": "How to work with me — interaction patterns, session management, plan discipline, communication style",
       "source": {
