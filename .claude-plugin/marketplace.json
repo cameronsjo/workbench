@@ -1,6 +1,6 @@
 {
   "name": "workbench",
-  "description": "Personal Claude Code plugins and curated obra/superpowers forks",
+  "description": "Personal Claude Code plugins — cadence ecosystem and standalone tools",
   "owner": {
     "name": "Cameron Sjo",
     "github": "cameronsjo"
@@ -55,59 +55,11 @@
       }
     },
     {
-      "name": "codex",
-      "description": "How to work with me — interaction patterns, session management, plan discipline, communication style",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/codex.git"
-      }
-    },
-    {
-      "name": "essentials",
-      "description": "Core developer workflow: brainstorming, git worktrees, skill building, enforcement hooks, session management",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/essentials.git"
-      }
-    },
-    {
-      "name": "vibes",
-      "description": "Communication style commands — hype, sass, roast, unhinged",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/vibes.git"
-      }
-    },
-    {
       "name": "rules",
       "description": "How to work with code — language standards, security, quality, git, CI/CD, Docker, MCP, documentation",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/rules.git"
-      }
-    },
-    {
-      "name": "dev-toolkit",
-      "description": "Development workflow tools — logging agents, project checks, release pipelines",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/dev-toolkit.git"
-      }
-    },
-    {
-      "name": "mcp-toolkit",
-      "description": "MCP server development — architecture patterns, tools-as-code",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/mcp-toolkit.git"
-      }
-    },
-    {
-      "name": "obsidian",
-      "description": "Obsidian toolkit — vault management, markdown, Bases, plugin development",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/obsidian.git"
       }
     },
     {
@@ -119,14 +71,6 @@
       }
     },
     {
-      "name": "image-gen-toolkit",
-      "description": "Image generation toolkit for Gemini — prompt engineering, composition specs, visual grammar",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/image-gen-toolkit.git"
-      }
-    },
-    {
       "name": "homelab",
       "description": "Homelab infrastructure context — Unraid server, media stack, Docker services",
       "source": {
@@ -135,27 +79,11 @@
       }
     },
     {
-      "name": "superpowers",
-      "description": "Core skills library — TDD, debugging, collaboration patterns",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/superpowers.git"
-      }
-    },
-    {
       "name": "superpowers-chrome",
       "description": "Direct Chrome DevTools Protocol access — skill mode + MCP mode, zero dependencies",
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/superpowers-chrome.git"
-      }
-    },
-    {
-      "name": "superpowers-lab",
-      "description": "Experimental skills — tmux automation, MCP server discovery, duplicate detection",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/superpowers-lab.git"
       }
     },
     {
