@@ -1,6 +1,6 @@
 # Workbench
 
-Hub registry for all personal Claude Code plugins and curated obra/superpowers forks.
+Hub registry for personal Claude Code plugins.
 
 ## Structure
 
@@ -10,34 +10,26 @@ Hub registry for all personal Claude Code plugins and curated obra/superpowers f
 └── docs/                   # Historical design docs
 ```
 
-## Plugins (17)
+## Plugins
 
-### Personal
+### Cadence Ecosystem
 
 | Plugin | Repo | Description |
 |---|---|---|
-| essentials | cameronsjo/essentials | Core workflow: brainstorming, worktrees, enforcement hooks, session management |
-| vibes | cameronsjo/vibes | Communication styles: hype, sass, roast, unhinged |
+| cadence | cameronsjo/cadence | Context management framework — four-tier workflow router, daily rhythm, session capture |
+| cadence-forge | cameronsjo/cadence-forge | Development workflow — logging, dependency vetting, release pipelines, diagrams |
+| cadence-mcp | cameronsjo/cadence-mcp | MCP server development patterns |
+| cadence-obsidian | cameronsjo/cadence-obsidian | Obsidian plugin development and vault workflows |
+| cadence-palette | cameronsjo/cadence-palette | Image generation toolkit for Gemini |
+| cadence-lab | cameronsjo/cadence-lab | Experimental — macOS integrations, tmux, MCP discovery |
+
+### Standalone
+
+| Plugin | Repo | Description |
+|---|---|---|
 | rules | cameronsjo/rules | 10 languages, security, quality, git, CI/CD, Docker, MCP, documentation |
-| dev-toolkit | cameronsjo/dev-toolkit | Logging agents, project checks, release pipelines |
-| mcp-toolkit | cameronsjo/mcp-toolkit | MCP server development patterns |
-| obsidian | cameronsjo/obsidian | Vault management, markdown, Bases, plugin dev |
-| homebridge-dev | cameronsjo/homebridge-dev | Homebridge plugin development |
-| image-gen-toolkit | cameronsjo/image-gen-toolkit | Gemini image generation |
-| homelab | cameronsjo/homelab | Homelab infrastructure context |
 | git-guardrails | cameronsjo/git-guardrails | Push/gh write guards, branch warnings, commit nudges |
-| project-onboard | cameronsjo/project-onboard | Onboarding skills for project portfolio |
-
-### Superpowers (obra forks)
-
-| Plugin | Repo | Description |
-|---|---|---|
-| superpowers | cameronsjo/superpowers | TDD, debugging, collaboration patterns |
-| superpowers-chrome | cameronsjo/superpowers-chrome | Chrome DevTools Protocol access |
-| superpowers-lab | cameronsjo/superpowers-lab | Experimental: tmux, MCP CLI, dedup |
-| superpowers-developing-for-claude-code | cameronsjo/superpowers-developing-for-claude-code | Plugin dev docs |
-| double-shot-latte | cameronsjo/double-shot-latte | Auto-continue |
-| elements-of-style | cameronsjo/the-elements-of-style | Strunk's writing guide |
+| pencil | cameronsjo/pencil | Design workflow for Pencil.dev — canvas design, .pen files |
 
 ## Plugin Repo Structure
 
