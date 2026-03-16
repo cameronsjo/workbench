@@ -71,6 +71,11 @@ for p in data.get('plugins', []):
 # Add repos not in marketplace
 REPOS+=("cadence-hooks" "workbench")
 
+# Local directory overrides (repo name → local dir name)
+declare -A DIR_OVERRIDE=(
+  ["cadence-hooks"]="claude-hooks"
+)
+
 echo "Ecosystem epoch tag: $TAG"
 echo "Repos: ${#REPOS[@]}"
 echo ""
@@ -80,34 +85,35 @@ SKIPPED=0
 ERRORS=0
 
 for repo in "${REPOS[@]}"; do
-  dir="$BASE_DIR/$repo"
+  local_name="${DIR_OVERRIDE[$repo]:-$repo}"
+  dir="$BASE_DIR/$local_name"
 
   if [[ ! -d "$dir/.git" ]]; then
     echo "  SKIP  $repo — not found at $dir"
-    ((SKIPPED++))
+    SKIPPED=$((SKIPPED + 1))
     continue
   fi
 
   # Check if tag already exists
   if git -C "$dir" rev-parse "$TAG" >/dev/null 2>&1; then
     echo "  EXISTS $repo — $TAG already exists"
-    ((SKIPPED++))
+    SKIPPED=$((SKIPPED + 1))
     continue
   fi
 
   if $DRY_RUN; then
     echo "  WOULD TAG $repo at $TAG (HEAD: $(git -C "$dir" rev-parse --short HEAD))"
-    ((TAGGED++))
+    TAGGED=$((TAGGED + 1))
     continue
   fi
 
   # Tag and push
   if git -C "$dir" tag "$TAG" && git -C "$dir" push origin "$TAG" 2>/dev/null; then
     echo "  TAGGED $repo at $TAG"
-    ((TAGGED++))
+    TAGGED=$((TAGGED + 1))
   else
     echo "  ERROR  $repo — failed to tag or push"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
   fi
 done
 
