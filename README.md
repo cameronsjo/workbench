@@ -1,6 +1,6 @@
 # Workbench
 
-Hub registry for all personal Claude Code plugins and curated obra/superpowers forks.
+Hub registry for personal Claude Code plugins.
 
 ## Installation
 
@@ -9,40 +9,32 @@ Hub registry for all personal Claude Code plugins and curated obra/superpowers f
 /plugin marketplace add cameronsjo/workbench
 
 # Install what you need
-/plugin install essentials@cameronsjo
-/plugin install superpowers@cameronsjo
+/plugin install cadence@cameronsjo
+/plugin install rules@cameronsjo
 ```
 
 Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 
-## Plugins (17)
+## Plugins
 
-### Personal
+### Cadence Ecosystem
 
 | Plugin | Description |
 |---|---|
-| essentials | Core workflow: brainstorming, worktrees, enforcement hooks, session management |
-| vibes | Communication styles: hype, sass, roast, unhinged |
+| cadence | Context management framework — four-tier workflow router, daily rhythm, session capture |
+| cadence-forge | Development workflow — logging, dependency vetting, release pipelines, diagrams |
+| cadence-mcp | MCP server development patterns |
+| cadence-obsidian | Obsidian plugin development and vault workflows |
+| cadence-palette | Image generation toolkit for Gemini |
+| cadence-lab | Experimental — macOS integrations, tmux, MCP discovery |
+
+### Standalone
+
+| Plugin | Description |
+|---|---|
 | rules | 10 languages, security, quality, git, CI/CD, Docker, MCP, documentation |
-| dev-toolkit | Logging agents, project checks, release pipelines |
-| mcp-toolkit | MCP server development patterns |
-| obsidian | Vault management, markdown reference, Bases, plugin development |
-| homebridge-dev | Homebridge plugin development: HAP mappings, accessory patterns |
-| image-gen-toolkit | Image generation toolkit for Gemini |
-| homelab | Homelab infrastructure: Unraid, media stack, Docker services |
 | git-guardrails | Push/gh write guards, branch warnings, commit nudges |
-| project-onboard | Onboarding skills for project portfolio |
-
-### Superpowers (obra forks)
-
-| Plugin | Description |
-|---|---|
-| superpowers | Core skills: TDD, debugging, collaboration patterns |
-| superpowers-chrome | Chrome DevTools Protocol: skill mode + MCP mode |
-| superpowers-lab | Experimental: tmux, MCP discovery, duplicate detection |
-| superpowers-developing-for-claude-code | Plugin/skill/MCP development docs |
-| double-shot-latte | Auto-continues work instead of stopping to ask |
-| the-elements-of-style | Strunk's writing guidance (1918) |
+| pencil | Design workflow for Pencil.dev — canvas design, .pen files |
 
 ## Architecture
 

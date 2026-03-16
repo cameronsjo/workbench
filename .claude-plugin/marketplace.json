@@ -125,6 +125,14 @@
         "source": "url",
         "url": "https://github.com/cameronsjo/pencil.git"
       }
+    },
+    {
+      "name": "cadence-writing",
+      "description": "Professional prose writing and editing toolkit — craft coaching, AI pattern detection, genre templates",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-writing.git"
+      }
     }
   ]
 }
