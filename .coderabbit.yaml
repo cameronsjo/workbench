@@ -1,0 +1,152 @@
+# CodeRabbit configuration — strict review for Claude Code plugins
+# Shared across the cadence ecosystem. Deploy via scripts/sync-coderabbit.sh
+
+language: en-US
+tone_instructions: "Be direct and technical. Flag real issues, skip pleasantries. Use RFC 2119 keywords (MUST/SHOULD) when prescribing fixes."
+early_access: true
+
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  high_level_summary_in_walkthrough: false
+  review_status: true
+  collapse_walkthrough: false
+  changed_files_summary: true
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: true
+  auto_apply_labels: false
+  suggested_reviewers: false
+  poem: false
+  in_progress_fortune: false
+  enable_prompt_for_ai_agents: true
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    ignore_title_keywords:
+      - "WIP"
+      - "wip"
+      - "DO NOT MERGE"
+
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+    simplify:
+      enabled: false
+
+  pre_merge_checks:
+    title:
+      mode: error
+      requirements: "Must follow Conventional Commits format: type(scope): description"
+    description:
+      mode: warning
+    docstrings:
+      mode: off
+
+  tools:
+    markdownlint:
+      enabled: true
+    shellcheck:
+      enabled: true
+    yamllint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    trufflehog:
+      enabled: true
+    languagetool:
+      enabled: true
+      level: picky
+      disabled_rules:
+        - UPPERCASE_SENTENCE_START
+        - COMMA_PARENTHESIS_WHITESPACE
+        - EN_QUOTES
+    biome:
+      enabled: true
+    actionlint:
+      enabled: true
+    checkmake:
+      enabled: true
+    github-checks:
+      enabled: true
+      timeout_ms: 90000
+
+  path_instructions:
+    - path: "skills/**/SKILL.md"
+      instructions: |
+        Review skill frontmatter strictly:
+        - `name` MUST use only lowercase letters, numbers, and hyphens
+        - `description` MUST start with "Use when" and contain ONLY triggering conditions
+        - `description` MUST NOT summarize the skill's workflow or process (CSO anti-pattern: descriptions that summarize workflow create shortcuts Claude takes instead of reading the full skill)
+        - Total frontmatter MUST NOT exceed 1024 characters
+        - SKILL.md MUST NOT exceed 500 lines (heavy content goes in references/)
+        - Check for `${CLAUDE_SKILL_DIR}` usage in self-references (portable paths)
+
+    - path: "rules/**/*.md"
+      instructions: |
+        Review rules for:
+        - RFC 2119 keywords (MUST/SHOULD/MAY/MUST NOT/SHOULD NOT) for requirements
+        - Concise, actionable guidance — no filler prose
+        - Consistent heading hierarchy
+        - Rules should shape behavior, not prescribe workflows
+
+    - path: "hooks/**"
+      instructions: |
+        Review hooks for:
+        - Hook errors MUST output to stderr (echo "..." >&2) before exit 2
+        - Scripts MUST use portable shebang (#!/usr/bin/env bash)
+        - Shell scripts MUST use set -euo pipefail (with || true after grep in pipelines)
+        - BSD sed compatibility: no \s (use [[:space:]]), no \n in inserts
+        - Check for proper exit codes: 0 (allow), 1 (allow with message), 2 (block)
+
+    - path: "**/*.sh"
+      instructions: |
+        Shell scripts:
+        - MUST use #!/usr/bin/env bash shebang
+        - MUST use set -euo pipefail
+        - Grep in pipelines MUST append || true to avoid pipefail exits
+        - BSD sed: no \s, no \n in insert commands, use [[:space:]] instead
+        - /usr/bin/find preferred over find (may be aliased to fd)
+
+    - path: "references/**/*.md"
+      instructions: |
+        Reference documents:
+        - Check relative links resolve correctly
+        - Check for BSL 1.1 SPDX header on new files
+        - Heavy content (100+ lines) belongs here, not inline in SKILL.md
+
+    - path: "agents/**/*.md"
+      instructions: |
+        Agent definitions:
+        - `description` should explain WHEN to use the agent (triggering conditions)
+        - Check model field if present (inherit, sonnet, opus, haiku)
+        - Verify tools list is appropriate for the agent's purpose
+
+    - path: "**/*.{json,yaml,yml}"
+      instructions: |
+        Configuration files:
+        - MUST NOT contain secrets, API keys, or credentials
+        - Check for valid JSON/YAML syntax
+        - plugin.json MUST NOT have a version field (uses SHA-based cache invalidation)
+
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+  learnings:
+    scope: local
+  pull_requests:
+    scope: local
+
+chat:
+  auto_reply: true
