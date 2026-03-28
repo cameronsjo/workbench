@@ -127,6 +127,14 @@
       }
     },
     {
+      "name": "cadence-scaffold",
+      "description": "Production-ready project scaffolding — per-archetype skills for FastAPI, Node, Go, React, Next.js, .NET Aspire, and Rust",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-scaffold.git"
+      }
+    },
+    {
       "name": "cadence-writing",
       "description": "Professional prose writing and editing toolkit — craft coaching, AI pattern detection, genre templates",
       "source": {
