@@ -35,6 +35,7 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | rules | 10 languages, security, quality, git, CI/CD, Docker, MCP, documentation |
 | git-guardrails | Push/gh write guards, branch warnings, commit nudges |
 | pencil | Design workflow for Pencil.dev — canvas design, .pen files |
+| agent-pool | Expert pool — mixture-of-experts routing with filesystem mail and contracts |
 
 ## Architecture
 

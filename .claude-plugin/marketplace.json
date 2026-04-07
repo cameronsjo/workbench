@@ -141,6 +141,14 @@
         "source": "url",
         "url": "https://github.com/cameronsjo/cadence-writing.git"
       }
+    },
+    {
+      "name": "agent-pool",
+      "description": "Expert pool — delegate to domain specialists via mixture-of-experts routing, filesystem mail, and contract-driven coordination",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/agent-pool.git"
+      }
     }
   ]
 }
