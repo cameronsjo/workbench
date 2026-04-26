@@ -103,14 +103,6 @@
       }
     },
     {
-      "name": "elements-of-style",
-      "description": "Writing guidance based on Strunk's The Elements of Style (1918)",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/the-elements-of-style.git"
-      }
-    },
-    {
       "name": "git-guardrails",
       "description": "Git safety hooks: block pushes and gh writes to repos you don't own, branch warnings, commit nudges",
       "source": {
@@ -148,6 +140,14 @@
       "source": {
         "source": "url",
         "url": "https://github.com/cameronsjo/agent-pool.git"
+      }
+    },
+    {
+      "name": "cadence-presence",
+      "description": "Executive presence and leadership skills — Gartner-sourced frameworks for personal brand, data storytelling, competitor analysis, and conflict resolution",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-presence.git"
       }
     }
   ]
