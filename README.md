@@ -36,6 +36,7 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | git-guardrails | Push/gh write guards, branch warnings, commit nudges |
 | pencil | Design workflow for Pencil.dev — canvas design, .pen files |
 | agent-pool | Expert pool — mixture-of-experts routing with filesystem mail and contracts |
+| artificer-design-system | Artificer design system — tokens, live spec, framework adapters, themes for Claude Code/Ghostty/VSCode/Obsidian |
 
 ## Architecture
 

@@ -149,6 +149,14 @@
         "source": "url",
         "url": "https://github.com/cameronsjo/cadence-presence.git"
       }
+    },
+    {
+      "name": "artificer-design-system",
+      "description": "Artificer — personal design system. AuDHD-optimized, dark-first, Jazz Age Deco palette. Tokens, live spec, framework adapters, and theme exports for Claude Code, Ghostty, VSCode, and Obsidian.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/artificer-design-system.git"
+      }
     }
   ]
 }
