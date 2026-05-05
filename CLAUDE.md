@@ -47,3 +47,9 @@ repo-root/
 ├── LICENSE
 └── .gitignore
 ```
+
+### Skill Path Resolution
+
+Paths inside `skills/<name>/SKILL.md` resolve **relative to SKILL.md**, not the plugin root. To reference assets at the repo root from a skill, use `../../<dir>/`. Do NOT duplicate the assets inside `skills/<name>/references/` — that drifts the moment the source updates.
+
+**Gotcha**: a skill that ships `references/src/...` as its own copy of repo-level `src/` is the wrong layer. Reference up, don't duplicate down. Verify before commit: `grep -nE 'references/(src|live-spec|...)/' skills/<name>/SKILL.md` should return zero matches when the migration is clean.
