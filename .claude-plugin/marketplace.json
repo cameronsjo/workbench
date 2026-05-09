@@ -15,6 +15,14 @@
       }
     },
     {
+      "name": "cadence-bootstrap",
+      "description": "Bootstrap-only skills for cadence — initialization, marketplace setup, license selection. Enable briefly during setup, then disable.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-bootstrap.git"
+      }
+    },
+    {
       "name": "cadence-forge",
       "description": "Development workflow tools — logging, dependency vetting, release pipelines, diagrams, and project checks",
       "source": {

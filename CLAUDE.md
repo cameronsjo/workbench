@@ -17,6 +17,7 @@ Hub registry for personal Claude Code plugins.
 | Plugin | Repo | Description |
 |---|---|---|
 | cadence | cameronsjo/cadence | Context management framework — four-tier workflow router, daily rhythm, session capture |
+| cadence-bootstrap | cameronsjo/cadence-bootstrap | Bootstrap-only skills — init, marketplace setup, license selection. Enable briefly during setup |
 | cadence-forge | cameronsjo/cadence-forge | Development workflow — logging, dependency vetting, release pipelines, diagrams |
 | cadence-mcp | cameronsjo/cadence-mcp | MCP server development patterns |
 | cadence-obsidian | cameronsjo/cadence-obsidian | Obsidian plugin development and vault workflows |
