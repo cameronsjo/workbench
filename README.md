@@ -22,7 +22,7 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | Plugin | Description |
 |---|---|
 | cadence | Context management framework — four-tier workflow router, daily rhythm, session capture |
-| cadence-bootstrap | Bootstrap-only skills — init, marketplace setup, license selection, onboarding, tidying. Enable briefly during setup |
+| cadence-bootstrap | Bootstrap-only skills — init, marketplace setup, license selection. Enable briefly during setup |
 | cadence-forge | Development workflow — logging, dependency vetting, release pipelines, diagrams |
 | cadence-mcp | MCP server development patterns |
 | cadence-obsidian | Obsidian plugin development and vault workflows |
