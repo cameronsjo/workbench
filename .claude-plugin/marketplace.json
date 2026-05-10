@@ -15,11 +15,11 @@
       }
     },
     {
-      "name": "cadence-bootstrap",
-      "description": "Bootstrap-only skills for cadence — initialization, marketplace setup, license selection. Enable briefly during setup, then disable.",
+      "name": "cadence-groundwork",
+      "description": "Episodic ground-breaking skills for new projects and Claude Code setup — scaffolding archetypes, license selection, marketplace and hooks setup, CI/CD pipeline setup, plugin and rules authoring. Enable when starting work, disable when done.",
       "source": {
         "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-bootstrap.git"
+        "url": "https://github.com/cameronsjo/cadence-groundwork.git"
       }
     },
     {
@@ -127,22 +127,6 @@
       }
     },
     {
-      "name": "cadence-scaffold",
-      "description": "Production-ready project scaffolding — per-archetype skills for FastAPI, Node, Go, React, Next.js, .NET Aspire, and Rust",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-scaffold.git"
-      }
-    },
-    {
-      "name": "cadence-writing",
-      "description": "Professional prose writing and editing toolkit — craft coaching, AI pattern detection, genre templates",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-writing.git"
-      }
-    },
-    {
       "name": "agent-pool",
       "description": "Expert pool — delegate to domain specialists via mixture-of-experts routing, filesystem mail, and contract-driven coordination",
       "source": {
@@ -151,11 +135,11 @@
       }
     },
     {
-      "name": "cadence-presence",
-      "description": "Executive presence and leadership skills — Gartner-sourced frameworks for personal brand, data storytelling, competitor analysis, and conflict resolution",
+      "name": "cadence-voice",
+      "description": "Communication and presence — prose craft and AI pattern detection, personal brand, data storytelling, competitor analysis, conflict resolution",
       "source": {
         "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-presence.git"
+        "url": "https://github.com/cameronsjo/cadence-voice.git"
       }
     },
     {
