@@ -10,7 +10,7 @@ Hub registry for personal Claude Code plugins.
 
 # Install what you need
 /plugin install cadence@cameronsjo
-/plugin install rules@cameronsjo
+/plugin install cadence-rules@cameronsjo
 ```
 
 Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
@@ -19,23 +19,23 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 
 ### Cadence Ecosystem
 
-| Plugin | Description |
-|---|---|
-| cadence | Context management framework — four-tier workflow router, daily rhythm, session capture |
-| cadence-bootstrap | Bootstrap-only skills — init, marketplace setup, license selection. Enable briefly during setup |
-| cadence-forge | Development workflow — logging, dependency vetting, release pipelines, diagrams |
-| cadence-mcp | MCP server development patterns |
-| cadence-obsidian | Obsidian plugin development and vault workflows |
-| cadence-palette | Image generation toolkit for Gemini |
-| cadence-lab | Experimental — macOS integrations, tmux, MCP discovery |
+| Plugin | Description | Rhythm |
+|---|---|---|
+| cadence | Everyday session-agnostic methodology — four-tier router, daily rhythm, capture, dispatch, everyday tuning | always-on |
+| cadence-forge | Dev workflow during a session — debugging, testing, polish, logging, review, dependency vetting | dev sessions |
+| cadence-groundwork | Episodic ground-breaking — scaffolding archetypes, license selection, marketplace and hooks setup, CI/CD pipeline setup, plugin and rules authoring | enable, run, disable |
+| cadence-voice | Communication and presence — prose craft, AI pattern detection, personal brand, data storytelling, conflict resolution | episodic |
+| cadence-mcp | MCP server development patterns | episodic |
+| cadence-obsidian | Obsidian plugin development and vault workflows | episodic |
+| cadence-palette | Image generation toolkit for Gemini | episodic |
+| cadence-lab | Experimental — macOS integrations, tmux, MCP discovery | as needed |
+| cadence-rules | 10 languages, security, quality, git, CI/CD, Docker, MCP, documentation | always-on |
+| cadence-guardrails | Push/gh write guards, branch warnings, commit nudges | always-on |
 
 ### Standalone
 
 | Plugin | Description |
 |---|---|
-| rules | 10 languages, security, quality, git, CI/CD, Docker, MCP, documentation |
-| git-guardrails | Push/gh write guards, branch warnings, commit nudges |
-| pencil | Design workflow for Pencil.dev — canvas design, .pen files |
 | agent-pool | Expert pool — mixture-of-experts routing with filesystem mail and contracts |
 | artificer-design-system | Artificer design system — tokens, live spec, framework adapters, themes for Claude Code/Ghostty/VSCode/Obsidian |
 

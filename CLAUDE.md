@@ -14,23 +14,25 @@ Hub registry for personal Claude Code plugins.
 
 ### Cadence Ecosystem
 
+Three primary rhythms map to three primary plugins:
+
+| Plugin | Repo | Rhythm | Description |
+|---|---|---|---|
+| cadence | cameronsjo/cadence | always-on | Everyday session-agnostic methodology — four-tier router, daily rhythm, capture, dispatch, everyday tuning |
+| cadence-forge | cameronsjo/cadence-forge | dev sessions | Dev workflow — debugging, testing, polish, logging, review, dependency vetting |
+| cadence-groundwork | cameronsjo/cadence-groundwork | enable, run, disable | Episodic ground-breaking — scaffolding archetypes, license selection, marketplace and hooks setup, CI/CD, plugin/rules authoring |
+
+Domain satellites and shared infrastructure:
+
 | Plugin | Repo | Description |
 |---|---|---|
-| cadence | cameronsjo/cadence | Context management framework — four-tier workflow router, daily rhythm, session capture |
-| cadence-bootstrap | cameronsjo/cadence-bootstrap | Bootstrap-only skills — init, marketplace setup, license selection. Enable briefly during setup |
-| cadence-forge | cameronsjo/cadence-forge | Development workflow — logging, dependency vetting, release pipelines, diagrams |
+| cadence-voice | cameronsjo/cadence-voice | Communication and presence — prose craft, AI pattern detection, brand, data storytelling, conflict resolution |
 | cadence-mcp | cameronsjo/cadence-mcp | MCP server development patterns |
 | cadence-obsidian | cameronsjo/cadence-obsidian | Obsidian plugin development and vault workflows |
 | cadence-palette | cameronsjo/cadence-palette | Image generation toolkit for Gemini |
 | cadence-lab | cameronsjo/cadence-lab | Experimental — macOS integrations, tmux, MCP discovery |
-
-### Standalone
-
-| Plugin | Repo | Description |
-|---|---|---|
-| rules | cameronsjo/rules | 10 languages, security, quality, git, CI/CD, Docker, MCP, documentation |
-| git-guardrails | cameronsjo/git-guardrails | Push/gh write guards, branch warnings, commit nudges |
-| pencil | cameronsjo/pencil | Design workflow for Pencil.dev — canvas design, .pen files |
+| cadence-rules | cameronsjo/cadence-rules | 10 languages, security, quality, git, CI/CD, Docker, MCP, documentation |
+| cadence-guardrails | cameronsjo/cadence-guardrails | Push/gh write guards, branch warnings, commit nudges |
 
 ## Plugin Repo Structure
 
