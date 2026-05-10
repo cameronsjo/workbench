@@ -119,14 +119,6 @@
       }
     },
     {
-      "name": "pencil",
-      "description": "Design workflow for Pencil.dev — canvas design, .pen files, and design-to-code with MCP tools",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/pencil.git"
-      }
-    },
-    {
       "name": "agent-pool",
       "description": "Expert pool — delegate to domain specialists via mixture-of-experts routing, filesystem mail, and contract-driven coordination",
       "source": {
