@@ -63,11 +63,11 @@
       }
     },
     {
-      "name": "rules",
+      "name": "cadence-rules",
       "description": "How to work with code — language standards, security, quality, git, CI/CD, Docker, MCP, documentation",
       "source": {
         "source": "url",
-        "url": "https://github.com/cameronsjo/rules.git"
+        "url": "https://github.com/cameronsjo/cadence-rules.git"
       }
     },
     {
@@ -111,11 +111,11 @@
       }
     },
     {
-      "name": "git-guardrails",
+      "name": "cadence-guardrails",
       "description": "Git safety hooks: block pushes and gh writes to repos you don't own, branch warnings, commit nudges",
       "source": {
         "source": "url",
-        "url": "https://github.com/cameronsjo/git-guardrails.git"
+        "url": "https://github.com/cameronsjo/cadence-guardrails.git"
       }
     },
     {
