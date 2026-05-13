@@ -135,6 +135,14 @@
       }
     },
     {
+      "name": "cadence-discovery",
+      "description": "Feature ideation pipeline — usage-grounded latent/divergent/adjacent discovery that produces one feature ready to hand off to cadence:attune",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-discovery.git"
+      }
+    },
+    {
       "name": "artificer-design-system",
       "description": "Artificer — personal design system. AuDHD-optimized, dark-first, Jazz Age Deco palette. Tokens, live spec, framework adapters, and theme exports for Claude Code, Ghostty, VSCode, and Obsidian.",
       "source": {
