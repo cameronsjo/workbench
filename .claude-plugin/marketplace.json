@@ -143,6 +143,14 @@
       }
     },
     {
+      "name": "cadence-metrics",
+      "description": "JSONL event logging for Claude Code sessions — cost-per-commit via PreToolUse/PostToolUse hooks. Pure data collection, no UI.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-metrics.git"
+      }
+    },
+    {
       "name": "artificer-design-system",
       "description": "Artificer — personal design system. AuDHD-optimized, dark-first, Jazz Age Deco palette. Tokens, live spec, framework adapters, and theme exports for Claude Code, Ghostty, VSCode, and Obsidian.",
       "source": {
