@@ -63,6 +63,14 @@
       }
     },
     {
+      "name": "cadence-canon",
+      "description": "Multi-session coordination — session identity, peer disclosure, and lane warnings for concurrent Claude Code sessions in one repo",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/cadence-canon.git"
+      }
+    },
+    {
       "name": "cadence-rules",
       "description": "How to work with code — language standards, security, quality, git, CI/CD, Docker, MCP, documentation",
       "source": {
