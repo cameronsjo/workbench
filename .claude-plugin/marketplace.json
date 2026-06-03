@@ -165,6 +165,14 @@
         "source": "url",
         "url": "https://github.com/cameronsjo/artificer-design-system.git"
       }
+    },
+    {
+      "name": "auditing-claude-md",
+      "description": "Audit CLAUDE.md and the full context stack for calibration problems — shouting, derivable content, wrong-layer placement, missing reasons, token bloat.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/auditing-claude-md.git"
+      }
     }
   ]
 }
