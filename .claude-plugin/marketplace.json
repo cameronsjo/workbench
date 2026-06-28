@@ -10,72 +10,72 @@
       "name": "cadence",
       "description": "Context management framework — four-tier workflow router, daily rhythm, session capture, authoring methodology",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence"
       }
     },
     {
       "name": "cadence-groundwork",
       "description": "Episodic ground-breaking skills for new projects and Claude Code setup — scaffolding archetypes, license selection, marketplace and hooks setup, CI/CD pipeline setup, plugin and rules authoring. Enable when starting work, disable when done.",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-groundwork.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-groundwork"
       }
     },
     {
       "name": "cadence-forge",
       "description": "Development workflow tools — logging, dependency vetting, release pipelines, diagrams, and project checks",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-forge.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-forge"
       }
     },
     {
       "name": "cadence-mcp",
       "description": "MCP server development — architecture patterns, tools-as-code",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-mcp.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-mcp"
       }
     },
     {
       "name": "cadence-obsidian",
       "description": "Obsidian plugin development and vault workflows — markdown, Bases, release automation",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-obsidian.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-obsidian"
       }
     },
     {
       "name": "cadence-palette",
       "description": "Image generation toolkit — Gemini prompt engineering, composition specs, visual grammar",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-palette.git"
-      }
-    },
-    {
-      "name": "cadence-lab",
-      "description": "Flair and experimental skills — macOS integrations, theming, tmux, MCP discovery",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-lab.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-palette"
       }
     },
     {
       "name": "cadence-canon",
       "description": "Multi-session coordination — session identity, peer disclosure, and lane warnings for concurrent Claude Code sessions in one repo",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-canon.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-canon"
       }
     },
     {
       "name": "cadence-rules",
       "description": "How to work with code — language standards, security, quality, git, CI/CD, Docker, MCP, documentation",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-rules.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-rules"
       }
     },
     {
@@ -122,8 +122,9 @@
       "name": "cadence-guardrails",
       "description": "Git safety hooks: block pushes and gh writes to repos you don't own, branch warnings, commit nudges",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-guardrails.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-guardrails"
       }
     },
     {
@@ -138,24 +139,27 @@
       "name": "cadence-voice",
       "description": "Communication and presence — prose craft and AI pattern detection, personal brand, data storytelling, competitor analysis, conflict resolution",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-voice.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-voice"
       }
     },
     {
       "name": "cadence-discovery",
       "description": "Feature ideation pipeline — usage-grounded latent/divergent/adjacent discovery that produces one feature ready to hand off to cadence:attune",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-discovery.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-discovery"
       }
     },
     {
       "name": "cadence-metrics",
       "description": "JSONL event logging for Claude Code sessions — cost-per-commit via PreToolUse/PostToolUse hooks. Pure data collection, no UI.",
       "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/cadence-metrics.git"
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-metrics"
       }
     },
     {
