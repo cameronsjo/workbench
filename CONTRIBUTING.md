@@ -1,42 +1,92 @@
 # Contributing
 
-Guide for adding plugins to the Claude Marketplace.
+Guide for adding a plugin to the workbench marketplace.
 
-## Quick Start
+## The model
 
-```bash
-# 1. Clone
-git clone https://github.com/cameronsjo/claude-marketplace.git
-cd claude-marketplace
+Workbench is a **registry**, not a source monorepo. It ships no plugin code of its own — its
+`.claude-plugin/marketplace.json` is a list of entries, each pointing at a plugin that lives
+**somewhere else**:
 
-# 2. Create plugin
-mkdir -p src/my-plugin/{.claude-plugin,commands}
+- A **standalone repo** — the plugin owns its own GitHub repository (`url` source).
+- A **monorepo subdir** — the plugin lives under `plugins/<name>/` of a shared repo, currently
+  `cameronsjo/cadence` (`git-subdir` source).
 
-# 3. Add plugin.json, commands, README
-# 4. Register in index.json
-# 5. Submit PR
+There is no `src/`, no `index.json`, and no version numbers. See
+[Versioning](#versioning) below.
+
+## Adding a plugin
+
+### 1. Publish the plugin
+
+The plugin lives in its own repo (or a `plugins/<name>/` subdir of a monorepo) with a
+`.claude-plugin/plugin.json`. See [Plugin repo structure](#plugin-repo-structure).
+
+### 2. Register it in `marketplace.json`
+
+Add one entry to the `plugins` array in `.claude-plugin/marketplace.json`. Pick the source shape
+that matches where the plugin lives.
+
+**Standalone repo — `url` source:**
+
+```json
+{
+  "name": "my-plugin",
+  "description": "Brief description shown in /plugin discover",
+  "source": {
+    "source": "url",
+    "url": "https://github.com/cameronsjo/my-plugin.git"
+  }
+}
 ```
 
-## Plugin Structure
+**Monorepo subdir — `git-subdir` source:**
+
+```json
+{
+  "name": "my-plugin",
+  "description": "Brief description shown in /plugin discover",
+  "source": {
+    "source": "git-subdir",
+    "url": "https://github.com/cameronsjo/cadence.git",
+    "path": "plugins/my-plugin"
+  }
+}
+```
+
+### 3. Add a `README.md` row
+
+Add the plugin to the appropriate table in `README.md` — the Cadence Ecosystem table for a
+`cameronsjo/cadence` subdir, or the Standalone table for its own repo.
+
+### 4. Open a PR
+
+Submit against `cameronsjo/workbench`.
+
+## Plugin repo structure
+
+Each plugin follows:
 
 ```
-src/my-plugin/
+repo-root/                    # or plugins/<name>/ in a monorepo
 ├── .claude-plugin/
-│   └── plugin.json      # Required: metadata
-├── README.md            # Required: documentation
-├── commands/            # Slash commands
+│   └── plugin.json           # Required: metadata
+├── commands/                 # Slash commands (.md)
 │   └── my-command.md
-└── agents/              # Subagents (optional)
-    └── my-agent.md
+├── agents/                   # Subagents (.md, optional)
+│   └── my-agent.md
+├── skills/                   # Skills with SKILL.md (optional)
+│   └── my-skill/SKILL.md
+├── README.md                 # Required: documentation
+└── LICENSE
 ```
 
-## plugin.json
+### plugin.json
 
 ```json
 {
   "name": "my-plugin",
   "description": "Brief description for /plugin discover",
-  "version": "1.0.0",
   "author": {
     "name": "your-github-username"
   },
@@ -50,13 +100,14 @@ src/my-plugin/
 |-------|----------|-------------|
 | `name` | Yes | Plugin identifier (kebab-case) |
 | `description` | Yes | One-line description |
-| `version` | Yes | Semver (auto-updated on release) |
 | `author.name` | Yes | GitHub username or name |
 | `keywords` | No | Search/discovery terms |
 
-## Command Format
+No `version` field — see [Versioning](#versioning).
 
-`src/my-plugin/commands/my-command.md`:
+## Command format
+
+`commands/my-command.md`:
 
 ```yaml
 ---
@@ -92,9 +143,9 @@ $ARGUMENTS
 - Use `allowed-tools` to limit scope (security)
 - Use `disable-model-invocation: true` for commands that modify Claude's behavior rather than spawning agents
 
-## Agent Format
+## Agent format
 
-`src/my-plugin/agents/my-agent.md`:
+`agents/my-agent.md`:
 
 ```yaml
 ---
@@ -132,60 +183,29 @@ What this agent does and how.
 | `color` | No | Terminal color for output |
 | `tools` | No | Available tools (defaults to all) |
 
-## Registering in index.json
+## PR checklist
 
-Add your plugin to the `plugins` array:
-
-```json
-{
-  "plugins": [
-    {
-      "name": "my-plugin",
-      "version": "1.0.0",
-      "path": "./src/my-plugin",
-      "description": "Same as plugin.json description"
-    }
-  ]
-}
-```
-
-## PR Checklist
-
-- [ ] Plugin directory in `src/`
-- [ ] Valid `plugin.json` with name, description, version
-- [ ] README.md documenting commands/agents
+- [ ] Plugin published with a valid `.claude-plugin/plugin.json` (name, description, author)
+- [ ] README.md documenting commands/agents/skills
 - [ ] All commands have `description` frontmatter
 - [ ] All agents have `name` and `description` frontmatter
-- [ ] Entry added to `index.json`
-- [ ] CI passes (validates structure automatically)
+- [ ] Entry added to `marketplace.json` (`url` or `git-subdir` source)
+- [ ] Row added to the `README.md` table
 
 ## Versioning
 
-Don't manually update versions. On merge to main:
+Plugins carry **no `version` field**. Workbench uses SHA-based cache invalidation — Claude Code
+re-pins each installed plugin to its latest pushed commit at session start, so a version number
+would be redundant bookkeeping. This is a deliberate design decision; see
+`docs/adr/0001-plugin-cache-versioning.md`.
 
-1. Conventional commit determines bump type
-2. All plugin versions sync automatically
-3. Git tag + GitHub release created
+## Testing locally
 
-**Commit prefixes:**
-
-| Prefix | Version Bump |
-|--------|--------------|
-| `feat:` | Minor (0.1.0 → 0.2.0) |
-| `fix:` | Patch (0.1.0 → 0.1.1) |
-| `feat!:` | Major (0.1.0 → 1.0.0) |
-| `chore:`, `docs:`, `refactor:` | No bump |
-
-## Testing Locally
-
-```bash
-# Install from local path
-/plugin install /path/to/claude-marketplace/src/my-plugin
-
-# Or symlink for development
-ln -s /path/to/claude-marketplace/src/my-plugin ~/.claude/plugins/my-plugin
-```
+For instant edit propagation on the dev machine, point the marketplace at a local checkout with a
+path override in `~/.claude/setup-marketplaces.sh`. Edits to the local plugin source then take
+effect without a push/re-pin cycle. Remove the override to fall back to the published source.
 
 ## Questions?
 
-Open an issue or check existing plugins for examples.
+Open an issue on `cameronsjo/claude-configurations` (the ecosystem tracker) or check existing
+entries in `marketplace.json` for examples.
