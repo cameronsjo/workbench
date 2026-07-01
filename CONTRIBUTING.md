@@ -67,7 +67,7 @@ Submit against `cameronsjo/workbench`.
 
 Each plugin follows:
 
-```
+```text
 repo-root/                    # or plugins/<name>/ in a monorepo
 ├── .claude-plugin/
 │   └── plugin.json           # Required: metadata

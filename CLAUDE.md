@@ -4,7 +4,7 @@ Hub registry for personal Claude Code plugins.
 
 ## Structure
 
-```
+```text
 ├── marketplace.json        # Plugin registry (url + git-subdir sources)
 ├── README.md               # Plugin directory with install instructions
 └── docs/                   # Historical design docs
@@ -40,7 +40,7 @@ Domain satellites and shared infrastructure:
 
 Each plugin follows:
 
-```
+```text
 repo-root/                # or plugins/<name>/ in the cadence monorepo
 ├── .claude-plugin/
 │   ├── marketplace.json  # Standalone repos only — declares it as its own marketplace
