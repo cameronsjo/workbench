@@ -177,6 +177,70 @@
         "source": "url",
         "url": "https://github.com/cameronsjo/auditing-claude-md.git"
       }
+    },
+    {
+      "name": "bosun",
+      "description": "GitOps CLI for Docker Compose on bare metal — Helm for home",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/bosun.git"
+      }
+    },
+    {
+      "name": "llm-council",
+      "description": "Multi-LLM deliberation web app with Council and Arena debate modes",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/llm-council.git"
+      }
+    },
+    {
+      "name": "media-mcp",
+      "description": "MCP server enriching Obsidian vaults with book, movie, and TV metadata",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/media-mcp.git"
+      }
+    },
+    {
+      "name": "mouse-mcp",
+      "description": "Disney parks data MCP server — attraction wait times, dining info, fuzzy search",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/mouse-mcp.git"
+      }
+    },
+    {
+      "name": "obaass",
+      "description": "Headless Obsidian orchestrator — obsidi-headless, obsidi-backup, and obsidi-mcp via Docker Compose",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/obaass.git"
+      }
+    },
+    {
+      "name": "obsidi-backup",
+      "description": "Vault backup sidecar — file watching, AI commit messages, restic cloud storage",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/obsidi-backup.git"
+      }
+    },
+    {
+      "name": "obsidi-claude",
+      "description": "Obsidian plugin for chatting with Claude AI using the Anthropic Agent SDK",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/obsidi-claude.git"
+      }
+    },
+    {
+      "name": "obsidi-mcp",
+      "description": "Obsidian plugin exposing 28+ vault tools via MCP server with CLI bridge",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/obsidi-mcp.git"
+      }
     }
   ]
 }
