@@ -33,6 +33,7 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | cadence-metrics | JSONL event logging — cost-per-commit via Pre/PostToolUse hooks | always-on |
 | cadence-rules | Language standards, security, quality, git, CI/CD, Docker, MCP, documentation | always-on |
 | cadence-guardrails | Push/gh write guards, branch warnings, commit nudges | always-on |
+| cadence-dev | Skills for building cadence itself — placement, skill-edit drills, model-tagged deferral | build repos (opt-in) |
 
 ### Standalone
 

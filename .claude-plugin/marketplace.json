@@ -79,6 +79,15 @@
       }
     },
     {
+      "name": "cadence-dev",
+      "description": "Skills for building cadence itself — ecosystem part placement, behavioral skill-edit drills, and model-tagged deferral — opt-in per build checkout, never always-on",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-dev"
+      }
+    },
+    {
       "name": "cadence-rules",
       "description": "How to work with code — language standards, security, quality, git, CI/CD, Docker, MCP, documentation",
       "source": {
