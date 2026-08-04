@@ -61,6 +61,15 @@
       }
     },
     {
+      "name": "cadence-data",
+      "description": "Data-layer craft — PostgreSQL application development and operations, split along the app-dev/DBA handoff line",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/cadence-data"
+      }
+    },
+    {
       "name": "cadence-canon",
       "description": "Multi-session coordination — session identity, peer disclosure, and lane warnings for concurrent Claude Code sessions in one repo",
       "source": {
