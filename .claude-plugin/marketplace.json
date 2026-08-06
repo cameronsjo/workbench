@@ -198,6 +198,14 @@
       }
     },
     {
+      "name": "artificer-voice",
+      "description": "Portable communication preferences injected at SessionStart and SubagentStart — one payload, every machine, no per-machine sync.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cameronsjo/artificer-voice.git"
+      }
+    },
+    {
       "name": "auditing-claude-md",
       "description": "Audit CLAUDE.md and the full context stack for calibration problems — shouting, derivable content, wrong-layer placement, missing reasons, token bloat.",
       "source": {
