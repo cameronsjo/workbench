@@ -79,15 +79,6 @@
       }
     },
     {
-      "name": "cadence-kanban",
-      "description": "Flux kanban board integration for cadence — durable, cross-machine continuation as board cards, with a one-command board bootstrap",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/cameronsjo/cadence.git",
-        "path": "plugins/cadence-kanban"
-      }
-    },
-    {
       "name": "cadence-dev",
       "description": "Skills for building cadence itself — ecosystem part placement, behavioral skill-edit drills, and model-tagged deferral — opt-in per build checkout, never always-on",
       "source": {
