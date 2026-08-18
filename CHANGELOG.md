@@ -11,6 +11,11 @@ rather than tagged releases.
 
 ### Added
 
+- Registered `cadence-dev` as a `git-subdir` entry from the `cameronsjo/cadence`
+  monorepo (#48).
+- Registered `cadence-data` as a `git-subdir` entry from the `cameronsjo/cadence`
+  monorepo (#49).
+- Registered `artificer-voice` as a private `url` source (#50).
 - Absorbed the attunements products as standalone `url` entries: `bosun`, `llm-council`,
   `media-mcp`, `mouse-mcp`, `obaass`, `obsidi-backup`, `obsidi-claude`, `obsidi-mcp` (#44).
 
@@ -21,6 +26,8 @@ rather than tagged releases.
 
 ### Removed
 
+- Removed the `cadence-kanban` entry — the board was retired and the plugin deleted
+  upstream (#51).
 - Dropped `cadence-lab`, which split off into its own marketplace (#43).
 
 ---
