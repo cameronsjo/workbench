@@ -29,7 +29,6 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | cadence-obsidian | Obsidian plugin development and vault workflows | episodic |
 | cadence-palette | Image generation toolkit — Gemini prompt engineering, composition specs | episodic |
 | cadence-discovery | Feature ideation pipeline — usage-grounded discovery producing one attune-ready feature | episodic |
-| cadence-canon | Multi-session coordination — session identity, peer disclosure, lane warnings | always-on |
 | cadence-metrics | JSONL event logging — cost-per-commit via Pre/PostToolUse hooks | always-on |
 | cadence-rules | Language standards, security, quality, git, CI/CD, Docker, MCP, documentation | always-on |
 | cadence-guardrails | Push/gh write guards, branch warnings, commit nudges | always-on |
@@ -62,7 +61,7 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 This repo is a **registry**, not a source monorepo — `marketplace.json` points at plugins that live
 elsewhere, via two source models:
 
-- The 12 cadence-ecosystem plugins live in the **`cameronsjo/cadence` monorepo** under
+- The 13 cadence-ecosystem plugins live in the **`cameronsjo/cadence` monorepo** under
   `plugins/<name>/`, referenced with `git-subdir` sources.
 - Standalone plugins each live in their own GitHub repo, referenced with `url` sources.
 

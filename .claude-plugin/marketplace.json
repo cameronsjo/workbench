@@ -70,15 +70,6 @@
       }
     },
     {
-      "name": "cadence-canon",
-      "description": "Multi-session coordination — session identity, peer disclosure, and lane warnings for concurrent Claude Code sessions in one repo",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/cameronsjo/cadence.git",
-        "path": "plugins/cadence-canon"
-      }
-    },
-    {
       "name": "cadence-dev",
       "description": "Skills for building cadence itself — ecosystem part placement, behavioral skill-edit drills, and model-tagged deferral — opt-in per build checkout, never always-on",
       "source": {
