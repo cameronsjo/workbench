@@ -31,7 +31,6 @@ Domain satellites and shared infrastructure:
 | cadence-obsidian | cameronsjo/cadence → plugins/cadence-obsidian | Obsidian plugin development and vault workflows |
 | cadence-palette | cameronsjo/cadence → plugins/cadence-palette | Image generation toolkit for Gemini |
 | cadence-discovery | cameronsjo/cadence → plugins/cadence-discovery | Feature ideation pipeline — usage-grounded discovery producing one attune-ready feature |
-| cadence-canon | cameronsjo/cadence → plugins/cadence-canon | Multi-session coordination — session identity, peer disclosure, lane warnings |
 | cadence-metrics | cameronsjo/cadence → plugins/cadence-metrics | JSONL event logging — cost-per-commit via Pre/PostToolUse hooks |
 | cadence-rules | cameronsjo/cadence → plugins/cadence-rules | 10 languages, security, quality, git, CI/CD, Docker, MCP, documentation |
 | cadence-guardrails | cameronsjo/cadence → plugins/cadence-guardrails | Push/gh write guards, branch warnings, commit nudges |
@@ -53,7 +52,7 @@ repo-root/                # or plugins/<name>/ in the cadence monorepo
 └── .gitignore
 ```
 
-A `git-subdir` plugin (the 12 cadence-ecosystem entries) has no per-plugin `marketplace.json` — that
+A `git-subdir` plugin (the 13 cadence-ecosystem entries) has no per-plugin `marketplace.json` — that
 file exists once, at the `cameronsjo/cadence` repo root.
 
 ### Skill Path Resolution

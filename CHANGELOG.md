@@ -26,6 +26,7 @@ rather than tagged releases.
 
 ### Removed
 
+- Removed the `cadence-canon` entry — the plugin is retired and its session hook wiring now ships in `cadence` (cadence-ecosystem ADR-0030 Phase 2). On every machine, run `claude plugin uninstall cadence-canon@workbench`; until you do, that machine fires each session hook twice (harmless — the hooks are idempotent — but nudge text and the SessionStart block appear doubled).
 - Removed the `cadence-kanban` entry — the board was retired and the plugin deleted
   upstream (#51).
 - Dropped `cadence-lab`, which split off into its own marketplace (#43).
