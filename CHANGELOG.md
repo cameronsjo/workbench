@@ -25,6 +25,8 @@ rather than tagged releases.
 
 ### Changed
 
+- `go` entry description no longer states a command count; the plugin's
+  command set changes with its own releases (cameronsjo/cadence#1375).
 - Re-pointed the 12 cadence-ecosystem plugins to the `cameronsjo/cadence` monorepo via
   `git-subdir` sources, replacing their standalone `url` sources (#43).
 
