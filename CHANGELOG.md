@@ -11,6 +11,10 @@ rather than tagged releases.
 
 ### Added
 
+- Registered `go` as a `git-subdir` entry from the `cameronsjo/cadence` monorepo
+  (`plugins/go`) — six terse one-shot slash commands, consolidating eight prior
+  commands split across an unmanaged user-level dir and the `cadence` plugin
+  (cameronsjo/cadence#1370).
 - Registered `cadence-dev` as a `git-subdir` entry from the `cameronsjo/cadence`
   monorepo (#48).
 - Registered `cadence-data` as a `git-subdir` entry from the `cameronsjo/cadence`
