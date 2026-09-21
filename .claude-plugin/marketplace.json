@@ -261,7 +261,7 @@
     },
     {
       "name": "go",
-      "description": "Six terse one-shot slash commands for recurring instructions Cameron says once per turn — some push commits, open draft PRs, or merge them",
+      "description": "Terse one-shot slash commands for recurring instructions Cameron says once per turn — some push commits, open draft PRs, or merge them",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",

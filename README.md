@@ -33,7 +33,7 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | cadence-rules | Language standards, security, quality, git, CI/CD, Docker, MCP, documentation | always-on |
 | cadence-guardrails | Push/gh write guards, branch warnings, commit nudges | always-on |
 | cadence-dev | Skills for building cadence itself — placement, skill-edit drills, model-tagged deferral | build repos (opt-in) |
-| go | Six terse one-shot slash commands for recurring instructions Cameron says once per turn | always-on |
+| go | Terse one-shot slash commands for recurring instructions Cameron says once per turn | always-on |
 
 ### Standalone
 
