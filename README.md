@@ -39,7 +39,6 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 
 | Plugin | Description |
 |---|---|
-| homebridge-dev | Homebridge plugin development — HAP mappings, accessory patterns, debugging |
 | homelab | Homelab infrastructure context — Unraid server, media stack, Docker services |
 | superpowers-chrome | Direct Chrome DevTools Protocol access — skill mode + MCP mode, zero dependencies |
 | superpowers-developing-for-claude-code | Skills and docs for developing Claude Code plugins, skills, and MCP servers |
