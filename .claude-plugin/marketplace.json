@@ -88,14 +88,6 @@
       }
     },
     {
-      "name": "homebridge-dev",
-      "description": "Homebridge plugin development — HAP mappings, accessory patterns, debugging",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/homebridge-dev.git"
-      }
-    },
-    {
       "name": "homelab",
       "description": "Homelab infrastructure context — Unraid server, media stack, Docker services",
       "source": {

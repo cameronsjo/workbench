@@ -32,6 +32,7 @@ rather than tagged releases.
 
 ### Removed
 
+- Removed the `homebridge-dev` entry. The skill and its `homebridge-explorer` agent now live as repo skills in `cameronsjo/homebridge`, the only repo that used them, and the `cameronsjo/homebridge-dev` repo is retired. It was not enabled on any machine; if it is installed somewhere, run `claude plugin uninstall homebridge-dev@workbench`.
 - Removed the `cadence-canon` entry — the plugin is retired and its session hook wiring now ships in `cadence` (cadence-ecosystem ADR-0030 Phase 2). On every machine, run `claude plugin uninstall cadence-canon@workbench`; until you do, that machine fires each session hook twice (harmless — the hooks are idempotent — but nudge text and the SessionStart block appear doubled).
 - Removed the `cadence-kanban` entry — the board was retired and the plugin deleted
   upstream (#51).
