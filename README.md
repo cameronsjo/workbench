@@ -42,7 +42,6 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | homelab | Homelab infrastructure context — Unraid server, media stack, Docker services |
 | artificer-design-system | Artificer design system — tokens, live spec, framework adapters, themes for Claude Code/Ghostty/VSCode/Obsidian |
 | artificer-voice | Portable communication preferences injected at SessionStart and SubagentStart (private repo) |
-| auditing-claude-md | Audit CLAUDE.md and the context stack — shouting, derivable content, wrong-layer placement, token bloat |
 | bosun | GitOps CLI for Docker Compose on bare metal — Helm for home |
 | llm-council | Multi-LLM deliberation web app with Council and Arena debate modes |
 | media-mcp | MCP server enriching Obsidian vaults with book, movie, and TV metadata |
