@@ -40,10 +40,6 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | Plugin | Description |
 |---|---|
 | homelab | Homelab infrastructure context — Unraid server, media stack, Docker services |
-| superpowers-chrome | Direct Chrome DevTools Protocol access — skill mode + MCP mode, zero dependencies |
-| superpowers-developing-for-claude-code | Skills and docs for developing Claude Code plugins, skills, and MCP servers |
-| double-shot-latte | Auto-continues Claude Code work instead of stopping to ask permission |
-| agent-pool | Expert pool — mixture-of-experts routing with filesystem mail and contracts |
 | artificer-design-system | Artificer design system — tokens, live spec, framework adapters, themes for Claude Code/Ghostty/VSCode/Obsidian |
 | artificer-voice | Portable communication preferences injected at SessionStart and SubagentStart (private repo) |
 | bosun | GitOps CLI for Docker Compose on bare metal — Helm for home |

@@ -96,44 +96,12 @@
       }
     },
     {
-      "name": "superpowers-chrome",
-      "description": "Direct Chrome DevTools Protocol access — skill mode + MCP mode, zero dependencies",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/superpowers-chrome.git"
-      }
-    },
-    {
-      "name": "superpowers-developing-for-claude-code",
-      "description": "Skills and docs for developing Claude Code plugins, skills, and MCP servers",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/superpowers-developing-for-claude-code.git"
-      }
-    },
-    {
-      "name": "double-shot-latte",
-      "description": "Auto-continues Claude Code work instead of stopping to ask permission",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/double-shot-latte.git"
-      }
-    },
-    {
       "name": "cadence-guardrails",
       "description": "Git safety hooks: block pushes and gh writes to repos you don't own, branch warnings, commit nudges",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/cadence-guardrails"
-      }
-    },
-    {
-      "name": "agent-pool",
-      "description": "Expert pool — delegate to domain specialists via mixture-of-experts routing, filesystem mail, and contract-driven coordination",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/cameronsjo/agent-pool.git"
       }
     },
     {
