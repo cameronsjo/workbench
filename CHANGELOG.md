@@ -32,7 +32,7 @@ rather than tagged releases.
 
 ### Removed
 
-- Removed the `auditing-claude-md` entry. Claude Code now ships a built-in CLAUDE.md audit, and the `cameronsjo/auditing-claude-md` repo is archived. If a machine still has it installed, run `claude plugin uninstall auditing-claude-md@workbench`.
+- Removed the `auditing-claude-md` entry. Claude Code now ships a built-in CLAUDE.md audit (`/doctor prompt-audit`), and the `cameronsjo/auditing-claude-md` repo is archived. If a machine still has it installed, run `claude plugin uninstall auditing-claude-md@workbench`.
 - Removed the `homebridge-dev` entry. The skill and its `homebridge-explorer` agent now live as repo skills in `cameronsjo/homebridge`, the only repo that used them, and the `cameronsjo/homebridge-dev` repo is retired. It may still be installed at project scope (recorded against the old `~/Projects/homebridge` path); remove the `homebridge-dev@workbench` entry from that profile's `plugins/installed_plugins.json`, since `claude plugin uninstall` needs the original project directory.
 - Removed the `cadence-canon` entry — the plugin is retired and its session hook wiring now ships in `cadence` (cadence-ecosystem ADR-0030 Phase 2). On every machine, run `claude plugin uninstall cadence-canon@workbench`; until you do, that machine fires each session hook twice (harmless — the hooks are idempotent — but nudge text and the SessionStart block appear doubled).
 - Removed the `cadence-kanban` entry — the board was retired and the plugin deleted
