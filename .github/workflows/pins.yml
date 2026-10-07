@@ -3,34 +3,31 @@ name: pins
 # The catalog holds known source shapes only, and every Claude Code mod is
 # pinned to one commit. The rule is scripts/check-pins.py.
 #
-# Two jobs:
+# This job uses the rule from the base branch and reads the pull request's
+# catalog as data, so a pull request cannot relax the rule it is judged by.
+# This is the job to require.
 #
-# - `pins` runs on pull_request_target. It uses the rule from the base branch
-#   and reads the pull request's catalog as data, so a pull request cannot
-#   relax the rule it is judged by. This is the job to require.
-#   It runs no file from the pull request: the one file it takes is JSON, read
-#   with `git show` into a temporary file and parsed. Keep it that way. Never
-#   check out, source or execute the pull request's tree in this job.
-# - `pins-self` runs the change's own copy of the rule and the rule's tests,
-#   on pull requests and on main. It is what tests a change to the rule.
+# It runs no file from the pull request: the one file it takes is JSON, read
+# with `git show` into a temporary file and parsed. Keep it that way. Never
+# check out, source or execute the pull request's tree here.
+#
+# It lives alone in this file so that no other event reports a check named
+# `pins`: a job skipped by an `if` counts as passed for a required check.
+# A change to the rule itself is tested by pins-self.yml.
 
 on:
-  pull_request:
   pull_request_target:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
 
 concurrency:
-  group: pins-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name != 'push' }}
+  group: pins-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   pins:
     name: pins
-    if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -51,17 +48,3 @@ jobs:
           [ "$fetched" = "$PR_HEAD" ] || { echo "the pull request moved to $fetched while this ran; the newer run judges it"; exit 1; }
           git show "refs/remotes/pr/head:.claude-plugin/marketplace.json" > "$RUNNER_TEMP/marketplace.json"
           python3 -I -B scripts/check-pins.py "$RUNNER_TEMP/marketplace.json"
-
-  pins-self:
-    name: pins-self
-    if: github.event_name != 'pull_request_target'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          persist-credentials: false
-      - name: The rule's own tests
-        run: python3 -I -B scripts/test_check_pins.py
-      - name: This change's rule judges this change's catalog
-        run: python3 -I -B scripts/check-pins.py
