@@ -11,6 +11,11 @@ rather than tagged releases.
 
 ### Added
 
+- Registered six Claude Code mods as `git-subdir` entries from the `cameronsjo/cadence`
+  monorepo: `afk`, `board`, `guard-toast`, `herdr-bridge`, `sploot`, `verbs`. Each is
+  pinned by a 40-character `sha`, because a mod runs its own code inside every session.
+- `pins` workflow and `scripts/check-pins.py`: fail unless each of the six mods has
+  exactly one entry, pinned by commit, with no component fields on it.
 - Registered `go` as a `git-subdir` entry from the `cameronsjo/cadence` monorepo
   (`plugins/go`) — six terse one-shot slash commands, consolidating eight prior
   commands split across an unmanaged user-level dir and the `cadence` plugin

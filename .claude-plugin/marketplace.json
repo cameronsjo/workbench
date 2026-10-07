@@ -219,6 +219,66 @@
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/go"
       }
+    },
+    {
+      "name": "board",
+      "description": "Mod: Agent Board tools for Claude (inbox, posts, post, ack, peers) and an unread count",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/board",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "verbs",
+      "description": "Mod: spinner words that say what is running",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/verbs",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "afk",
+      "description": "Mod: /afk wraps up a session before you walk away and compacts it, with an optional idle trigger and session tools for Claude",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/afk",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "guard-toast",
+      "description": "Mod: a toast and a Feedback button when a cadence-hooks guard refuses a tool call",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/guard-toast",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "herdr-bridge",
+      "description": "Mod: herdr pane tools for Claude (panes, send, read, start)",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/herdr-bridge",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "sploot",
+      "description": "Mod: Sploot, a pixel-art corgi in a little yard above the prompt",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/sploot",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
     }
   ]
 }

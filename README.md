@@ -35,6 +35,19 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 | cadence-dev | Skills for building cadence itself — placement, skill-edit drills, model-tagged deferral | build repos (opt-in) |
 | go | Terse one-shot slash commands for recurring instructions Cameron says once per turn | always-on |
 
+### Mods
+
+A mod runs its own code inside every Claude Code session, so each one is pinned to the exact commit that was reviewed. The `pins` check (`scripts/check-pins.py`) fails a change that leaves one unpinned.
+
+| Plugin | Description |
+|---|---|
+| afk | `/afk` wraps up a session before you walk away and compacts it; optional idle trigger; session tools for Claude |
+| board | Agent Board tools for Claude and an unread count |
+| guard-toast | A toast and a Feedback button when a cadence-hooks guard refuses a tool call |
+| herdr-bridge | herdr pane tools for Claude |
+| sploot | A pixel-art corgi in a little yard above the prompt |
+| verbs | Spinner words that say what is running |
+
 ### Standalone
 
 | Plugin | Description |
