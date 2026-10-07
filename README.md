@@ -41,7 +41,7 @@ A mod runs its own code inside every Claude Code session, so each one is pinned 
 
 | Plugin | Description |
 |---|---|
-| afk | `/afk` has Claude push commits, open a draft PR and journal, then compacts without asking; optional idle trigger; tools to compact, rename, and switch the model |
+| afk | `/afk` has Claude journal and push unpushed commits, then compacts without asking; optional idle trigger; tools to compact, rename, and switch the model |
 | board | Agent Board tools for Claude and an unread count; its own permission step for those tools; registers each session with the board |
 | guard-toast | A toast and a Feedback button when a cadence-hooks guard refuses a tool call |
 | herdr-bridge | herdr pane tools for Claude; its own permission step for those tools; can type into other panes and start agents |

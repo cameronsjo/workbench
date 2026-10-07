@@ -242,12 +242,12 @@
     },
     {
       "name": "afk",
-      "description": "Mod: /afk has Claude push commits, open a draft PR and journal, then compacts the conversation without asking; an optional idle trigger starts the same run. Tools let Claude compact, rename the session, and switch the model, which also sets your default for new sessions",
+      "description": "Mod: /afk has Claude write the session journal and push the branch if it has unpushed commits, then compacts the conversation without asking; an optional idle trigger starts the same run. Tools let Claude compact, rename the session, and switch the model, which also sets your default for new sessions",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/afk",
-        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+        "sha": "7c456aa058d98dc0a7db348106b92431ceb368a9"
       }
     },
     {
