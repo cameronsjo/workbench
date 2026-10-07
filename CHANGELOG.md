@@ -32,6 +32,9 @@ rather than tagged releases.
 
 ### Changed
 
+- Moved the `sploot` pin to cadence `b37c048162de`: her frisbee is a ball (`/frisbee` is now
+  `/ball`), she has more stretches and a lower bow, and her digging kicks soil low onto a pile
+  (cameronsjo/cadence#1653).
 - `go` entry description no longer states a command count; the plugin's
   command set changes with its own releases (cameronsjo/cadence#1375).
 - Re-pointed the 12 cadence-ecosystem plugins to the `cameronsjo/cadence` monorepo via
