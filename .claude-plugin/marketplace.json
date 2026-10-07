@@ -277,7 +277,7 @@
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/sploot",
-        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+        "sha": "b37c048162de986b18445fd174ca34af0ea6a284"
       }
     }
   ]
