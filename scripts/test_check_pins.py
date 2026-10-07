@@ -24,90 +24,152 @@ def load() -> types.ModuleType:
 
 pins = load()
 SHA = "0123456789abcdef0123456789abcdef01234567"
+PLAIN = len(pins.MODS)  # index of the cadence entry that is not a mod
+ALONE = PLAIN + 1  # index of the standalone entry
 
 
-def entry(name: str, sha: str | None = SHA) -> dict[str, object]:
+def cadence(name: str, sha: str | None = None) -> dict[str, object]:
     source: dict[str, object] = {"source": "git-subdir", "url": pins.CADENCE_URL, "path": f"plugins/{name}"}
     if sha is not None:
         source["sha"] = sha
-    return {"name": name, "description": f"{name} mod", "source": source}
+    return {"name": name, "description": f"{name} plugin", "source": source}
 
 
 def good() -> dict[str, object]:
-    other = {"name": "cadence", "description": "not a mod", "source": {"source": "git-subdir", "url": pins.CADENCE_URL, "path": "plugins/cadence"}}
-    return {"name": "workbench", "plugins": [other, *(entry(mod) for mod in pins.MODS)]}
+    alone = {"name": "homelab", "description": "standalone", "source": {"source": "url", "url": "https://github.com/cameronsjo/homelab.git"}}
+    return {"name": "workbench", "description": "d", "owner": {"name": "o"}, "plugins": [*(cadence(mod, SHA) for mod in pins.MODS), cadence("cadence"), alone]}
 
 
-class PinTest(unittest.TestCase):
-    def problems(self, change) -> list[str]:  # noqa: ANN001 - a callable that edits the catalog in place
-        catalog = copy.deepcopy(good())
-        change(catalog["plugins"])
-        return pins.pin_problems(catalog)
+def problems(change) -> list[str]:  # noqa: ANN001 - a callable that edits the catalog in place
+    catalog = copy.deepcopy(good())
+    change(catalog)
+    return pins.catalog_problems(catalog)
 
+
+class CatalogTest(unittest.TestCase):
     def assert_one(self, change, text: str) -> None:  # noqa: ANN001
-        found = self.problems(change)
+        found = problems(change)
         self.assertTrue(any(text in line for line in found), found)
 
-    def test_six_pinned_entries_pass(self) -> None:
-        self.assertEqual(pins.pin_problems(good()), [])
+    def test_the_fixture_passes(self) -> None:
+        self.assertEqual(pins.catalog_problems(good()), [])
 
-    def test_an_unpinned_plugin_that_is_not_a_mod_is_not_judged(self) -> None:
-        self.assertEqual(self.problems(lambda p: p.append({"name": "x", "description": "", "source": "./x", "hooks": {}})), [])
+    def test_the_allowlists_are_exactly_these(self) -> None:
+        # Widening any of these is the change a reviewer must see; a list of refused keys would not notice one more allowed.
+        self.assertEqual(pins.TOP_KEYS, {"name", "description", "owner", "plugins"})
+        self.assertEqual(pins.ENTRY_KEYS, {"name", "description", "source"})
+        self.assertEqual(pins.CADENCE_KEYS, {"source", "url", "path"})
+        self.assertEqual(pins.STANDALONE_KEYS, {"source", "url"})
+        self.assertEqual(pins.OPTIONAL_KEYS, {"ref", "sha"})
+        self.assertEqual(pins.PINNED_KEYS, {"source", "url", "path", "sha"})
+        self.assertEqual(sorted(pins.MODS), ["afk", "board", "guard-toast", "herdr-bridge", "sploot", "verbs"])
+        self.assertEqual((pins.OWNER, pins.CADENCE_URL), ("cameronsjo", "https://github.com/cameronsjo/cadence.git"))
 
-    def test_a_missing_mod_fails(self) -> None:
-        self.assert_one(lambda p: p.pop(1), "board: 0 catalog entries reach this mod")
-
-    def test_a_mod_without_a_sha_fails(self) -> None:
-        self.assert_one(lambda p: p[1]["source"].pop("sha"), "board: source has keys path, source, url")
-
-    def test_a_sha_that_is_not_forty_lowercase_hex_fails(self) -> None:
-        for bad in (SHA[:39], SHA.upper(), "main", SHA + "0", f" {SHA}", 7, None, ""):
-            with self.subTest(sha=bad):
-                self.assert_one(lambda p, bad=bad: p[1]["source"].__setitem__("sha", bad), "not 40 lowercase hex digits")
-
-    def test_a_ref_beside_the_sha_fails(self) -> None:
-        self.assert_one(lambda p: p[1]["source"].__setitem__("ref", "main"), "it holds exactly source, url, path and sha")
-
-    def test_a_component_field_on_a_mods_entry_fails(self) -> None:
-        for key in ("hooks", "commands", "agents", "skills", "mcpServers", "strict", "lspServers", "outputStyles"):
+    def test_a_top_level_key_outside_the_list_fails(self) -> None:
+        for key in ("renames", "allowCrossMarketplaceDependenciesOn", "metadata", "forceRemoveDeletedPlugins"):
             with self.subTest(key=key):
-                self.assert_one(lambda p, key=key: p[1].__setitem__(key, {}), f"board: the entry has {key}")
+                self.assert_one(lambda c, key=key: c.__setitem__(key, {}), f"the catalog has top-level {key}")
 
-    def test_another_repository_fails(self) -> None:
-        self.assert_one(lambda p: p[1]["source"].__setitem__("url", "https://github.com/evil/cadence.git"), "board: source.url is")
+    def test_an_entry_key_outside_the_list_fails_on_any_entry(self) -> None:
+        for index in (0, PLAIN, ALONE):
+            for key in ("hooks", "commands", "agents", "skills", "mcpServers", "strict", "dependencies", "version", "userConfig"):
+                with self.subTest(index=index, key=key):
+                    self.assert_one(lambda c, index=index, key=key: c["plugins"][index].__setitem__(key, {}), "an entry holds description, name, source only")
 
-    def test_another_source_kind_fails(self) -> None:
-        self.assert_one(lambda p: p[1]["source"].__setitem__("source", "github"), "board: source.source is 'github'")
-
-    def test_a_source_that_is_a_string_fails(self) -> None:
-        self.assert_one(lambda p: p[1].__setitem__("source", "./plugins/board"), "board: the entry has no source object")
-
-    def test_a_second_entry_with_the_same_name_fails(self) -> None:
-        self.assert_one(lambda p: p.append(entry("board", None)), "board: 2 catalog entries reach this mod")
-
-    def test_a_second_entry_under_a_folded_name_fails(self) -> None:
-        for name in ("Board", "BOARD", "ｂoard"):  # the last is a fullwidth b
-            with self.subTest(name=name):
-                found = self.problems(lambda p, name=name: p.append({"name": name, "description": "", "source": "./x"}))
-                self.assertTrue(any("board: 2 catalog entries" in line for line in found), found)
-                self.assertTrue(any("name it 'board' exactly" in line for line in found), found)
-
-    def test_another_name_at_a_mods_path_fails(self) -> None:
-        for path in ("plugins/board", "plugins/Board", "./plugins/board", "plugins/board/"):
-            with self.subTest(path=path):
-                twin = {"name": "notes", "description": "", "source": {"source": "git-subdir", "url": pins.CADENCE_URL, "path": path}}
-                found = self.problems(lambda p, twin=twin: p.append(twin))
-                self.assertTrue(any("board: 2 catalog entries" in line for line in found), found)
-
-    def test_an_entry_that_is_not_an_object_fails(self) -> None:
-        self.assert_one(lambda p: p.append("board"), "is not an object")
+    def test_an_entry_without_a_description_fails(self) -> None:
+        self.assert_one(lambda c: c["plugins"][PLAIN].pop("description"), "an entry holds description, name, source only")
 
     def test_a_catalog_without_a_plugins_list_fails(self) -> None:
-        self.assertEqual(pins.pin_problems({"plugins": {}}), ["the catalog has no plugins list"])
-        self.assertEqual(pins.pin_problems([]), ["the catalog has no plugins list"])
+        for bad in ({"plugins": {}}, [], {"name": "x"}, None):
+            with self.subTest(bad=bad):
+                self.assertEqual(pins.catalog_problems(bad), ["the catalog has no plugins list"])
 
-    def test_the_roster_is_six(self) -> None:
-        self.assertEqual(sorted(pins.MODS), ["afk", "board", "guard-toast", "herdr-bridge", "sploot", "verbs"])
+    def test_an_entry_that_is_not_an_object_fails(self) -> None:
+        self.assert_one(lambda c: c["plugins"].append("board"), "is not an object")
+
+    def test_a_name_that_is_not_plain_lowercase_fails(self) -> None:
+        for name in ("Notes", "notes.", "no tes", "ｎotes", "", "-notes", "notes/x", 7, None):
+            with self.subTest(name=name):
+                self.assert_one(lambda c, name=name: c["plugins"].append({"name": name, "description": "", "source": {"source": "url", "url": "https://github.com/cameronsjo/x.git"}}), "not lowercase letters, digits and hyphens")
+
+    def test_a_second_entry_with_a_name_fails(self) -> None:
+        self.assert_one(lambda c: c["plugins"].append(cadence("cadence")), "cadence: 2 or more entries have this name")
+
+    def test_a_string_source_fails(self) -> None:
+        self.assert_one(lambda c: c["plugins"][PLAIN].__setitem__("source", "./plugins/cadence"), "not an object")
+
+    def test_a_source_of_another_kind_or_place_fails(self) -> None:
+        sources = (
+            {"source": "github", "repo": "cameronsjo/cadence"},
+            {"source": "url", "url": pins.CADENCE_URL},  # the whole cadence repository
+            {"source": "url", "url": "https://github.com/cameronsjo/Cadence.git"},
+            {"source": "url", "url": "https://github.com/evil/homelab.git"},
+            {"source": "url", "url": "https://github.com/cameronsjo/homelab"},
+            {"source": "url", "url": "git@github.com:cameronsjo/homelab.git"},
+            {"source": "url", "url": "https://github.com/cameronsjo/homelab.git/../../evil/x.git"},
+            {"source": "git-subdir", "url": "https://github.com/evil/cadence.git", "path": "plugins/notes"},
+            {"source": "git-subdir", "url": "https://github.com/cameronsjo/cadence", "path": "plugins/notes"},
+            {"source": "git-subdir", "url": "https://github.com/cameronsjo/homelab.git", "path": "plugins/notes"},
+            {"source": "npm", "package": "x"},
+            {},
+        )
+        for source in sources:
+            with self.subTest(source=source):
+                self.assert_one(lambda c, source=source: c["plugins"].append({"name": "notes", "description": "", "source": source}), "notes: source (")
+
+    def test_a_cadence_path_is_the_entrys_own_directory_spelled_one_way(self) -> None:
+        # Each of these reaches plugins/board under another name, unpinned.
+        for path in ("plugins/board", "plugins//board", "plugins/./board", "./plugins/board", "plugins/board/", "plugins/board/.", "plugins\\board", "plugins/afk/../board", "plugins/Board", "plugins/notes/../board", "notes", "x/notes", "plugins//notes", "plugins/board/../notes", "", None, 7):
+            with self.subTest(path=path):
+                self.assert_one(lambda c, path=path: c["plugins"].append({"name": "notes", "description": "", "source": {"source": "git-subdir", "url": pins.CADENCE_URL, "path": path}}), "notes: source.path is")
+
+    def test_a_source_key_outside_its_shape_fails(self) -> None:
+        self.assert_one(lambda c: c["plugins"][PLAIN]["source"].__setitem__("subdir", "x"), "cadence: a cadence source holds")
+        self.assert_one(lambda c: c["plugins"][ALONE]["source"].__setitem__("path", "plugins/board"), "homelab: a standalone source holds")
+        self.assert_one(lambda c: c["plugins"][PLAIN]["source"].pop("path"), "cadence: source.path is 'None'")
+
+    def test_ref_and_sha_are_allowed_off_a_mod(self) -> None:
+        for index in (PLAIN, ALONE):
+            self.assertEqual(problems(lambda c, index=index: c["plugins"][index]["source"].update(ref="main", sha=SHA)), [])
+
+
+class ModTest(unittest.TestCase):
+    """Every case runs for each of the six: a check that judged one mod would pass a test that broke only that one."""
+
+    def each(self, change, text: str) -> None:  # noqa: ANN001 - change(catalog, index)
+        for index, mod in enumerate(pins.MODS):
+            with self.subTest(mod=mod):
+                found = problems(lambda c, index=index: change(c, index))
+                self.assertTrue(any(line.startswith(f"{mod}: ") and text in line for line in found), found)
+
+    def test_a_missing_mod_fails(self) -> None:
+        self.each(lambda c, i: c["plugins"].pop(i), "no catalog entry has this name")
+
+    def test_a_mod_without_a_sha_fails(self) -> None:
+        self.each(lambda c, i: c["plugins"][i]["source"].pop("sha"), "a mod's source holds exactly path, sha, source, url")
+
+    def test_a_sha_that_is_not_forty_lowercase_hex_fails(self) -> None:
+        for bad in (SHA[:39], SHA.upper(), "main", SHA + "0", f" {SHA}", f"{SHA}\n", 7, None, ""):
+            with self.subTest(sha=bad):
+                self.each(lambda c, i, bad=bad: c["plugins"][i]["source"].__setitem__("sha", bad), "not 40 lowercase hex digits")
+
+    def test_a_ref_beside_the_sha_fails(self) -> None:
+        self.each(lambda c, i: c["plugins"][i]["source"].__setitem__("ref", "main"), "a mod's source holds exactly")
+
+    def test_a_mod_at_another_path_fails(self) -> None:
+        self.each(lambda c, i: c["plugins"][i]["source"].__setitem__("path", "plugins/cadence"), "source.path is 'plugins/cadence'")
+
+    def test_a_mod_from_a_standalone_repository_fails(self) -> None:
+        self.each(lambda c, i: c["plugins"][i].__setitem__("source", {"source": "url", "url": "https://github.com/cameronsjo/homelab.git", "sha": SHA}), "a mod is a git-subdir source in the cadence repository")
+
+    def test_a_mod_named_in_another_case_fails_and_is_not_counted_missing_silently(self) -> None:
+        for index, mod in enumerate(pins.MODS):
+            with self.subTest(mod=mod):
+                found = problems(lambda c, index=index, mod=mod: c["plugins"][index].__setitem__("name", mod.upper()))
+                self.assertTrue(any(f"name it {mod!r} exactly" in line for line in found), found)
+
+    def test_a_component_field_on_a_mod_fails(self) -> None:
+        self.each(lambda c, i: c["plugins"][i].__setitem__("hooks", {}), "an entry holds description, name, source only")
 
 
 class CommandTest(unittest.TestCase):
@@ -119,24 +181,30 @@ class CommandTest(unittest.TestCase):
 
     def test_pass_and_fail_exit_codes(self) -> None:
         ok = self.run_on(json.dumps(good()))
-        self.assertEqual((ok.returncode, ok.stdout.strip()), (0, "PASS  6 of 6 mods pinned by commit"))
+        self.assertEqual((ok.returncode, ok.stdout.strip()), (0, "PASS  8 entries in known shapes; 6 of 6 mods pinned by commit"))
         catalog = good()
-        catalog["plugins"][1]["source"].pop("sha")  # type: ignore[index]
+        catalog["plugins"][0]["source"].pop("sha")  # type: ignore[index]
         bad = self.run_on(json.dumps(catalog))
         self.assertEqual(bad.returncode, 1, bad.stdout)
         self.assertIn("FAIL  2 problem(s)", bad.stdout)
 
     def test_unreadable_json_is_exit_two(self) -> None:
-        self.assertEqual(self.run_on("{").returncode, 2)
+        for text in ("{", '{"plugins": [], "x": NaN}', ""):
+            with self.subTest(text=text):
+                self.assertEqual(self.run_on(text).returncode, 2)
 
     def test_a_missing_file_and_a_flag_are_exit_two(self) -> None:
         for args in (["/nonexistent/marketplace.json"], ["--help"], ["a", "b"]):
             done = subprocess.run([sys.executable, "-I", "-B", str(SCRIPT), *args], capture_output=True, text=True, check=False)
             self.assertEqual(done.returncode, 2, args)
 
-    def test_the_repository_catalog_passes(self) -> None:
+    def test_the_repository_catalog_passes_with_all_six(self) -> None:
         done = subprocess.run([sys.executable, "-I", "-B", str(SCRIPT)], capture_output=True, text=True, check=False)
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        catalog = json.loads((HERE.parent / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+        pinned = {e["name"]: e["source"].get("sha") for e in catalog["plugins"] if e["name"] in pins.MODS}
+        self.assertEqual(sorted(pinned), sorted(pins.MODS))
+        self.assertTrue(all(isinstance(sha, str) and len(sha) == 40 for sha in pinned.values()), pinned)
 
 
 if __name__ == "__main__":

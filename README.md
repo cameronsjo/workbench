@@ -37,14 +37,14 @@ Or use the automated setup in `~/.claude/setup-marketplaces.sh`.
 
 ### Mods
 
-A mod runs its own code inside every Claude Code session, so each one is pinned to the exact commit that was reviewed. The `pins` check (`scripts/check-pins.py`) fails a change that leaves one unpinned.
+A mod runs its own code inside every Claude Code session, so each one is pinned to one exact commit instead of following a branch. The `pins` check (`scripts/check-pins.py`) fails a catalog that leaves one unpinned, or that holds an entry or a field outside the shapes the script lists. It cannot tell whether a pinned commit was reviewed; that is the pull request's job.
 
 | Plugin | Description |
 |---|---|
-| afk | `/afk` wraps up a session before you walk away and compacts it; optional idle trigger; session tools for Claude |
-| board | Agent Board tools for Claude and an unread count |
+| afk | `/afk` has Claude push commits, open a draft PR and journal, then compacts without asking; optional idle trigger; tools to compact, rename, and switch the model |
+| board | Agent Board tools for Claude and an unread count; its own permission step for those tools; registers each session with the board |
 | guard-toast | A toast and a Feedback button when a cadence-hooks guard refuses a tool call |
-| herdr-bridge | herdr pane tools for Claude |
+| herdr-bridge | herdr pane tools for Claude; its own permission step for those tools; can type into other panes and start agents |
 | sploot | A pixel-art corgi in a little yard above the prompt |
 | verbs | Spinner words that say what is running |
 

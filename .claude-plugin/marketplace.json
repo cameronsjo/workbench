@@ -222,7 +222,7 @@
     },
     {
       "name": "board",
-      "description": "Mod: Agent Board tools for Claude (inbox, posts, post, ack, peers) and an unread count",
+      "description": "Mod: Agent Board tools for Claude (inbox, posts, post, ack, peers) and an unread count. It is its own permission step for those tools, brings other programs' text into the conversation, and registers each session with the board",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
@@ -242,7 +242,7 @@
     },
     {
       "name": "afk",
-      "description": "Mod: /afk wraps up a session before you walk away and compacts it, with an optional idle trigger and session tools for Claude",
+      "description": "Mod: /afk has Claude push commits, open a draft PR and journal, then compacts the conversation without asking; an optional idle trigger starts the same run. Tools let Claude compact, rename the session, and switch the model, which also sets your default for new sessions",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
@@ -262,7 +262,7 @@
     },
     {
       "name": "herdr-bridge",
-      "description": "Mod: herdr pane tools for Claude (panes, send, read, start)",
+      "description": "Mod: herdr pane tools for Claude (panes, send, read, start). It is its own permission step for those tools: send types into other agents' panes, start launches agents outside this session's guards, and read can read any pane",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
