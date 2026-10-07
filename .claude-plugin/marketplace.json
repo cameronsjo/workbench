@@ -219,6 +219,66 @@
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/go"
       }
+    },
+    {
+      "name": "board",
+      "description": "Mod: Agent Board tools for Claude (inbox, posts, post, ack, peers) and an unread count. It is its own permission step for those tools, brings other programs' text into the conversation, and registers each session with the board",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/board",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "verbs",
+      "description": "Mod: spinner words that say what is running",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/verbs",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "afk",
+      "description": "Mod: /afk has Claude write the session journal and push the branch if it has unpushed commits, then compacts the conversation without asking; an optional idle trigger starts the same run. Tools let Claude compact, rename the session, and switch the model, which also sets your default for new sessions",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/afk",
+        "sha": "7c456aa058d98dc0a7db348106b92431ceb368a9"
+      }
+    },
+    {
+      "name": "guard-toast",
+      "description": "Mod: a toast and a Feedback button when a cadence-hooks guard refuses a tool call",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/guard-toast",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "herdr-bridge",
+      "description": "Mod: herdr pane tools for Claude (panes, send, read, start). It is its own permission step for those tools: send types into other agents' panes, start launches agents outside this session's guards, and read can read any pane",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/herdr-bridge",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
+    },
+    {
+      "name": "sploot",
+      "description": "Mod: Sploot, a pixel-art corgi in a little yard above the prompt",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/cameronsjo/cadence.git",
+        "path": "plugins/sploot",
+        "sha": "36102589db24d20200303d9bd0af5cea643b9a71"
+      }
     }
   ]
 }

@@ -1,0 +1,56 @@
+name: pins
+
+# The catalog holds known source shapes only, and every Claude Code mod is
+# pinned to one commit. The rule is scripts/check-pins.py.
+#
+# This job uses the rule from the base branch and reads the pull request's
+# catalog as data, so a pull request cannot relax the rule it is judged by.
+# This is the job to require.
+#
+# It runs no file from the pull request: the one file it takes is JSON, read
+# with `git show` into a temporary file and parsed. Keep it that way. Never
+# check out, source or execute the pull request's tree here.
+#
+# It lives alone in this file so that no other event reports a check named
+# `pins`: a job skipped by an `if` counts as passed for a required check.
+# A change to the rule itself is tested by pins-self.yml.
+
+on:
+  pull_request_target:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pins-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pins:
+    name: pins
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the base branch
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: The base rule judges the pull request's catalog
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          case "$PR_NUMBER" in ''|*[!0-9]*) echo "bad pull request number"; exit 1 ;; esac
+          case "$PR_HEAD" in *[!0-9a-f]*) echo "bad head sha"; exit 1 ;; esac
+          [ "${#PR_HEAD}" -eq 40 ] || { echo "bad head sha"; exit 1; }
+          git fetch --quiet --no-tags --depth=1 origin "+refs/pull/${PR_NUMBER}/head:refs/remotes/pr/head"
+          fetched=$(git rev-parse --verify --quiet refs/remotes/pr/head) || { echo "the pull request head could not be read"; exit 1; }
+          [ "$fetched" = "$PR_HEAD" ] || { echo "the pull request moved to $fetched while this ran; the newer run judges it"; exit 1; }
+          # A plain file only. For a symlink `git show` prints the link's target, which can be a passing
+          # catalog while a checkout follows the link to a file this job never read.
+          entry=$(git ls-tree refs/remotes/pr/head -- .claude-plugin/marketplace.json)
+          case "$entry" in "100644 blob "*) ;; *) echo "the catalog is not a plain file in this pull request: ${entry:-missing}"; exit 1 ;; esac
+          git show "refs/remotes/pr/head:.claude-plugin/marketplace.json" > "$RUNNER_TEMP/marketplace.json"
+          # Every path in the pull request, as data: a folded twin of the catalog replaces it in a macOS clone.
+          git ls-tree -r -z --name-only refs/remotes/pr/head > "$RUNNER_TEMP/paths"
+          python3 -I -B scripts/check-pins.py "$RUNNER_TEMP/marketplace.json" "$RUNNER_TEMP/paths"
