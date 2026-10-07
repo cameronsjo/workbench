@@ -1,7 +1,14 @@
 #!/usr/bin/env -S python3 -I -B
 """Fail unless the catalog holds only known source shapes and every Claude Code mod is pinned to one commit.
 
-Usage: check-pins.py [<marketplace.json>]   (default: .claude-plugin/marketplace.json beside scripts/)
+Usage: check-pins.py [<marketplace.json> [<paths file>]]
+       (default catalog: .claude-plugin/marketplace.json beside scripts/)
+
+<paths file> is the NUL-separated output of `git ls-tree -r -z --name-only`
+for the tree the catalog came from. With it, the check also fails on two paths
+that differ only by letter case or by characters a macOS disk folds together:
+a clone there keeps one of them, so a twin of the catalog (or of this script)
+would be read in place of the file that was judged.
 
 A mod is a plugin that runs its own code inside every Claude Code session, so
 the catalog never follows a branch for one: each mod's entry names one exact
@@ -69,9 +76,28 @@ def keys(found: object) -> str:
 
 
 def folded(text: str) -> str:
-    """A name as a case-insensitive disk compares it, near enough. A trailing dot is dropped as Windows drops it."""
-    once = unicodedata.normalize("NFKC", text.casefold())
-    return unicodedata.normalize("NFKC", once.casefold()).rstrip(".")
+    """A name as a case-insensitive disk compares it, near enough. A trailing dot is dropped as Windows drops it.
+
+    Normalized, folded, normalized again: folding first puts a combining mark out of order, and a
+    fold can leave a string that is no longer normalized.
+    """
+    return unicodedata.normalize("NFKC", unicodedata.normalize("NFKC", text).casefold()).rstrip(".")
+
+
+def twin_problems(paths: list[str]) -> list[str]:
+    """Why a set of paths cannot all exist on a disk that ignores letter case or folds characters."""
+    # Keyed by the folded parts, never the folded string: U+FF0F folds to "/".
+    spellings: dict[tuple[str, ...], set[str]] = {}
+    for path in paths:
+        parts = path.split("/")
+        for depth in range(1, len(parts) + 1):
+            spellings.setdefault(tuple(folded(part) for part in parts[:depth]), set()).add("/".join(parts[:depth]))
+    return [
+        f"{' and '.join(shown(s) for s in sorted(group))} are one path on a disk that ignores letter case or folds characters; keep one"
+        for _, group in sorted(spellings.items())
+        # Named once, where the spellings part. Members under differently spelled parents are below a group that is itself named.
+        if len(group) > 1 and len({spelled.rpartition("/")[0] for spelled in group}) == 1
+    ]
 
 
 def source_problems(name: str, source: object) -> list[str]:
@@ -141,7 +167,7 @@ def catalog_problems(catalog: object) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) > 1 or any(arg.startswith("-") for arg in argv):
+    if len(argv) > 2 or any(arg.startswith("-") for arg in argv):
         print(__doc__, file=sys.stderr)
         return 2
     path = pathlib.Path(argv[0]) if argv else pathlib.Path(__file__).resolve().parent.parent / ".claude-plugin" / "marketplace.json"
@@ -151,6 +177,16 @@ def main(argv: list[str]) -> int:
         print(f"{shown(path)} could not be read as JSON: {shown(err)}", file=sys.stderr)
         return 2
     problems = catalog_problems(catalog)
+    if len(argv) == 2:
+        try:
+            listing = pathlib.Path(argv[1]).read_bytes()
+        except OSError as err:
+            print(f"{shown(argv[1])} could not be read: {shown(err)}", file=sys.stderr)
+            return 2
+        paths = [name.decode("utf-8", "surrogateescape") for name in listing.split(b"\0") if name]
+        if ".claude-plugin/marketplace.json" not in paths:
+            problems.append("the paths file does not list .claude-plugin/marketplace.json: it is not the tree the catalog came from")
+        problems += twin_problems(paths)
     for problem in problems:
         print(problem)
     if problems:

@@ -51,4 +51,6 @@ jobs:
           entry=$(git ls-tree refs/remotes/pr/head -- .claude-plugin/marketplace.json)
           case "$entry" in "100644 blob "*) ;; *) echo "the catalog is not a plain file in this pull request: ${entry:-missing}"; exit 1 ;; esac
           git show "refs/remotes/pr/head:.claude-plugin/marketplace.json" > "$RUNNER_TEMP/marketplace.json"
-          python3 -I -B scripts/check-pins.py "$RUNNER_TEMP/marketplace.json"
+          # Every path in the pull request, as data: a folded twin of the catalog replaces it in a macOS clone.
+          git ls-tree -r -z --name-only refs/remotes/pr/head > "$RUNNER_TEMP/paths"
+          python3 -I -B scripts/check-pins.py "$RUNNER_TEMP/marketplace.json" "$RUNNER_TEMP/paths"

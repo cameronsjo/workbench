@@ -172,7 +172,48 @@ class ModTest(unittest.TestCase):
         self.each(lambda c, i: c["plugins"][i].__setitem__("hooks", {}), "an entry holds description, name, source only")
 
 
+class TwinTest(unittest.TestCase):
+    CATALOG = ".claude-plugin/marketplace.json"
+
+    def test_distinct_paths_pass(self) -> None:
+        self.assertEqual(pins.twin_problems([self.CATALOG, "scripts/check-pins.py", "README.md", "docs/a.md", "docs/b.md"]), [])
+
+    def test_a_folded_twin_of_the_catalog_or_the_rule_fails(self) -> None:
+        for twin in (".claude-plugin/marketplace.j\u017fon", ".claude-plugin/mar\u212aetplace.json", ".claude-plugin/Marketplace.json", ".Claude-Plugin/x", "\u017fcripts/check-pins.py", "scripts/Check-Pins.py", ".claude-plugin/\u1fb3\u0323", "docs/\u03aa\u0301"):
+            with self.subTest(twin=twin):
+                base = [self.CATALOG, "scripts/check-pins.py", ".claude-plugin/\u03b1\u0323\u0345", "docs/\u0390"]
+                self.assertEqual(len(pins.twin_problems([*base, twin])), 1, twin)
+
+    def test_twin_directories_are_named_once(self) -> None:
+        self.assertEqual(pins.twin_problems(["docs/a.md", "Docs/a.md"]), ["Docs and docs are one path on a disk that ignores letter case or folds characters; keep one"])
+
+    def test_a_name_holding_a_folding_slash_does_not_hide_a_twin(self) -> None:
+        found = pins.twin_problems([self.CATALOG, ".claude-plugin/Marketplace.json", ".claude-plugin\uff0fmarketplace.json"])
+        self.assertEqual(len(found), 1, found)
+        self.assertIn(".claude-plugin/Marketplace.json and .claude-plugin/marketplace.json", found[0])
+
+
 class CommandTest(unittest.TestCase):
+    def test_a_paths_file_is_judged_and_must_be_the_catalogs_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            catalog = pathlib.Path(tmp) / "m.json"
+            catalog.write_text(json.dumps(good()), encoding="utf-8")
+            listing = pathlib.Path(tmp) / "paths"
+            cases = (
+                ([".claude-plugin/marketplace.json", "README.md"], 0, "PASS"),
+                ([".claude-plugin/marketplace.json", ".claude-plugin/marketplace.j\u017fon"], 1, "are one path on a disk"),
+                (["README.md"], 1, "does not list .claude-plugin/marketplace.json"),
+                ([], 1, "does not list .claude-plugin/marketplace.json"),
+            )
+            for paths, code, text in cases:
+                with self.subTest(paths=paths):
+                    listing.write_bytes(b"".join(p.encode("utf-8") + b"\0" for p in paths))
+                    done = subprocess.run([sys.executable, "-I", "-B", str(SCRIPT), str(catalog), str(listing)], capture_output=True, text=True, check=False)
+                    self.assertEqual(done.returncode, code, done.stdout + done.stderr)
+                    self.assertIn(text, done.stdout)
+            missing = subprocess.run([sys.executable, "-I", "-B", str(SCRIPT), str(catalog), str(listing) + ".none"], capture_output=True, text=True, check=False)
+            self.assertEqual(missing.returncode, 2)
+
     def run_on(self, text: str) -> subprocess.CompletedProcess[str]:
         with tempfile.TemporaryDirectory() as tmp:
             path = pathlib.Path(tmp) / "marketplace.json"
@@ -194,7 +235,7 @@ class CommandTest(unittest.TestCase):
                 self.assertEqual(self.run_on(text).returncode, 2)
 
     def test_a_missing_file_and_a_flag_are_exit_two(self) -> None:
-        for args in (["/nonexistent/marketplace.json"], ["--help"], ["a", "b"]):
+        for args in (["/nonexistent/marketplace.json"], ["--help"], ["a", "b", "c"]):
             done = subprocess.run([sys.executable, "-I", "-B", str(SCRIPT), *args], capture_output=True, text=True, check=False)
             self.assertEqual(done.returncode, 2, args)
 
