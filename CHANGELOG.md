@@ -32,6 +32,10 @@ rather than tagged releases.
 
 ### Changed
 
+- Moved the pins of all six mods to cadence `bc367b6d`, the review follow-ups: `afk` registers
+  no tools when `tools` is off in config; `herdr-bridge` gains an `identity` setting; `board` and
+  `herdr-bridge` re-read the off switch before each acting call; a setting a mod does not
+  recognise is shown by name only (cameronsjo/cadence#1659).
 - Moved the pins of all six mods (`afk`, `board`, `guard-toast`, `herdr-bridge`, `sploot`,
   `verbs`) to cadence `5cb993a6`. Each gains a status reply on its command, `/<mod> on|off`
   for the session, an `enabled` setting, and a `/config` guard; `afk` gains `/afk in`,
