@@ -32,6 +32,10 @@ rather than tagged releases.
 
 ### Changed
 
+- Moved the pins of all six mods (`afk`, `board`, `guard-toast`, `herdr-bridge`, `sploot`,
+  `verbs`) to cadence `5cb993a6`. Each gains a status reply on its command, `/<mod> on|off`
+  for the session, an `enabled` setting, and a `/config` guard; `afk` gains `/afk in`,
+  `/afk idle` and `/afk tools` (cameronsjo/cadence#1657).
 - Moved the `sploot` pin to cadence `b37c048162de`: her frisbee is a ball (`/frisbee` is now
   `/ball`), she has more stretches and a lower bow, and her digging kicks soil low onto a pile
   (cameronsjo/cadence#1653).
