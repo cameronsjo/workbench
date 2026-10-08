@@ -227,7 +227,7 @@
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/board",
-        "sha": "5cb993a6acba19f501d36735cde1c3ef9f9318e5"
+        "sha": "bc367b6d60e4b22afeb65bfe214cbcd933e8b1de"
       }
     },
     {
@@ -237,7 +237,7 @@
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/verbs",
-        "sha": "5cb993a6acba19f501d36735cde1c3ef9f9318e5"
+        "sha": "bc367b6d60e4b22afeb65bfe214cbcd933e8b1de"
       }
     },
     {
@@ -247,7 +247,7 @@
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/afk",
-        "sha": "5cb993a6acba19f501d36735cde1c3ef9f9318e5"
+        "sha": "bc367b6d60e4b22afeb65bfe214cbcd933e8b1de"
       }
     },
     {
@@ -257,7 +257,7 @@
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/guard-toast",
-        "sha": "5cb993a6acba19f501d36735cde1c3ef9f9318e5"
+        "sha": "bc367b6d60e4b22afeb65bfe214cbcd933e8b1de"
       }
     },
     {
@@ -267,7 +267,7 @@
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/herdr-bridge",
-        "sha": "5cb993a6acba19f501d36735cde1c3ef9f9318e5"
+        "sha": "bc367b6d60e4b22afeb65bfe214cbcd933e8b1de"
       }
     },
     {
@@ -277,7 +277,7 @@
         "source": "git-subdir",
         "url": "https://github.com/cameronsjo/cadence.git",
         "path": "plugins/sploot",
-        "sha": "5cb993a6acba19f501d36735cde1c3ef9f9318e5"
+        "sha": "bc367b6d60e4b22afeb65bfe214cbcd933e8b1de"
       }
     }
   ]
