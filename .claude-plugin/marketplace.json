@@ -280,5 +280,6 @@
         "sha": "bc367b6d60e4b22afeb65bfe214cbcd933e8b1de"
       }
     }
-  ]
+  ],
+  "probe": true
 }

@@ -1,0 +1,18 @@
+name: probe-pins
+
+# PROBE, never merge: does a pull request's own job named `pins` satisfy the required check
+# while the real one (pins.yml, from the base branch) fails? See the pull request body.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pins:
+    name: pins
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - run: "true"
